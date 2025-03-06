@@ -31,6 +31,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6862592938200428302}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &217744119995725158
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4375763924852149334}
+  m_Layer: 0
+  m_Name: BarrelGeo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4375763924852149334
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 217744119995725158}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8095300915798911568}
+  - {fileID: 7209023492727005720}
+  m_Father: {fileID: 6862592938200428302}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1592242393313337371
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,12 +91,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1592242393313337371}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 6862592938200428302}
+  m_Father: {fileID: 4375763924852149334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2062098011408200199
 MeshFilter:
@@ -184,7 +217,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   muzzlePosObj: {fileID: 68951873212743625}
   barrelObj: {fileID: 7863998719442206706}
-  firingAngle: 0
+  firingAngle: 90
   rotationAngle: 0
 --- !u!1 &5512454092935710273
 GameObject:
@@ -323,7 +356,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3090272437844839822}
-  m_Father: {fileID: 6862592938200428302}
+  m_Father: {fileID: 4375763924852149334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7863998719442206706
 GameObject:
@@ -354,8 +387,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8095300915798911568}
-  - {fileID: 7209023492727005720}
+  - {fileID: 4375763924852149334}
   - {fileID: 147777428397509666}
   m_Father: {fileID: 5865803489786622386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
