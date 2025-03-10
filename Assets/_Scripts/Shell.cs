@@ -16,6 +16,7 @@ namespace _Scripts {
             _gm = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
             _mc = _gm.mortar;
             
+            PrepForLoad();
             _mc.LoadShell(this);
         }
 
@@ -24,10 +25,11 @@ namespace _Scripts {
         }
 
         public void PrepForLoad() {
-            _rb.
+            _rb.useGravity = false;
         }
         
         public void Fire() {
+            _rb.useGravity = true;
             Fire(launchImpulse);
         }
 

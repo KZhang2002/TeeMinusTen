@@ -41,6 +41,7 @@ namespace _Scripts {
         public void FireShell() {
             if (!CurrentShell) return;
             // _pm.FireShell(CurrentShell);
+            CurrentShell.transform.position = muzzlePos;
             CurrentShell.Fire();
             
             // CurrentShell = null;
