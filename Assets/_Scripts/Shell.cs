@@ -37,5 +37,11 @@ namespace _Scripts {
             _rb.velocity = Vector3.zero;
             _rb.AddForce(transform.up * impulseVal, ForceMode.Impulse);
         }
+
+        // private void OnCollisionEnter(Collision col) {
+        //     GameObject obj = col.gameObject;
+        //     if (!obj.CompareTag("Terrain")) return;
+        //     if ()
+        // }
     }
 }
