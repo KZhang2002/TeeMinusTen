@@ -20,7 +20,7 @@ namespace _Scripts {
         }
 
         private void Start() {
-            _gm = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
+            _gm = GameManager.instance;
             _mc = _gm.mortar;
         }
 
