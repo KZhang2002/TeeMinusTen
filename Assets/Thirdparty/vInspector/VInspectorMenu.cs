@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEditor.Compilation;
 using static VInspector.Libs.VUtils;
 using static VInspector.Libs.VGUI;
-
+// using static VTools.VDebug;
 
 namespace VInspector
 {
@@ -30,7 +30,7 @@ namespace VInspector
         public static bool collapseEverythingElseEnabled { get => EditorPrefsCached.GetBool("vInspector-collapseEverythingElseEnabled", true); set => EditorPrefsCached.SetBool("vInspector-collapseEverythingElseEnabled", value); }
         public static bool collapseEverythingEnabled { get => EditorPrefsCached.GetBool("vInspector-collapseEverythingEnabled", true); set => EditorPrefsCached.SetBool("vInspector-collapseEverythingEnabled", value); }
 
-        public static bool attributesDisabled { get => IsSymbolDefinedInAsmdef(nameof(VInspector), "VINSPECTOR_ATTRIBUTES_DISABLED"); set => SetSymbolDefinedInAsmdef(nameof(VInspector), "VINSPECTOR_ATTRIBUTES_DISABLED", value); }
+        public static bool attributesDisabled { get => EditorUtils.IsSymbolDefinedInAsmdef(nameof(VInspector), "VINSPECTOR_ATTRIBUTES_DISABLED"); set => EditorUtils.SetSymbolDefinedInAsmdef(nameof(VInspector), "VINSPECTOR_ATTRIBUTES_DISABLED", value); }
         public static bool pluginDisabled { get => ProjectPrefs.GetBool("vInspector-pluginDisabled", false); set => ProjectPrefs.SetBool("vInspector-pluginDisabled", value); }
 
 
@@ -152,7 +152,7 @@ namespace VInspector
 
 
 
-        [MenuItem(disablePlugin, false, 100001)] static void dadsadsdsdasadasdasdsadadsas() { pluginDisabled = !pluginDisabled; if (!pluginDisabled) EditorPrefsCached.SetBool("vInspector-pluginWasReenabled", true); attributesDisabled = pluginDisabled; }
+        [MenuItem(disablePlugin, false, 100001)] static void dadsadsdsdasadasdasdsadadsas() { pluginDisabled = !pluginDisabled; attributesDisabled = pluginDisabled; }
         [MenuItem(disablePlugin, true, 100001)] static bool dadsaddssdsdaasadsadadsdasadsas() { Menu.SetChecked(disablePlugin, pluginDisabled); return true; }
 
 

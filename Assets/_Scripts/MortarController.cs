@@ -10,8 +10,9 @@ namespace _Scripts {
         [SerializeField] private GameObject barrelObj;
         private Vector3 barrelPos => barrelObj.transform.position;
         private ProjectileManager _pm;
-        public Shell CurrentShell { get; private set; }
-        private Rigidbody _shellRB;
+        public Shell currentShell { get; private set; }
+        private Transform shellTf => currentShell.transform;
+        private Rigidbody _shellRb;
 
         // Interaction
         public float firingAngle = 45f;
@@ -29,20 +30,31 @@ namespace _Scripts {
             transform.eulerAngles = new Vector3(0, rotationAngle, 0);
             barrelObj.transform.localEulerAngles = new Vector3(0, 0, 90f - firingAngle);
         }
+
+        public void ChangeFiringAngle(float n) {
+            firingAngle += n;
+        }
+        
+        public void ChangeRotationAngle(float n) {
+            rotationAngle += n;
+        }
         
         public void LoadShell(Shell shell) {
             // if (CurrentShell) Destroy(CurrentShell);
             
             
-            CurrentShell = shell;
-            _shellRB = CurrentShell.GetComponent<Rigidbody>();
+            currentShell = shell;
+            _shellRb = currentShell.GetComponent<Rigidbody>();
         }
 
         public void FireShell() {
-            if (!CurrentShell) return;
+            if (!currentShell) return;
             // _pm.FireShell(CurrentShell);
-            CurrentShell.transform.position = muzzlePos;
-            CurrentShell.Fire();
+            _shellRb.velocity = Vector3.zero;
+            _shellRb.angularVelocity = Vector3.zero;
+            shellTf.localRotation = Quaternion.identity;
+            shellTf.position = muzzlePos;
+            currentShell.Fire();
             
             // CurrentShell = null;
         }

@@ -16,7 +16,7 @@ using static VInspector.VInspectorState;
 using static VInspector.VInspectorData;
 using static VInspector.Libs.VUtils;
 using static VInspector.Libs.VGUI;
-
+// using static VTools.VDebug;
 
 
 namespace VInspector
@@ -693,7 +693,8 @@ namespace VInspector
                 {
                     if (expandedInspectorHeightUnknown) return;
 
-                    SmoothDamp(ref currentInspectorHeight, targetInspectorHeight, expandAnimation_lerpSpeed, ref currentInspectorHeightDerivative, deltaTime, expandAnimation_speedLimit);
+
+                    MathUtil.SmoothDamp(ref currentInspectorHeight, targetInspectorHeight, expandAnimation_lerpSpeed, ref currentInspectorHeightDerivative, deltaTime, expandAnimation_speedLimit);
 
                 }
                 void modifyInspectorElementStyle()
@@ -795,7 +796,7 @@ namespace VInspector
             {
                 void lerp()
                 {
-                    SmoothDamp(ref currentSpacerHeight, 0, deleteAnimation_lerpSpeed, ref currentSpacerHeightDerivative, deltaTime, deleteAnimation_speedLimit);
+                    MathUtil.SmoothDamp(ref currentSpacerHeight, 0, deleteAnimation_lerpSpeed, ref currentSpacerHeightDerivative, deltaTime, deleteAnimation_speedLimit);
                 }
                 void modifySpacerElement()
                 {
@@ -888,6 +889,8 @@ namespace VInspector
 
             var editorIndex = tracker.activeEditors.ToList().IndexOfFirst(r => r.target == component);
 
+            if (!editorIndex.IsInRangeOf(tracker.activeEditors)) return false;
+
             return tracker.GetVisible(editorIndex) == 1;
 
         }
@@ -929,6 +932,8 @@ namespace VInspector
             var tracker = inspectorWindow.GetMemberValue<ActiveEditorTracker>("m_Tracker");
 
             var editorIndex = tracker.activeEditors.ToList().IndexOfFirst(r => r.target == component);
+
+            if (!editorIndex.IsInRangeOf(tracker.activeEditors)) return;
 
             tracker.SetVisible(editorIndex, newExpandedState ? 1 : 0);
 
@@ -1015,7 +1020,6 @@ namespace VInspector
         static Dictionary<Component, VInspectorComponentHeader> componentHeaders_byComponent = new();
 
         static Dictionary<Editor, int> componentOrderHashes_byEditor = new();
-
 
 
 
@@ -1115,6 +1119,36 @@ namespace VInspector
 
         static bool PlaymodeSaveButton(Rect buttonRect, Object[] targets)
         {
+
+            void tryApplyingFailedToSaveDatas()
+            {
+                if (Application.isPlaying) return;
+                if (!VInspectorClipboard.instance.failedToSaveComponentDatas.Any()) return;
+
+                foreach (var data in VInspectorClipboard.instance.failedToSaveComponentDatas.ToList())
+                    foreach (var target in targets)
+                        if (target is Component component_)
+                            if (target.GetGlobalID().UnpackForPrefab() == data.globalId)
+                            {
+                                VInspectorClipboard.ApplyComponentData(data, component_);
+                                VInspectorClipboard.instance.failedToSaveComponentDatas.Remove(data);
+                            }
+
+
+                // applies saved component datas that couldn't be applied on playmode exit
+                // such datas correspond to:
+                // - prefabs (because prefabs produce different (unpacked) globalId in playmode) 
+                // - objects from scenes that weren't loaded before playmode (because datas can only be applied to loaded object)
+                //
+                // this solution applies datas once respective components become visible in inspector
+                // a "proper" solution would involve looping through all objects in a scene once it's opened
+
+            }
+
+            tryApplyingFailedToSaveDatas();
+
+
+
             if (!Application.isPlaying) return false;
             if (targets.First() is not Component component) return false;
 
@@ -1164,25 +1198,43 @@ namespace VInspector
 
 
 
-        static void LoadBookmarkObjectsForScene(Scene scene) // on scene loaded
+        static void LoadSceneBookmarkObjects() // update
         {
             if (!data) return;
 
 
-            var bookmarksFromThisScene = data.bookmarks.Where(r => r.globalId.guid == scene.path.ToGuid()).ToList();
+            var scenesToLoadFor = unloadedSceneBookmarksGuids.Select(r => EditorSceneManager.GetSceneByPath(r.ToPath()))
+                                                             .Where(r => r.isLoaded);
+            if (!scenesToLoadFor.Any()) return;
 
-            var objectsForTheseBookmarks = bookmarksFromThisScene.Select(r => r.globalId).GetObjects();
 
 
-            for (int i = 0; i < bookmarksFromThisScene.Count; i++)
-                bookmarksFromThisScene[i]._obj = objectsForTheseBookmarks[i];
+            foreach (var scene in scenesToLoadFor)
+            {
+                var bookmarksFromThisScene = data.bookmarks.Where(r => r.globalId.guid == scene.path.ToGuid()).ToList();
 
-            for (int i = 0; i < bookmarksFromThisScene.Count; i++)
-                bookmarksFromThisScene[i]._name = bookmarksFromThisScene[i]._obj?.name ?? "";
+                var objectsForTheseBookmarks = bookmarksFromThisScene.Select(r => !Application.isPlaying ? r.globalId
+                                                                                                         : r.globalId.UnpackForPrefab()).GetObjects();
+
+                for (int i = 0; i < bookmarksFromThisScene.Count; i++)
+                    bookmarksFromThisScene[i]._obj = objectsForTheseBookmarks[i];
+
+            }
+
+            unloadedSceneBookmarksGuids.Clear();
+
+
+            foreach (var inspector in allInspectors)
+                inspector.Repaint();
 
         }
 
-        static void StashBookmarkObjects() // on playmode enter
+        public static HashSet<string> unloadedSceneBookmarksGuids = new();
+
+
+
+
+        static void StashBookmarkObjects() // on playmode enter before awake
         {
             stashedBookmarkObjects_byBookmark.Clear();
 
@@ -1202,44 +1254,21 @@ namespace VInspector
         static Dictionary<Bookmark, Object> stashedBookmarkObjects_byBookmark = new();
 
 
-
-
-
-        static void OnSceneOpened_inEditMode(Scene scene, OpenSceneMode _)
-        {
-            LoadBookmarkObjectsForScene(scene);
-
-        }
-        static void OnSceneLoaded_inPlaymode(Scene scene, LoadSceneMode loadMode)
-        {
-            if ((int)loadMode == 4) return; // playmode enter
-
-            LoadBookmarkObjectsForScene(scene);
-
-        }
-        static void OnProjectLoaded()
-        {
-            for (int i = 0; i < EditorSceneManager.sceneCount; i++)
-                LoadBookmarkObjectsForScene(EditorSceneManager.GetSceneAt(i));
-
-        }
-        static void OnPluginReenabled()
-        {
-            for (int i = 0; i < EditorSceneManager.sceneCount; i++)
-                LoadBookmarkObjectsForScene(EditorSceneManager.GetSceneAt(i));
-
-        }
-        static void OnPlaymodeStateChanged(PlayModeStateChange state)
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void OnPlaymodeEnter_beforeAwake()
         {
             if (!data) return;
 
+            StashBookmarkObjects();
+
+        }
+        static void OnPlaymodeExit(PlayModeStateChange state)
+        {
+            if (state != PlayModeStateChange.EnteredEditMode) return;
+            if (!data) return;
 
 
-            if (state == PlayModeStateChange.EnteredPlayMode)
-                StashBookmarkObjects();
-
-            if (state == PlayModeStateChange.EnteredEditMode)
-                UnstashBookmarkObjects();
+            UnstashBookmarkObjects();
 
             // scene objects can get recreated in playmode if the scene was reloaded
             // in this case their respective bookmarks will be updated in OnSceneLoaded_inPlaymode to reference the recreated versions
@@ -1248,19 +1277,120 @@ namespace VInspector
 
 
 
-            if (state == PlayModeStateChange.EnteredEditMode)
-                foreach (var bookmark in data.bookmarks)
-                    if (bookmark.globalId.guid == "00000000000000000000000000000000")
-                        if (bookmark._obj is GameObject gameObject)
-                        {
-                            bookmark.globalId = new GlobalID(bookmark.globalId.ToString().Replace("00000000000000000000000000000000", gameObject.scene.path.ToGuid()));
-                            data.Dirty();
-                        }
+            foreach (var bookmark in data.bookmarks)
+                if (bookmark.globalId.guid == "00000000000000000000000000000000")
+                    if (bookmark._obj is GameObject gameObject)
+                    {
+                        bookmark.globalId = new GlobalID(bookmark.globalId.ToString().Replace("00000000000000000000000000000000", gameObject.scene.path.ToGuid()));
+                        data.Dirty();
+                    }
 
             // objects from DontDestroyOnLoad that were bookmarked in playmode have globalIds with blank scene guids
             // we fix this after playmode, when scene guids become available
 
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public static bool HasVInspectorAttribtues(Type type)
+        {
+            if (typesWithVInspectorAttributes != null) return typesWithVInspectorAttributes.Contains(type);
+
+
+            typesWithVInspectorAttributes = new();
+
+            typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<FoldoutAttribute>().Select(r => r.DeclaringType));
+            typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<TabAttribute>().Select(r => r.DeclaringType));
+
+            typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<VariantsAttribute>().Select(r => r.DeclaringType));
+            typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<IfAttribute>().Select(r => r.DeclaringType));
+            typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<ReadOnlyAttribute>().Select(r => r.DeclaringType));
+            typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<ShowInInspectorAttribute>().Select(r => r.DeclaringType));
+
+            typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<ButtonAttribute>().Select(r => r.DeclaringType));
+            typesWithVInspectorAttributes.UnionWith(TypeCache.GetMethodsWithAttribute<ButtonAttribute>().Select(r => r.DeclaringType));
+
+            typesWithVInspectorAttributes.UnionWith(TypeCache.GetMethodsWithAttribute<OnValueChangedAttribute>().Select(r => r.DeclaringType));
+
+            foreach (var r in typesWithVInspectorAttributes.ToHashSet())
+                typesWithVInspectorAttributes.UnionWith(TypeCache.GetTypesDerivedFrom(r));
+
+
+
+            return typesWithVInspectorAttributes.Contains(type);
+
+        }
+
+        static HashSet<Type> typesWithVInspectorAttributes = null;
+
+
+
+        public static bool HasUITKOnlyDrawers(SerializedObject serializedObject)
+        {
+            if (serializedObject.targetObject == null) return false;
+
+
+            var targetType = serializedObject.targetObject.GetType();
+
+            if (uitkUsage_byType.ContainsKey(targetType)) return uitkUsage_byType[targetType];
+
+
+
+
+            var maxSearchDepth = 1;
+
+            var curProperty = serializedObject.GetIterator();
+
+            while (curProperty.NextVisible(enterChildren: curProperty.depth < maxSearchDepth))
+            {
+                var handler = typeof(Editor).Assembly.GetType("UnityEditor.ScriptAttributeUtility").InvokeMethod("GetHandler", curProperty);
+
+                var propertyDrawer = handler.GetPropertyValue<PropertyDrawer>("propertyDrawer");
+
+                if (propertyDrawer == null) continue;
+
+
+                var hasUITKimplementation = propertyDrawer.CreatePropertyGUI(curProperty.Copy()) != null;
+                var hasIMGUIimplementation = propertyDrawer.GetType().GetMethod("OnGUI", new[] { typeof(Rect), typeof(SerializedProperty), typeof(GUIContent) }).DeclaringType == propertyDrawer.GetType();
+
+                if (hasUITKimplementation && !hasIMGUIimplementation)
+                    return uitkUsage_byType[targetType] = true;
+
+            }
+
+
+
+
+            return uitkUsage_byType[targetType] = false;
+
+        }
+
+        static Dictionary<Type, bool> uitkUsage_byType = new();
+
+
+
+        static void OnUndoRedo()
+        {
+            if (!valueChangedCallbacks_byUndoPosition.Any()) return;
+
+            if (valueChangedCallbacks_byUndoPosition.TryGetValue(EditorUtils.GetCurrendUndoGroupIndex(), out var callback))
+                callback.Invoke();
+
+        }
+
+        public static Dictionary<int, System.Action> valueChangedCallbacks_byUndoPosition = new();
 
 
 
@@ -1309,18 +1439,12 @@ namespace VInspector
                 Editor.finishedDefaultHeaderGUI += UpdateHeaderButtons;
 
 
+                Undo.undoRedoPerformed -= OnUndoRedo;
+                Undo.undoRedoPerformed += OnUndoRedo;
 
 
-
-                UnityEditor.SceneManagement.EditorSceneManager.sceneOpened -= OnSceneOpened_inEditMode;
-                UnityEditor.SceneManagement.EditorSceneManager.sceneOpened += OnSceneOpened_inEditMode;
-
-                UnityEditor.SceneManagement.EditorSceneManager.sceneLoaded -= OnSceneLoaded_inPlaymode;
-                UnityEditor.SceneManagement.EditorSceneManager.sceneLoaded += OnSceneLoaded_inPlaymode;
-
-                var projectWasLoaded = typeof(EditorApplication).GetFieldValue<UnityEngine.Events.UnityAction>("projectWasLoaded");
-                typeof(EditorApplication).SetFieldValue("projectWasLoaded", (projectWasLoaded - OnProjectLoaded) + OnProjectLoaded);
-
+                EditorApplication.update -= LoadSceneBookmarkObjects;
+                EditorApplication.update += LoadSceneBookmarkObjects;
 
 
 
@@ -1332,8 +1456,8 @@ namespace VInspector
                 EditorApplication.quitting -= VInspectorState.Save;
                 EditorApplication.quitting += VInspectorState.Save;
 
-                EditorApplication.playModeStateChanged -= OnPlaymodeStateChanged;
-                EditorApplication.playModeStateChanged += OnPlaymodeStateChanged;
+                EditorApplication.playModeStateChanged -= OnPlaymodeExit;
+                EditorApplication.playModeStateChanged += OnPlaymodeExit;
 
                 EditorApplication.playModeStateChanged -= VInspectorClipboard.OnPlaymodeStateChanged;
                 EditorApplication.playModeStateChanged += VInspectorClipboard.OnPlaymodeStateChanged;
@@ -1367,56 +1491,31 @@ namespace VInspector
                 // this addresses reports of data loss when trying to load it on a new machine
 
             }
-            void callOnPluginReenabled()
-            {
-                if (!EditorPrefs.HasKey("vInspector-pluginWasReenabled")) return;
-
-                OnPluginReenabled();
-
-                EditorPrefs.DeleteKey("vInspector-pluginWasReenabled");
-
-            }
-            void migrateHeaderButtonSettings()
-            {
-                if (EditorPrefs.HasKey("vInspector-headerButtonSettingsMigrated")) return;
-
-
-                var defaultButtonCount = EditorPrefs.GetInt("vInspector-componentButtons_defaultButtonsCount", 3);
-
-                VInspectorMenu.hideHelpButtonEnabled = defaultButtonCount <= 2;
-                VInspectorMenu.hidePresetsButtonEnabled = defaultButtonCount <= 1;
-
-
-                EditorPrefs.SetBool("vInspector-headerButtonSettingsMigrated", true);
-
-            }
-            void migrateItemsToBookmarks()
+            void removeDeletedBookmarks()
             {
                 if (!data) return;
-                if (ProjectPrefs.HasKey("vInspector-itemsToBookmarksMigrated")) return;
-
-                ProjectPrefs.SetBool("vInspector-itemsToBookmarksMigrated", true);
 
 
-                var lines = System.IO.File.ReadAllLines(data.GetPath());
+                var toRemove = data.bookmarks.Where(r => r.isDeleted);
 
-                if (lines.Length < 14 || !lines[14].Contains("items:")) return;
-
-                lines[14] = lines[14].Replace("items", "bookmarks");
+                if (!toRemove.Any()) return;
 
 
-                System.IO.File.WriteAllLines(data.GetPath(), lines);
+                foreach (var r in toRemove.ToList())
+                    data.bookmarks.Remove(r);
 
-                AssetDatabase.ImportAsset(data.GetPath());
+                data.Dirty();
+
+
+                // delayed to give bookmarks a chance to load in update
 
             }
 
             subscribe();
             loadData();
             loadDataDelayed();
-            callOnPluginReenabled();
-            migrateHeaderButtonSettings();
-            migrateItemsToBookmarks();
+
+            EditorApplication.delayCall += () => removeDeletedBookmarks();
 
         }
 
@@ -1425,12 +1524,8 @@ namespace VInspector
 
 
 
-
         static IEnumerable<EditorWindow> allInspectors => _allInspectors ??= t_InspectorWindow.GetFieldValue<IList>("m_AllInspectors").Cast<EditorWindow>().Where(r => r.GetType() == t_InspectorWindow);
         static IEnumerable<EditorWindow> _allInspectors;
-
-
-
 
         static Type t_InspectorWindow = typeof(Editor).Assembly.GetType("UnityEditor.InspectorWindow");
         static Type t_PropertyEditor = typeof(Editor).Assembly.GetType("UnityEditor.PropertyEditor");
@@ -1446,7 +1541,7 @@ namespace VInspector
 
 
 
-        const string version = "2.0.9";
+        const string version = "2.0.13";
 
 
     }

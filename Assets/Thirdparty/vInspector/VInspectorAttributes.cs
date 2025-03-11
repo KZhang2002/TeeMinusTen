@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System;
 using UnityEngine;
-
+// using static VTools.VDebug;
 #if UNITY_EDITOR
 using static VInspector.Libs.VUtils;
 #endif
@@ -127,10 +127,10 @@ namespace VInspector
     [AttributeUsage(AttributeTargets.Method)]
     public class OnValueChangedAttribute : Attribute
     {
-        public string[] variableNames;
+        public string[] variableOrGroupNames;
 
-        public OnValueChangedAttribute(string variableName) => this.variableNames = new[] { variableName };
-        public OnValueChangedAttribute(params string[] variableNames) => this.variableNames = variableNames;
+        public OnValueChangedAttribute(string name) => this.variableOrGroupNames = new[] { name };
+        public OnValueChangedAttribute(params string[] names) => this.variableOrGroupNames = names;
 
     }
 

@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using Type = System.Type;
 using static VInspector.Libs.VUtils;
 using static VInspector.Libs.VGUI;
-
+// using static VTools.VDebug;
 
 
 namespace VInspector
@@ -135,7 +135,7 @@ namespace VInspector
                 instance.savedComponentDatas.Remove(alreadySavedData);
             }
             else
-                instance.savedComponentDatas.Add(GetComponentData(component));
+                instance.savedComponentDatas.Add(GetComponentData(component, saveGlobalId: true));
 
             instance.Dirty();
 
@@ -143,17 +143,26 @@ namespace VInspector
 
         public static void OnPlaymodeStateChanged(PlayModeStateChange state)
         {
+            if (state == PlayModeStateChange.EnteredPlayMode)
+                instance.failedToSaveComponentDatas.Clear();
+
+
             if (state != PlayModeStateChange.EnteredEditMode) return;
 
             foreach (var data in instance.savedComponentDatas)
                 if (EditorUtility.InstanceIDToObject(data.sourceComponent.GetInstanceID()) is Component sourceComponent)
                     ApplyComponentData(data, sourceComponent);
+                else if (data.globalId.GetObject() is Component sourceComponent_)
+                    ApplyComponentData(data, sourceComponent_);
+                else
+                    instance.failedToSaveComponentDatas.Add(data);
 
             instance.savedComponentDatas.Clear();
 
         }
 
         [SerializeReference] public List<ComponentData> savedComponentDatas = new();
+        [SerializeReference] public List<ComponentData> failedToSaveComponentDatas = new();
 
 
 
@@ -161,11 +170,15 @@ namespace VInspector
 
 
 
-        public static ComponentData GetComponentData(Component component)
+        public static ComponentData GetComponentData(Component component, bool saveGlobalId = false)
         {
             var data = new ComponentData();
 
             data.sourceComponent = component;
+
+            if (saveGlobalId)
+                data.globalId = component.GetGlobalID();
+
 
 
             var property = new SerializedObject(component).GetIterator();
@@ -199,7 +212,14 @@ namespace VInspector
         }
 
         [System.Serializable]
-        public class ComponentData { public Component sourceComponent; public Dictionary<string, object> serializedPropertyValues_byPath = new(); }
+        public class ComponentData
+        {
+            public Component sourceComponent;
+            public Dictionary<string, object> serializedPropertyValues_byPath = new();
+
+            public GlobalID globalId;
+
+        }
 
     }
 

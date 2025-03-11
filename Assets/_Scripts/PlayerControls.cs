@@ -37,19 +37,103 @@ namespace _Scripts
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Tilt"",
+                    ""type"": ""Value"",
+                    ""id"": ""80bde6a1-6a78-4dec-a3b9-0e4cb79bc59c"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Rotate"",
+                    ""type"": ""Value"",
+                    ""id"": ""406ca2f4-d999-4405-87fe-deba5eb51bcc"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""c578cf92-a578-430a-8270-dd099562c43f"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Fire"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Q-E"",
+                    ""id"": ""fe818559-15da-421b-ab9b-50b2e72879a6"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tilt"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""51e2dccd-529b-4f8a-a2f2-da805d95ae06"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tilt"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""8d2b2186-65b7-4023-b6bd-f9b80357dd68"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tilt"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""A-D"",
+                    ""id"": ""ec80b60c-e2f4-475f-ba6d-70e5b4bf1c14"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""8dccc69f-fd39-42db-8411-3bd7905ea432"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""d9933621-b3d6-48ae-be96-354851eaab0e"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -59,6 +143,8 @@ namespace _Scripts
             // Standard
             m_Standard = asset.FindActionMap("Standard", throwIfNotFound: true);
             m_Standard_Fire = m_Standard.FindAction("Fire", throwIfNotFound: true);
+            m_Standard_Tilt = m_Standard.FindAction("Tilt", throwIfNotFound: true);
+            m_Standard_Rotate = m_Standard.FindAction("Rotate", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -121,11 +207,15 @@ namespace _Scripts
         private readonly InputActionMap m_Standard;
         private List<IStandardActions> m_StandardActionsCallbackInterfaces = new List<IStandardActions>();
         private readonly InputAction m_Standard_Fire;
+        private readonly InputAction m_Standard_Tilt;
+        private readonly InputAction m_Standard_Rotate;
         public struct StandardActions
         {
             private @PlayerControls m_Wrapper;
             public StandardActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
             public InputAction @Fire => m_Wrapper.m_Standard_Fire;
+            public InputAction @Tilt => m_Wrapper.m_Standard_Tilt;
+            public InputAction @Rotate => m_Wrapper.m_Standard_Rotate;
             public InputActionMap Get() { return m_Wrapper.m_Standard; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -138,6 +228,12 @@ namespace _Scripts
                 @Fire.started += instance.OnFire;
                 @Fire.performed += instance.OnFire;
                 @Fire.canceled += instance.OnFire;
+                @Tilt.started += instance.OnTilt;
+                @Tilt.performed += instance.OnTilt;
+                @Tilt.canceled += instance.OnTilt;
+                @Rotate.started += instance.OnRotate;
+                @Rotate.performed += instance.OnRotate;
+                @Rotate.canceled += instance.OnRotate;
             }
 
             private void UnregisterCallbacks(IStandardActions instance)
@@ -145,6 +241,12 @@ namespace _Scripts
                 @Fire.started -= instance.OnFire;
                 @Fire.performed -= instance.OnFire;
                 @Fire.canceled -= instance.OnFire;
+                @Tilt.started -= instance.OnTilt;
+                @Tilt.performed -= instance.OnTilt;
+                @Tilt.canceled -= instance.OnTilt;
+                @Rotate.started -= instance.OnRotate;
+                @Rotate.performed -= instance.OnRotate;
+                @Rotate.canceled -= instance.OnRotate;
             }
 
             public void RemoveCallbacks(IStandardActions instance)
@@ -165,6 +267,8 @@ namespace _Scripts
         public interface IStandardActions
         {
             void OnFire(InputAction.CallbackContext context);
+            void OnTilt(InputAction.CallbackContext context);
+            void OnRotate(InputAction.CallbackContext context);
         }
     }
 }

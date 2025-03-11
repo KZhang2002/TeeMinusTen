@@ -14,7 +14,7 @@ using Type = System.Type;
 using static VInspector.VInspectorState;
 using static VInspector.Libs.VUtils;
 using static VInspector.Libs.VGUI;
-
+// using static VTools.VDebug;
 
 
 namespace VInspector
@@ -27,31 +27,23 @@ namespace VInspector
         [System.Serializable]
         public class Bookmark
         {
-            public GlobalID globalId;
-
-
-            public Type type => Type.GetType(_typeString) ?? typeof(DefaultAsset);
-            public string _typeString;
 
             public Object obj
             {
                 get
                 {
-                    if (_obj == null && !isSceneGameObject)
-                        _obj = globalId.GetObject();
+                    if (isSceneGameObject && _obj == null)
+                    {
+                        VInspector.unloadedSceneBookmarksGuids.Add(globalId.guid);
+                        return null;
+                    }
 
-                    return _obj;
-
-                    // updating scene objects here using globalId.GetObject() could cause performance issues on large scenes
-                    // so instead they are batch updated in VInspector.LoadBookmarkObjectsForScene()
+                    return _obj ??= globalId.GetObject();
 
                 }
             }
             public Object _obj;
 
-
-            public bool isSceneGameObject;
-            public bool isAsset;
 
 
             public bool isLoadable => obj != null;
@@ -80,65 +72,43 @@ namespace VInspector
 
             public string assetPath => globalId.guid.ToPath();
 
+            public Type type => Type.GetType(_typeString) ?? typeof(DefaultAsset);
+
+            public string name
+            {
+                get
+                {
+                    if (!obj) return "Can't load object";
+
+                    if (assetPath.GetExtension() == ".cs")
+                        return obj.name.Decamelcase();
+                    else
+                        return obj.name;
+
+                }
+            }
+
+
 
             public Bookmark(Object o)
             {
                 globalId = o.GetGlobalID();
-
-                id = Random.value.GetHashCode();
 
                 isSceneGameObject = o is GameObject go && go.scene.rootCount != 0;
                 isAsset = !isSceneGameObject;
 
                 _typeString = o.GetType().AssemblyQualifiedName;
 
-                _name = o.name;
-
                 _obj = o;
 
             }
 
+            public GlobalID globalId;
 
-            // [System.NonSerialized]
-            public float width => VInspectorNavbar.expandedBookmarkWidth;
+            public bool isSceneGameObject;
+            public bool isAsset;
 
-
-
-
-            public string name
-            {
-                get
-                {
-                    if (!isLoadable) return _name;
-
-                    if (assetPath.GetExtension() == ".cs")
-                        _name = obj.name.Decamelcase();
-                    else
-                        _name = obj.name;
-
-                    return _name;
-
-                }
-            }
-            public string _name { get => state._name; set => state._name = value; }
-
-            public string sceneGameObjectIconName { get => state.sceneGameObjectIconName; set => state.sceneGameObjectIconName = value; }
-
-
-
-            public BookmarkState state
-            {
-                get
-                {
-                    if (!VInspectorState.instance.bookmarkStates_byBookmarkId.ContainsKey(id))
-                        VInspectorState.instance.bookmarkStates_byBookmarkId[id] = new BookmarkState();
-
-                    return VInspectorState.instance.bookmarkStates_byBookmarkId[id];
-
-                }
-            }
-
-            public int id;
+            public string _typeString;
 
         }
 

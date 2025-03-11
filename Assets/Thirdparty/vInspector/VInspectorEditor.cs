@@ -9,10 +9,11 @@ using System.Reflection;
 using UnityEditor;
 using Type = System.Type;
 using Attribute = System.Attribute;
+using static VInspector.VInspector;
 using static VInspector.VInspectorState;
 using static VInspector.Libs.VUtils;
 using static VInspector.Libs.VGUI;
-
+// using static VTools.VDebug;
 
 
 namespace VInspector
@@ -379,7 +380,7 @@ namespace VInspector
 
 
                         var type = fieldInfo.FieldType;
-                        var name = fieldInfo.Name.PrettifyVarName();
+                        var name = fieldInfo.Name.FormatVariableName();
 
                         var curValue = fieldInfo.GetValue(fieldInfo.IsStatic ? null : target);
 
@@ -418,7 +419,7 @@ namespace VInspector
 
 
                         var type = propertyInfo.PropertyType;
-                        var name = propertyInfo.Name.PrettifyVarName();
+                        var name = propertyInfo.Name.FormatVariableName();
 
                         var curValue = propertyInfo.GetValue(propertyInfo.GetAccessors(true).First().IsStatic ? null : target);
 
@@ -452,13 +453,21 @@ namespace VInspector
 
                     }
 
-                    void onGuiChanged()
+                    void invokeValueChangedCallbacks()
                     {
                         if (memberInfo is not FieldInfo fieldInfo) return;
-                        if (!valueChangedCallbacks_byFieldInfos.TryGetValue(fieldInfo, out var methodInfoList)) return;
 
-                        foreach (var target in targets)
-                            AbstractEditor.toCallAfterModifyingSO += () => methodInfoList.ForEach(r => r.Invoke(target, null));
+                        if (!valueChangedCallbacks_byFieldInfo.TryGetValue(fieldInfo, out var methodInfos))
+                            if (!valueChangedCallbacks_byGroupPath.TryGetValue(drawingTabPath, out methodInfos))
+                                if (!valueChangedCallbacks_byGroupPath.TryGetValue(drawingFoldoutPath, out methodInfos)) return;
+
+
+                        void invokeCallbacks() => methodInfos.ForEach(r => targets.ForEach(rr => r.Invoke(rr, null)));
+
+                        // invokeCallbacks();
+                        AbstractEditor.toCallAfterModifyingSO += invokeCallbacks;
+
+                        valueChangedCallbacks_byUndoPosition[EditorUtils.GetCurrendUndoGroupIndex()] = invokeCallbacks;
 
                     }
 
@@ -474,7 +483,7 @@ namespace VInspector
                     nonSerialized_property();
 
                     if (EditorGUI.EndChangeCheck())
-                        onGuiChanged();
+                        invokeValueChangedCallbacks();
 
                     ResetGUIEnabled();
 
@@ -565,7 +574,7 @@ namespace VInspector
 
 
 
-                    color = HSLToRGB(hue, saturation, lightness);
+                    color = ColorUtils.HSLToRGB(hue, saturation, lightness);
 
                     color *= 2f;
                     color.a = 1;
@@ -629,8 +638,7 @@ namespace VInspector
 
                     button.isExpanded = !button.isExpanded;
 
-                    // GUI.DrawTexture(buttonRect.SetWidth(24).SetHeightFromMid(24).Resize(6).MoveX(2), EditorIcons.GetIcon("d_IN_foldout_on"));
-                    // GUI.DrawTexture(buttonRect.SetWidth(24).SetHeightFromMid(24).Resize(6).MoveX(2), EditorIcons.GetIcon("d_IN_foldout_on"));
+                    GUIUtility.keyboardControl = 0;
 
                 }
                 void parameters()
@@ -641,7 +649,7 @@ namespace VInspector
                     void parameter(int i)
                     {
                         var type = button.parameterInfos[i].ParameterType;
-                        var name = button.parameterInfos[i].Name.PrettifyVarName();
+                        var name = button.parameterInfos[i].Name.FormatVariableName();
 
                         var curValue = button.GetParameterValue(i);
 
@@ -841,97 +849,6 @@ namespace VInspector
 
 
 
-        public static bool HasVInspectorAttribtues(Type type)
-        {
-            if (typesWithVInspectorAttributes == null)
-            {
-
-                typesWithVInspectorAttributes = new();
-
-
-                typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<FoldoutAttribute>().Select(r => r.DeclaringType));
-
-                typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<TabAttribute>().Select(r => r.DeclaringType));
-
-
-                typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<VariantsAttribute>().Select(r => r.DeclaringType));
-
-                typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<IfAttribute>().Select(r => r.DeclaringType));
-
-                typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<ReadOnlyAttribute>().Select(r => r.DeclaringType));
-
-                typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<ShowInInspectorAttribute>().Select(r => r.DeclaringType));
-
-
-                typesWithVInspectorAttributes.UnionWith(TypeCache.GetFieldsWithAttribute<ButtonAttribute>().Select(r => r.DeclaringType));
-                typesWithVInspectorAttributes.UnionWith(TypeCache.GetMethodsWithAttribute<ButtonAttribute>().Select(r => r.DeclaringType));
-
-
-                typesWithVInspectorAttributes.UnionWith(TypeCache.GetMethodsWithAttribute<OnValueChangedAttribute>().Select(r => r.DeclaringType));
-
-
-
-                foreach (var r in typesWithVInspectorAttributes.ToHashSet())
-                    typesWithVInspectorAttributes.UnionWith(TypeCache.GetTypesDerivedFrom(r));
-
-
-            }
-
-            return typesWithVInspectorAttributes.Contains(type);
-
-        }
-
-        static HashSet<Type> typesWithVInspectorAttributes = null;
-
-
-
-        public static bool HasUITKOnlyDrawers(SerializedObject serializedObject)
-        {
-            if (serializedObject.targetObject == null) return false;
-
-
-            var targetType = serializedObject.targetObject.GetType();
-
-            if (uitkUsage_byType.ContainsKey(targetType)) return uitkUsage_byType[targetType];
-
-
-
-
-            var maxSearchDepth = 1;
-
-            var curProperty = serializedObject.GetIterator();
-
-            while (curProperty.NextVisible(enterChildren: curProperty.depth < maxSearchDepth))
-            {
-                var handler = typeof(Editor).Assembly.GetType("UnityEditor.ScriptAttributeUtility").InvokeMethod("GetHandler", curProperty);
-
-                var propertyDrawer = handler.GetPropertyValue<PropertyDrawer>("propertyDrawer");
-
-                if (propertyDrawer == null) continue;
-
-
-                var hasUITKimplementation = propertyDrawer.CreatePropertyGUI(curProperty.Copy()) != null;
-                var hasIMGUIimplementation = propertyDrawer.GetType().GetMethod("OnGUI", new[] { typeof(Rect), typeof(SerializedProperty), typeof(GUIContent) }).DeclaringType == propertyDrawer.GetType();
-
-                if (hasUITKimplementation && !hasIMGUIimplementation)
-                    return uitkUsage_byType[targetType] = true;
-
-            }
-
-
-
-
-            return uitkUsage_byType[targetType] = false;
-
-        }
-
-        static Dictionary<Type, bool> uitkUsage_byType = new();
-
-
-
-
-
-
 
         public VInspectorEditor(System.Func<SerializedProperty> rootPropertyGetter, System.Func<IEnumerable<object>> targetsGetter)
         {
@@ -1079,18 +996,22 @@ namespace VInspector
                         var fieldTarget = field.IsStatic ? null : target;
 
                         button.action = (o) => field.SetValue(o, !(bool)field.GetValue(o));
-                        button.name = buttonAttribute.name != "" ? buttonAttribute.name : field.Name.PrettifyVarName(false);
+                        button.name = buttonAttribute.name != "" ? buttonAttribute.name : field.Name.FormatVariableName(false);
                         button.isPressed = () => (bool)field.GetValue(fieldTarget);
 
                     }
 
                     if (member is MethodInfo method)
+                    {
+                        if (method.DeclaringType.IsGenericType)
+                            method = targetType.GetMethodInfo(method.Name, method.GetParameters().Select(r => r.ParameterType).ToArray()) ?? method; // fixes wrong method when targetType inherits from method.DeclaringType and method.DeclaringType is generic
+
                         if (!method.GetParameters().Any())
                         {
                             var methodTarget = method.IsStatic ? null : target;
 
                             button.action = (methodTarget) => method.Invoke(methodTarget, null);
-                            button.name = buttonAttribute.name != "" ? buttonAttribute.name : method.Name.PrettifyVarName(false);
+                            button.name = buttonAttribute.name != "" ? buttonAttribute.name : method.Name.FormatVariableName(false);
                             button.isPressed = () => false;
 
                         }
@@ -1099,12 +1020,14 @@ namespace VInspector
                             var methodTarget = method.IsStatic ? null : target;
 
                             button.action = (methodTarget) => method.Invoke(methodTarget, Enumerable.Range(0, button.parameterInfos.Count).Select(i => button.GetParameterValue(i)).ToArray());
-                            button.name = buttonAttribute.name != "" ? buttonAttribute.name : method.Name.PrettifyVarName(false);
+                            button.name = buttonAttribute.name != "" ? buttonAttribute.name : method.Name.FormatVariableName(false);
                             button.isPressed = () => false;
 
                             button.parameterInfos = method.GetParameters().ToList();
 
                         }
+
+                    }
 
 
 
@@ -1132,7 +1055,7 @@ namespace VInspector
                     if (methodsWithButtonAttributes_byTargetType.ContainsKey(targetType)) return;
 
                     var methods = TypeCache.GetMethodsWithAttribute<ButtonAttribute>()
-                                           .Where(r => r.DeclaringType.IsAssignableFrom(targetType))
+                                           .Where(r => r.DeclaringType.IsAssignableFrom(targetType) || (targetType.BaseType.IsGenericType && targetType.BaseType.GetGenericTypeDefinition() == r.DeclaringType))
                                            .OrderBy(r => r.MetadataToken);
 
                     methodsWithButtonAttributes_byTargetType[targetType] = methods.ToList();
@@ -1216,23 +1139,33 @@ namespace VInspector
 
             void createValueChangedCallbacks()
             {
-                if (valueChangedCallbacks_byFieldInfos != null) return;
+                if (valueChangedCallbacks_byFieldInfo != null) return;
 
-                valueChangedCallbacks_byFieldInfos = new();
+                valueChangedCallbacks_byFieldInfo = new();
+                valueChangedCallbacks_byGroupPath = new();
 
                 var methodInfos = TypeCache.GetMethodsWithAttribute<OnValueChangedAttribute>()
                    .Where(r => r.GetParameters().Length == 0)
                    .OrderBy(r => r.MetadataToken);
 
+
+                void Add<T1, T2>(Dictionary<T1, List<T2>> dictionary, T1 key, T2 value)
+                {
+                    if (dictionary.TryGetValue(key, out var alreadyCreatedList))
+                        alreadyCreatedList.Add(value);
+                    else
+                        dictionary[key] = new List<T2> { value };
+
+                }
+
                 foreach (var methodInfo in methodInfos)
                     foreach (var attribute in methodInfo.GetCustomAttributes<OnValueChangedAttribute>())
-                        foreach (var variableName in attribute.variableNames)
-                            if (methodInfo.DeclaringType.GetFieldInfo(variableName) is FieldInfo fieldInfo)
-                                if (valueChangedCallbacks_byFieldInfos.TryGetValue(fieldInfo, out var alreadyCreatedList))
-                                    alreadyCreatedList.Add(methodInfo);
-                                else
-                                    valueChangedCallbacks_byFieldInfos[fieldInfo] = new List<MethodInfo> { methodInfo };
+                        foreach (var name in attribute.variableOrGroupNames)
 
+                            if (methodInfo.DeclaringType.GetFieldInfo(name) is FieldInfo fieldInfo)
+                                Add(valueChangedCallbacks_byFieldInfo, fieldInfo, methodInfo);
+                            else
+                                Add(valueChangedCallbacks_byGroupPath, name, methodInfo);
 
             }
 
@@ -1449,7 +1382,8 @@ namespace VInspector
         static Dictionary<Type, List<TabAttribute>> tabAttributes_byTargetType = new();
         static Dictionary<Type, List<FoldoutAttribute>> foldoutAttributes_byTargetType = new();
         static Dictionary<Type, List<MemberInfo>> showInInspectorMembers_byTargetType = new();
-        static Dictionary<FieldInfo, List<MethodInfo>> valueChangedCallbacks_byFieldInfos;
+        static Dictionary<FieldInfo, List<MethodInfo>> valueChangedCallbacks_byFieldInfo;
+        static Dictionary<string, List<MethodInfo>> valueChangedCallbacks_byGroupPath;
 
 
         [EndFoldout, EndTab, EndIf]
@@ -1711,7 +1645,7 @@ namespace VInspector
             if (VInspectorMenu.hideScriptFieldEnabled)
                 rootElement.Q("PropertyField:m_Script")?.RemoveFromHierarchy();
 
-            if (VInspectorEditor.HasVInspectorAttribtues(target.GetType()))
+            if (HasVInspectorAttribtues(target.GetType()))
                 rootElement.Add(new HelpBox("vInspector attributes are disabled in this script because it contains property drawers implemented with UI Toolkit, which doesn't allow using IMGUI editors such as vInspector's attribute system", HelpBoxMessageType.Info));
 
 
@@ -1719,7 +1653,7 @@ namespace VInspector
 
         }
 
-        bool useUITK => VInspectorEditor.HasUITKOnlyDrawers(serializedObject);
+        bool useUITK => HasUITKOnlyDrawers(serializedObject);
 
 
 
@@ -1826,7 +1760,7 @@ namespace VInspector
                             var methodTarget = method.IsStatic ? null : new object();
 
                             button.action = (methodTarget) => method.Invoke(methodTarget, null);
-                            button.name = buttonAttribute.name != "" ? buttonAttribute.name : method.Name.PrettifyVarName(false);
+                            button.name = buttonAttribute.name != "" ? buttonAttribute.name : method.Name.FormatVariableName(false);
                             button.isPressed = () => false;
 
                         }
@@ -1835,7 +1769,7 @@ namespace VInspector
                             var methodTarget = method.IsStatic ? null : new object();
 
                             button.action = (methodTarget) => method.Invoke(methodTarget, Enumerable.Range(0, button.parameterInfos.Count).Select(i => button.GetParameterValue(i)).ToArray());
-                            button.name = buttonAttribute.name != "" ? buttonAttribute.name : method.Name.PrettifyVarName(false);
+                            button.name = buttonAttribute.name != "" ? buttonAttribute.name : method.Name.FormatVariableName(false);
                             button.isPressed = () => false;
 
                             button.parameterInfos = method.GetParameters().ToList();
@@ -1873,7 +1807,7 @@ namespace VInspector
             void drawField(FieldInfo fieldInfo)
             {
                 var type = fieldInfo.FieldType;
-                var name = fieldInfo.Name.PrettifyVarName();
+                var name = fieldInfo.Name.FormatVariableName();
 
                 var curValue = fieldInfo.GetValue(fieldInfo.IsStatic ? null : new object());
 
@@ -1937,7 +1871,7 @@ namespace VInspector
 
 
 
-                    color = HSLToRGB(hue, saturation, lightness);
+                    color = ColorUtils.HSLToRGB(hue, saturation, lightness);
 
                     color *= 2f;
                     color.a = 1;
@@ -2006,7 +1940,7 @@ namespace VInspector
                     void parameter(int i)
                     {
                         var type = button.parameterInfos[i].ParameterType;
-                        var name = button.parameterInfos[i].Name.PrettifyVarName();
+                        var name = button.parameterInfos[i].Name.FormatVariableName();
 
                         var curValue = button.GetParameterValue(i);
 

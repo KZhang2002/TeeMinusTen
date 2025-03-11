@@ -9,7 +9,7 @@ using System.Reflection;
 using UnityEditor;
 using static VInspector.Libs.VUtils;
 using static VInspector.Libs.VGUI;
-
+// using static VTools.VDebug;
 
 
 
@@ -152,7 +152,7 @@ namespace VInspector
                     var script = MonoScript.FromMonoBehaviour(component as MonoBehaviour);
 
                     if (curEvent.clickCount == 1)
-                        PingObject(script);
+                        EditorUtils.PingObject(script);
 
                     mousePressedOnScriptIcon = false;
 

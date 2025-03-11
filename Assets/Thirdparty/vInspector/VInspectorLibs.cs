@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using System.Reflection;
@@ -243,28 +244,13 @@ namespace VInspector.Libs
 
         #endregion
 
-        #region Linq
+        #region Collections
 
 
         public static T NextTo<T>(this IEnumerable<T> e, T to) => e.SkipWhile(r => !r.Equals(to)).Skip(1).FirstOrDefault();
         public static T PreviousTo<T>(this IEnumerable<T> e, T to) => e.Reverse().SkipWhile(r => !r.Equals(to)).Skip(1).FirstOrDefault();
-        public static T NextToOtFirst<T>(this IEnumerable<T> e, T to) => e.NextTo(to) ?? e.First();
+        public static T NextToOrFirst<T>(this IEnumerable<T> e, T to) => e.NextTo(to) ?? e.First();
         public static T PreviousToOrLast<T>(this IEnumerable<T> e, T to) => e.PreviousTo(to) ?? e.Last();
-
-        public static Dictionary<TKey, TValue> MergeDictionaries<TKey, TValue>(IEnumerable<Dictionary<TKey, TValue>> dicts)
-        {
-            if (dicts.Count() == 0) return null;
-            if (dicts.Count() == 1) return dicts.First();
-
-            var mergedDict = new Dictionary<TKey, TValue>(dicts.First());
-
-            foreach (var dict in dicts.Skip(1))
-                foreach (var r in dict)
-                    if (!mergedDict.ContainsKey(r.Key))
-                        mergedDict.Add(r.Key, r.Value);
-
-            return mergedDict;
-        }
 
         public static IEnumerable<T> InsertFirst<T>(this IEnumerable<T> ie, T t) => new[] { t }.Concat(ie);
 
@@ -319,42 +305,178 @@ namespace VInspector.Libs
         #region Math
 
 
-        public static bool Approx(this float f1, float f2) => Mathf.Approximately(f1, f2);
+        public static class MathUtil // MathUtils name is taken by UnityEditor.MathUtils 
+        {
+
+            public static float TriangleArea(Vector2 A, Vector2 B, Vector2 C) => Vector3.Cross(A - B, A - C).z.Abs() / 2;
+
+            public static Vector2 LineIntersection(Vector2 A, Vector2 B, Vector2 C, Vector2 D)
+            {
+                var a1 = B.y - A.y;
+                var b1 = A.x - B.x;
+                var c1 = a1 * A.x + b1 * A.y;
+
+                var a2 = D.y - C.y;
+                var b2 = C.x - D.x;
+                var c2 = a2 * C.x + b2 * C.y;
+
+                var d = a1 * b2 - a2 * b1;
+
+                var x = (b2 * c1 - b1 * c2) / d;
+                var y = (a1 * c2 - a2 * c1) / d;
+
+                return new Vector2(x, y);
+
+            }
+
+
+
+
+            public static float Lerp(float f1, float f2, float t) => Mathf.LerpUnclamped(f1, f2, t);
+            public static float Lerp(ref float f1, float f2, float t)
+            {
+                return f1 = Lerp(f1, f2, t);
+            }
+
+            public static Vector2 Lerp(Vector2 f1, Vector2 f2, float t) => Vector2.LerpUnclamped(f1, f2, t);
+            public static Vector2 Lerp(ref Vector2 f1, Vector2 f2, float t)
+            {
+                return f1 = Lerp(f1, f2, t);
+            }
+
+            public static Vector3 Lerp(Vector3 f1, Vector3 f2, float t) => Vector3.LerpUnclamped(f1, f2, t);
+            public static Vector3 Lerp(ref Vector3 f1, Vector3 f2, float t)
+            {
+                return f1 = Lerp(f1, f2, t);
+            }
+
+            public static Color Lerp(Color f1, Color f2, float t) => Color.LerpUnclamped(f1, f2, t);
+            public static Color Lerp(ref Color f1, Color f2, float t)
+            {
+                return f1 = Lerp(f1, f2, t);
+            }
+
+
+            public static float Lerp(float current, float target, float speed, float deltaTime) => Mathf.Lerp(current, target, GetLerpT(speed, deltaTime));
+            public static float Lerp(ref float current, float target, float speed, float deltaTime)
+            {
+                return current = Lerp(current, target, speed, deltaTime);
+            }
+
+            public static Vector2 Lerp(Vector2 current, Vector2 target, float speed, float deltaTime) => Vector2.Lerp(current, target, GetLerpT(speed, deltaTime));
+            public static Vector2 Lerp(ref Vector2 current, Vector2 target, float speed, float deltaTime)
+            {
+                return current = Lerp(current, target, speed, deltaTime);
+            }
+
+            public static Vector3 Lerp(Vector3 current, Vector3 target, float speed, float deltaTime) => Vector3.Lerp(current, target, GetLerpT(speed, deltaTime));
+            public static Vector3 Lerp(ref Vector3 current, Vector3 target, float speed, float deltaTime)
+            {
+                return current = Lerp(current, target, speed, deltaTime);
+            }
+
+            public static float SmoothDamp(float current, float target, float speed, ref float derivative, float deltaTime, float maxSpeed) => Mathf.SmoothDamp(current, target, ref derivative, .5f / speed, maxSpeed, deltaTime);
+            public static float SmoothDamp(float current, float target, float speed, ref float derivative, float deltaTime)
+            {
+                return Mathf.SmoothDamp(current, target, ref derivative, .5f / speed, Mathf.Infinity, deltaTime);
+            }
+            public static float SmoothDamp(float current, float target, float speed, ref float derivative)
+            {
+                return SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
+            }
+            public static float SmoothDamp(ref float current, float target, float speed, ref float derivative, float deltaTime, float maxSpeed)
+            {
+                return current = SmoothDamp(current, target, speed, ref derivative, deltaTime, maxSpeed);
+            }
+            public static float SmoothDamp(ref float current, float target, float speed, ref float derivative, float deltaTime)
+            {
+                return current = SmoothDamp(current, target, speed, ref derivative, deltaTime);
+            }
+            public static float SmoothDamp(ref float current, float target, float speed, ref float derivative)
+            {
+                return current = SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
+            }
+
+            public static Vector2 SmoothDamp(Vector2 current, Vector2 target, float speed, ref Vector2 derivative, float deltaTime) => Vector2.SmoothDamp(current, target, ref derivative, .5f / speed, Mathf.Infinity, deltaTime);
+            public static Vector2 SmoothDamp(Vector2 current, Vector2 target, float speed, ref Vector2 derivative)
+            {
+                return SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
+            }
+            public static Vector2 SmoothDamp(ref Vector2 current, Vector2 target, float speed, ref Vector2 derivative, float deltaTime)
+            {
+                return current = SmoothDamp(current, target, speed, ref derivative, deltaTime);
+            }
+            public static Vector2 SmoothDamp(ref Vector2 current, Vector2 target, float speed, ref Vector2 derivative)
+            {
+                return current = SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
+            }
+
+            public static Vector3 SmoothDamp(Vector3 current, Vector3 target, float speed, ref Vector3 derivative, float deltaTime) => Vector3.SmoothDamp(current, target, ref derivative, .5f / speed, Mathf.Infinity, deltaTime);
+            public static Vector3 SmoothDamp(Vector3 current, Vector3 target, float speed, ref Vector3 derivative)
+            {
+                return SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
+            }
+            public static Vector3 SmoothDamp(ref Vector3 current, Vector3 target, float speed, ref Vector3 derivative, float deltaTime)
+            {
+                return current = SmoothDamp(current, target, speed, ref derivative, deltaTime);
+            }
+            public static Vector3 SmoothDamp(ref Vector3 current, Vector3 target, float speed, ref Vector3 derivative)
+            {
+                return current = SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
+            }
+
+
+            public static float GetLerpT(float lerpSpeed, float deltaTime) => 1 - Mathf.Exp(-lerpSpeed * 2f * deltaTime);
+            public static float GetLerpT(float lerpSpeed)
+            {
+                return GetLerpT(lerpSpeed, Time.deltaTime);
+            }
+
+
+
+        }
+
+
         public static float DistanceTo(this float f1, float f2) => Mathf.Abs(f1 - f2);
         public static float DistanceTo(this Vector2 f1, Vector2 f2) => (f1 - f2).magnitude;
         public static float DistanceTo(this Vector3 f1, Vector3 f2) => (f1 - f2).magnitude;
-        public static float Dist(float f1, float f2) => Mathf.Abs(f1 - f2);
-        public static float Avg(float f1, float f2) => (f1 + f2) / 2;
-        public static float Abs(this float f) => Mathf.Abs(f);
+
+        public static float Sign(this float f) => f == 0 ? 0 : Mathf.Sign(f);
+
         public static int Abs(this int f) => Mathf.Abs(f);
-        public static float Sign(this float f) => Mathf.Sign(f);
-        public static float Clamp(this float f, float f0, float f1) => Mathf.Clamp(f, f0, f1);
+        public static float Abs(this float f) => Mathf.Abs(f);
+
         public static int Clamp(this int f, int f0, int f1) => Mathf.Clamp(f, f0, f1);
+        public static float Clamp(this float f, float f0, float f1) => Mathf.Clamp(f, f0, f1);
+
         public static float Clamp01(this float f) => Mathf.Clamp(f, 0, 1);
         public static Vector2 Clamp01(this Vector2 f) => new(f.x.Clamp01(), f.y.Clamp01());
         public static Vector3 Clamp01(this Vector3 f) => new(f.x.Clamp01(), f.y.Clamp01(), f.z.Clamp01());
 
 
-        public static float Pow(this float f, float pow) => Mathf.Pow(f, pow);
         public static int Pow(this int f, int pow) => (int)Mathf.Pow(f, pow);
+        public static float Pow(this float f, float pow) => Mathf.Pow(f, pow);
 
         public static float Round(this float f) => Mathf.Round(f);
         public static float Ceil(this float f) => Mathf.Ceil(f);
         public static float Floor(this float f) => Mathf.Floor(f);
+
         public static int RoundToInt(this float f) => Mathf.RoundToInt(f);
         public static int CeilToInt(this float f) => Mathf.CeilToInt(f);
         public static int FloorToInt(this float f) => Mathf.FloorToInt(f);
+
         public static int ToInt(this float f) => (int)f;
         public static float ToFloat(this int f) => (float)f;
         public static float ToFloat(this double f) => (float)f;
 
 
+
         public static float Sqrt(this float f) => Mathf.Sqrt(f);
 
-        public static float Max(this float f, float ff) => Mathf.Max(f, ff);
-        public static float Min(this float f, float ff) => Mathf.Min(f, ff);
         public static int Max(this int f, int ff) => Mathf.Max(f, ff);
         public static int Min(this int f, int ff) => Mathf.Min(f, ff);
+        public static float Max(this float f, float ff) => Mathf.Max(f, ff);
+        public static float Min(this float f, float ff) => Mathf.Min(f, ff);
 
         public static float Loop(this float f, float boundMin, float boundMax)
         {
@@ -368,27 +490,9 @@ namespace VInspector.Libs
         public static float PingPong(this float f, float boundMax) => f.PingPong(0, boundMax);
 
 
-        public static float TriangleArea(Vector2 A, Vector2 B, Vector2 C) => Vector3.Cross(A - B, A - C).z.Abs() / 2;
-        public static Vector2 LineIntersection(Vector2 A, Vector2 B, Vector2 C, Vector2 D)
-        {
-            var a1 = B.y - A.y;
-            var b1 = A.x - B.x;
-            var c1 = a1 * A.x + b1 * A.y;
-
-            var a2 = D.y - C.y;
-            var b2 = C.x - D.x;
-            var c2 = a2 * C.x + b2 * C.y;
-
-            var d = a1 * b2 - a2 * b1;
-
-            var x = (b2 * c1 - b1 * c2) / d;
-            var y = (a1 * c2 - a2 * c1) / d;
-
-            return new Vector2(x, y);
-
-        }
-
         public static float ProjectOn(this Vector2 v, Vector2 on) => Vector3.Project(v, on).magnitude;
+        public static float ProjectOn(this Vector3 v, Vector3 on) => Vector3.Project(v, on).magnitude;
+
         public static float AngleTo(this Vector2 v, Vector2 to) => Vector2.Angle(v, to);
 
         public static Vector2 Rotate(this Vector2 v, float deg) => Quaternion.AngleAxis(deg, Vector3.forward) * v;
@@ -402,6 +506,7 @@ namespace VInspector.Libs
             return Vector2.Dot(av, ab) / Vector2.Dot(ab, ab);
         }
 
+
         public static bool IsOdd(this int i) => i % 2 == 1;
         public static bool IsEven(this int i) => i % 2 == 0;
 
@@ -410,6 +515,8 @@ namespace VInspector.Libs
 
         public static bool IsInRangeOf(this int i, IList list) => i.IsInRange(0, list.Count - 1);
         public static bool IsInRangeOf<T>(this int i, T[] array) => i.IsInRange(0, array.Length - 1);
+
+        public static bool Approx(this float f1, float f2) => Mathf.Approximately(f1, f2);
 
 
 
@@ -463,7 +570,7 @@ namespace VInspector.Libs
             public int size => radius * 2 + (isEvenSize ? 0 : 1);
             public float sigma => 1 - Mathf.Pow(sharpness, .1f) * .99999f;
 
-            public float[,] Array2d()
+            public float[,] Array2d() // todo test and use GenerateArray
             {
                 float[,] kr = new float[size, size];
 
@@ -503,152 +610,6 @@ namespace VInspector.Libs
         }
 
 
-
-
-
-
-
-        #endregion
-
-        #region Lerping
-
-
-        public static float LerpT(float lerpSpeed, float deltaTime) => 1 - Mathf.Exp(-lerpSpeed * 2f * deltaTime);
-        public static float LerpT(float lerpSpeed) => LerpT(lerpSpeed, Time.deltaTime);
-
-        public static float Lerp(float f1, float f2, float t) => Mathf.LerpUnclamped(f1, f2, t);
-        public static float Lerp(ref float f1, float f2, float t) => f1 = Lerp(f1, f2, t);
-
-        public static Vector2 Lerp(Vector2 f1, Vector2 f2, float t) => Vector2.LerpUnclamped(f1, f2, t);
-        public static Vector2 Lerp(ref Vector2 f1, Vector2 f2, float t) => f1 = Lerp(f1, f2, t);
-
-        public static Vector3 Lerp(Vector3 f1, Vector3 f2, float t) => Vector3.LerpUnclamped(f1, f2, t);
-        public static Vector3 Lerp(ref Vector3 f1, Vector3 f2, float t) => f1 = Lerp(f1, f2, t);
-
-        public static Color Lerp(Color f1, Color f2, float t) => Color.LerpUnclamped(f1, f2, t);
-        public static Color Lerp(ref Color f1, Color f2, float t) => f1 = Lerp(f1, f2, t);
-
-
-        public static float Lerp(float current, float target, float speed, float deltaTime) => Mathf.Lerp(current, target, LerpT(speed, deltaTime));
-        public static float Lerp(ref float current, float target, float speed, float deltaTime) => current = Lerp(current, target, speed, deltaTime);
-
-        public static Vector2 Lerp(Vector2 current, Vector2 target, float speed, float deltaTime) => Vector2.Lerp(current, target, LerpT(speed, deltaTime));
-        public static Vector2 Lerp(ref Vector2 current, Vector2 target, float speed, float deltaTime) => current = Lerp(current, target, speed, deltaTime);
-
-        public static Vector3 Lerp(Vector3 current, Vector3 target, float speed, float deltaTime) => Vector3.Lerp(current, target, LerpT(speed, deltaTime));
-        public static Vector3 Lerp(ref Vector3 current, Vector3 target, float speed, float deltaTime) => current = Lerp(current, target, speed, deltaTime);
-
-        public static float SmoothDamp(float current, float target, float speed, ref float derivative, float deltaTime, float maxSpeed) => Mathf.SmoothDamp(current, target, ref derivative, .5f / speed, maxSpeed, deltaTime);
-        public static float SmoothDamp(ref float current, float target, float speed, ref float derivative, float deltaTime, float maxSpeed) => current = SmoothDamp(current, target, speed, ref derivative, deltaTime, maxSpeed);
-        public static float SmoothDamp(float current, float target, float speed, ref float derivative, float deltaTime) => Mathf.SmoothDamp(current, target, ref derivative, .5f / speed, Mathf.Infinity, deltaTime);
-        public static float SmoothDamp(ref float current, float target, float speed, ref float derivative, float deltaTime) => current = SmoothDamp(current, target, speed, ref derivative, deltaTime);
-        public static float SmoothDamp(float current, float target, float speed, ref float derivative) => SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
-        public static float SmoothDamp(ref float current, float target, float speed, ref float derivative) => current = SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
-
-        public static Vector2 SmoothDamp(Vector2 current, Vector2 target, float speed, ref Vector2 derivative, float deltaTime) => Vector2.SmoothDamp(current, target, ref derivative, .5f / speed, Mathf.Infinity, deltaTime);
-        public static Vector2 SmoothDamp(ref Vector2 current, Vector2 target, float speed, ref Vector2 derivative, float deltaTime) => current = SmoothDamp(current, target, speed, ref derivative, deltaTime);
-        public static Vector2 SmoothDamp(Vector2 current, Vector2 target, float speed, ref Vector2 derivative) => SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
-        public static Vector2 SmoothDamp(ref Vector2 current, Vector2 target, float speed, ref Vector2 derivative) => current = SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
-
-        public static Vector3 SmoothDamp(Vector3 current, Vector3 target, float speed, ref Vector3 derivative, float deltaTime) => Vector3.SmoothDamp(current, target, ref derivative, .5f / speed, Mathf.Infinity, deltaTime);
-        public static Vector3 SmoothDamp(ref Vector3 current, Vector3 target, float speed, ref Vector3 derivative, float deltaTime) => current = SmoothDamp(current, target, speed, ref derivative, deltaTime);
-        public static Vector3 SmoothDamp(Vector3 current, Vector3 target, float speed, ref Vector3 derivative) => SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
-        public static Vector3 SmoothDamp(ref Vector3 current, Vector3 target, float speed, ref Vector3 derivative) => current = SmoothDamp(current, target, speed, ref derivative, Time.deltaTime);
-
-
-
-
-
-
-        #endregion
-
-        #region Colors
-
-
-        public static Color Greyscale(float brightness, float alpha = 1) => new(brightness, brightness, brightness, alpha);
-
-        public static Color SetAlpha(this Color color, float alpha) { color.a = alpha; return color; }
-        public static Color MultiplyAlpha(this Color color, float k) { color.a *= k; return color; }
-
-
-
-        public static Color HSLToRGB(float h, float s, float l)
-        {
-            float hue2Rgb(float v1, float v2, float vH)
-            {
-                if (vH < 0f)
-                    vH += 1f;
-
-                if (vH > 1f)
-                    vH -= 1f;
-
-                if (6f * vH < 1f)
-                    return v1 + (v2 - v1) * 6f * vH;
-
-                if (2f * vH < 1f)
-                    return v2;
-
-                if (3f * vH < 2f)
-                    return v1 + (v2 - v1) * (2f / 3f - vH) * 6f;
-
-                return v1;
-            }
-
-            if (s.Approx(0)) return new Color(l, l, l);
-
-            float k1;
-
-            if (l < .5f)
-                k1 = l * (1f + s);
-            else
-                k1 = l + s - s * l;
-
-
-            var k2 = 2f * l - k1;
-
-            float r, g, b;
-            r = hue2Rgb(k2, k1, h + 1f / 3);
-            g = hue2Rgb(k2, k1, h);
-            b = hue2Rgb(k2, k1, h - 1f / 3);
-
-            return new Color(r, g, b);
-        }
-        public static Color LCHtoRGB(float l, float c, float h)
-        {
-            l *= 100;
-            c *= 100;
-            h *= 360;
-
-            double xw = 0.948110;
-            double yw = 1.00000;
-            double zw = 1.07304;
-
-            float a = c * Mathf.Cos(Mathf.Deg2Rad * h);
-            float b = c * Mathf.Sin(Mathf.Deg2Rad * h);
-
-            float fy = (l + 16) / 116;
-            float fx = fy + (a / 500);
-            float fz = fy - (b / 200);
-
-            float x = (float)System.Math.Round(xw * ((System.Math.Pow(fx, 3) > 0.008856) ? System.Math.Pow(fx, 3) : ((fx - 16 / 116) / 7.787)), 5);
-            float y = (float)System.Math.Round(yw * ((System.Math.Pow(fy, 3) > 0.008856) ? System.Math.Pow(fy, 3) : ((fy - 16 / 116) / 7.787)), 5);
-            float z = (float)System.Math.Round(zw * ((System.Math.Pow(fz, 3) > 0.008856) ? System.Math.Pow(fz, 3) : ((fz - 16 / 116) / 7.787)), 5);
-
-            float r = x * 3.2406f - y * 1.5372f - z * 0.4986f;
-            float g = -x * 0.9689f + y * 1.8758f + z * 0.0415f;
-            float bValue = x * 0.0557f - y * 0.2040f + z * 1.0570f;
-
-            r = r > 0.0031308f ? 1.055f * (float)System.Math.Pow(r, 1 / 2.4) - 0.055f : r * 12.92f;
-            g = g > 0.0031308f ? 1.055f * (float)System.Math.Pow(g, 1 / 2.4) - 0.055f : g * 12.92f;
-            bValue = bValue > 0.0031308f ? 1.055f * (float)System.Math.Pow(bValue, 1 / 2.4) - 0.055f : bValue * 12.92f;
-
-            // r = (float)System.Math.Round(System.Math.Max(0, System.Math.Min(1, r)));
-            // g = (float)System.Math.Round(System.Math.Max(0, System.Math.Min(1, g)));
-            // bValue = (float)System.Math.Round(System.Math.Max(0, System.Math.Min(1, bValue)));
-
-            return new Color(r, g, bValue);
-
-        }
 
 
 
@@ -709,25 +670,105 @@ namespace VInspector.Libs
 
         #endregion
 
+        #region Colors
+
+
+        public class ColorUtils
+        {
+            public static Color HSLToRGB(float h, float s, float l)
+            {
+                float hue2Rgb(float v1, float v2, float vH)
+                {
+                    if (vH < 0f)
+                        vH += 1f;
+
+                    if (vH > 1f)
+                        vH -= 1f;
+
+                    if (6f * vH < 1f)
+                        return v1 + (v2 - v1) * 6f * vH;
+
+                    if (2f * vH < 1f)
+                        return v2;
+
+                    if (3f * vH < 2f)
+                        return v1 + (v2 - v1) * (2f / 3f - vH) * 6f;
+
+                    return v1;
+                }
+
+                if (s.Approx(0)) return new Color(l, l, l);
+
+                float k1;
+
+                if (l < .5f)
+                    k1 = l * (1f + s);
+                else
+                    k1 = l + s - s * l;
+
+
+                var k2 = 2f * l - k1;
+
+                float r, g, b;
+                r = hue2Rgb(k2, k1, h + 1f / 3);
+                g = hue2Rgb(k2, k1, h);
+                b = hue2Rgb(k2, k1, h - 1f / 3);
+
+                return new Color(r, g, b);
+            }
+            public static Color LCHtoRGB(float l, float c, float h)
+            {
+                l *= 100;
+                c *= 100;
+                h *= 360;
+
+                double xw = 0.948110;
+                double yw = 1.00000;
+                double zw = 1.07304;
+
+                float a = c * Mathf.Cos(Mathf.Deg2Rad * h);
+                float b = c * Mathf.Sin(Mathf.Deg2Rad * h);
+
+                float fy = (l + 16) / 116;
+                float fx = fy + (a / 500);
+                float fz = fy - (b / 200);
+
+                float x = (float)System.Math.Round(xw * ((System.Math.Pow(fx, 3) > 0.008856) ? System.Math.Pow(fx, 3) : ((fx - 16 / 116) / 7.787)), 5);
+                float y = (float)System.Math.Round(yw * ((System.Math.Pow(fy, 3) > 0.008856) ? System.Math.Pow(fy, 3) : ((fy - 16 / 116) / 7.787)), 5);
+                float z = (float)System.Math.Round(zw * ((System.Math.Pow(fz, 3) > 0.008856) ? System.Math.Pow(fz, 3) : ((fz - 16 / 116) / 7.787)), 5);
+
+                float r = x * 3.2406f - y * 1.5372f - z * 0.4986f;
+                float g = -x * 0.9689f + y * 1.8758f + z * 0.0415f;
+                float bValue = x * 0.0557f - y * 0.2040f + z * 1.0570f;
+
+                r = r > 0.0031308f ? 1.055f * (float)System.Math.Pow(r, 1 / 2.4) - 0.055f : r * 12.92f;
+                g = g > 0.0031308f ? 1.055f * (float)System.Math.Pow(g, 1 / 2.4) - 0.055f : g * 12.92f;
+                bValue = bValue > 0.0031308f ? 1.055f * (float)System.Math.Pow(bValue, 1 / 2.4) - 0.055f : bValue * 12.92f;
+
+                // r = (float)System.Math.Round(System.Math.Max(0, System.Math.Min(1, r)));
+                // g = (float)System.Math.Round(System.Math.Max(0, System.Math.Min(1, g)));
+                // bValue = (float)System.Math.Round(System.Math.Max(0, System.Math.Min(1, bValue)));
+
+                return new Color(r, g, bValue);
+
+            }
+
+        }
+
+
+        public static Color Greyscale(float brightness, float alpha = 1) => new(brightness, brightness, brightness, alpha);
+
+        public static Color SetAlpha(this Color color, float alpha) { color.a = alpha; return color; }
+        public static Color MultiplyAlpha(this Color color, float k) { color.a *= k; return color; }
+
+
+
+
+
+        #endregion
+
         #region Objects
 
-
-        public static Object[] FindObjects(Type type)
-        {
-#if UNITY_2023_1_OR_NEWER
-            return Object.FindObjectsByType(type, FindObjectsSortMode.None);
-#else
-            return Object.FindObjectsOfType(type);
-#endif
-        }
-        public static T[] FindObjects<T>() where T : Object
-        {
-#if UNITY_2023_1_OR_NEWER
-            return Object.FindObjectsByType<T>(FindObjectsSortMode.None);
-#else
-            return Object.FindObjectsOfType<T>();
-#endif
-        }
 
         public static void Destroy(this Object r)
         {
@@ -791,64 +832,89 @@ namespace VInspector.Libs
         #region Text
 
 
-        public static string FormatDistance(float meters)
+        public static class TextUtils
         {
-            int m = (int)meters;
+            public static string FormatDistance(float meters)
+            {
+                int m = (int)meters;
 
-            if (m < 1000) return m + " m";
-            else return (m / 1000) + "." + (m / 100) % 10 + " km";
+                if (m < 1000)
+                    return m + " m";
+                else
+                    return (m / 1000) + "." + (m / 100) % 10 + " km";
+
+            }
+            public static string FormatLong(long l) => System.String.Format("{0:n0}", l);
+            public static string FormatInt(int l) => FormatLong((long)l);
+            public static string FormatTime(long ms, bool includeMs = false)
+            {
+                System.TimeSpan t = System.TimeSpan.FromMilliseconds(ms);
+                var s = "";
+                if (t.Hours != 0) s += " " + t.Hours + " hour" + GetCountSuffix(t.Hours);
+                if (t.Minutes != 0) s += " " + t.Minutes + " minute" + GetCountSuffix(t.Minutes);
+                if (t.Seconds != 0) s += " " + t.Seconds + " second" + GetCountSuffix(t.Seconds);
+                if (t.Milliseconds != 0 && includeMs) s += " " + t.Milliseconds + " millisecond" + GetCountSuffix(t.Milliseconds);
+
+                if (s == "")
+                    if (includeMs) s = "0 milliseconds";
+                    else s = "0 seconds";
+
+                return s.Trim();
+            }
+            public static string FormatFileSize(long bytes, bool sizeUnknownIfNotMoreThanZero = false)
+            {
+                if (sizeUnknownIfNotMoreThanZero && bytes == 0) return "Size unknown";
+
+                var ss = new[] { "B", "KB", "MB", "GB", "TB" };
+                var bprev = bytes;
+                int i = 0;
+                while (bytes >= 1024 && i++ < ss.Length - 1) bytes = (bprev = bytes) / 1024;
+
+                if (bytes < 0) return "? B";
+                if (i < 3) return string.Format("{0:0.#} ", bytes) + ss[i];
+                return string.Format("{0:0.##} ", bytes) + ss[i];
+            }
+
+            static string GetCountSuffix(long c) => c % 10 != 1 ? "s" : "";
+
+            public static string GetLoremIpsum(int words = 2)
+            {
+                var s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum";
+                var ws = s.Split(' ').Select(r => r.ToLower().Trim(new[] { ',', '.' }));
+                ws = ws.OrderBy(r => UnityEngine.Random.Range(0, 1232)).Take(words);
+                var ss = string.Join(" ", ws);
+                return char.ToUpper(ss[0]) + ss.Substring(1);
+            }
+
         }
-        public static string FormatLong(long l) => System.String.Format("{0:n0}", l);
-        public static string FormatInt(int l) => FormatLong((long)l);
-        public static string FormatSize(long bytes, bool sizeUnknownIfNotMoreThanZero = false)
+
+
+        public static bool IsEmpty(this string s) => s == "";
+        public static bool IsNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
+
+        public static bool IsLower(this char c) => System.Char.IsLower(c);
+        public static bool IsUpper(this char c) => System.Char.IsUpper(c);
+
+
+
+        public static string Decamelcase(this string s)
         {
-            if (sizeUnknownIfNotMoreThanZero && bytes == 0) return "Size unknown";
-
-            var ss = new[] { "B", "KB", "MB", "GB", "TB" };
-            var bprev = bytes;
-            int i = 0;
-            while (bytes >= 1024 && i++ < ss.Length - 1) bytes = (bprev = bytes) / 1024;
-
-            if (bytes < 0) return "? B";
-            if (i < 3) return string.Format("{0:0.#} ", bytes) + ss[i];
-            return string.Format("{0:0.##} ", bytes) + ss[i];
+            return Regex.Replace(Regex.Replace(s, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
         }
-        public static string FormatTime(long ms, bool includeMs = false)
+        public static string FormatVariableName(this string s, bool lowercaseFollowingWords = true)
         {
-            System.TimeSpan t = System.TimeSpan.FromMilliseconds(ms);
-            var s = "";
-            if (t.Hours != 0) s += " " + t.Hours + " hour" + CountSuffix(t.Hours);
-            if (t.Minutes != 0) s += " " + t.Minutes + " minute" + CountSuffix(t.Minutes);
-            if (t.Seconds != 0) s += " " + t.Seconds + " second" + CountSuffix(t.Seconds);
-            if (t.Milliseconds != 0 && includeMs) s += " " + t.Milliseconds + " millisecond" + CountSuffix(t.Milliseconds);
-
-            if (s == "")
-                if (includeMs) s = "0 milliseconds";
-                else s = "0 seconds";
-
-            return s.Trim();
+            return string.Join(" ", s.Decamelcase()
+                         .Split(' ')
+                         .Select(r => new[] { "", "and", "or", "with", "without", "by", "from" }.Contains(r.ToLower()) || (lowercaseFollowingWords && !s.Trim().StartsWith(r)) ? r.ToLower()
+                                                                                                                                                                                 : r.Substring(0, 1).ToUpper() + r.Substring(1))).Trim(' ');
         }
-        static string CountSuffix(long c) => c % 10 != 1 ? "s" : "";
+
         public static string Remove(this string s, string toRemove)
         {
             if (toRemove == "") return s;
             return s.Replace(toRemove, "");
         }
 
-        public static string LoremIpsum(int words = 2)
-        {
-            var s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum";
-            var ws = s.Split(' ').Select(r => r.ToLower().Trim(new[] { ',', '.' }));
-            ws = ws.OrderBy(r => UnityEngine.Random.Range(0, 1232)).Take(words);
-            var ss = string.Join(" ", ws);
-            return char.ToUpper(ss[0]) + ss.Substring(1);
-        }
-
-        public static string Decamelcase(this string str) => Regex.Replace(Regex.Replace(str, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
-        public static string PrettifyVarName(this string str, bool lowercaseFollowingWords = true) => string.Join(" ", str.Decamelcase().Split(' ').Select(r => new[] { "", "and", "or", "with", "without", "by", "from" }.Contains(r.ToLower()) || (lowercaseFollowingWords && !str.Trim().StartsWith(r)) ? r.ToLower() : r.Substring(0, 1).ToUpper() + r.Substring(1))).Trim(' ');
-
-        public static bool IsEmpty(this string s) => s == "";
-        public static bool IsNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
 
 
 
@@ -859,15 +925,26 @@ namespace VInspector.Libs
         #region Paths
 
 
-        public static string GetParentPath(this string path) => path.Substring(0, path.LastIndexOf('/'));
-        public static bool HasParentPath(this string path) => path.Contains('/') && path.GetParentPath() != "";
+        public static bool HasParentPath(this string path) => path.LastIndexOf('/') > 0;
+        public static string GetParentPath(this string path) => path.HasParentPath() ? path.Substring(0, path.LastIndexOf('/')) : "";
+
+        public static string GetFilename(this string path, bool withExtension = false) => withExtension ? Path.GetFileName(path) : Path.GetFileNameWithoutExtension(path);
+        public static string GetExtension(this string path) => Path.GetExtension(path);
+
 
         public static string ToGlobalPath(this string localPath) => Application.dataPath + "/" + localPath.Substring(0, localPath.Length - 1);
-        public static string ToLocalPath(this string globalPath) => "Assets" + globalPath.Remove(Application.dataPath);
+        public static string ToLocalPath(this string globalPath) => "Assets" + globalPath.Replace(Application.dataPath, "");
 
 
 
-        public static string CombinePath(this string p, string p2) => Path.Combine(p, p2);
+        public static string CombinePath(this string p1, string p2, bool useBackslashOnWindows = false)
+        {
+            if (useBackslashOnWindows) // false by default because all paths in unity use forward slashes, even on Windows
+                return Path.Combine(p1, p2);
+            else
+                return Path.Combine(p1, p2).Replace('\\', '/');
+
+        }
 
         public static bool IsSubpathOf(this string path, string of) => path.StartsWith(of + "/") || of == "";
 
@@ -884,10 +961,57 @@ namespace VInspector.Libs
 
         public static bool DirectoryExists(this string pathOrDirectory) => Directory.Exists(pathOrDirectory.GetDirectory());
 
+        public static string EnsureDirExists(this string pathOrDirectory) // todo to EnsureDirectoryExists
+        {
+            var directory = pathOrDirectory.GetDirectory();
+
+            if (directory.HasParentPath() && !Directory.Exists(directory.GetParentPath()))
+                EnsureDirExists(directory.GetParentPath());
+
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            return pathOrDirectory;
+
+        }
+
+
+
+        public static string ClearDir(this string dir)
+        {
+            if (!Directory.Exists(dir)) return dir;
+
+            var diri = new DirectoryInfo(dir);
+            foreach (var r in diri.EnumerateFiles()) r.Delete();
+            foreach (var r in diri.EnumerateDirectories()) r.Delete(true);
+
+            return dir;
+        }
 
 
 
 
+
+
+#if UNITY_EDITOR
+
+        public static string EnsurePathIsUnique(this string path)
+        {
+            if (!path.DirectoryExists()) return path;
+
+            var s = AssetDatabase.GenerateUniqueAssetPath(path); // returns empty if parent dir doesnt exist 
+
+            return s == "" ? path : s;
+
+        }
+
+        public static void EnsureDirExistsAndRevealInFinder(string dir)
+        {
+            EnsureDirExists(dir);
+            UnityEditor.EditorUtility.OpenWithDefaultApp(dir);
+        }
+
+#endif
 
 
 
@@ -902,9 +1026,6 @@ namespace VInspector.Libs
         public static string ToPath(this string guid) => AssetDatabase.GUIDToAssetPath(guid); // returns empty string if not found
         public static List<string> ToPaths(this IEnumerable<string> guids) => guids.Select(r => r.ToPath()).ToList();
 
-        public static string GetFilename(this string path, bool withExtension = false) => withExtension ? Path.GetFileName(path) : Path.GetFileNameWithoutExtension(path); // prev GetName
-        public static string GetExtension(this string path) => Path.GetExtension(path);
-
 
         public static string ToGuid(this string pathInProject) => AssetDatabase.AssetPathToGUID(pathInProject);
         public static List<string> ToGuids(this IEnumerable<string> pathsInProject) => pathsInProject.Select(r => r.ToGuid()).ToList();
@@ -918,17 +1039,50 @@ namespace VInspector.Libs
         public static bool IsValidGuid(this string guid) => AssetDatabase.AssetPathToGUID(AssetDatabase.GUIDToAssetPath(guid), AssetPathToGUIDOptions.OnlyExistingAssets) != "";
 
 
-
-
-
+        public static T Reimport<T>(this T t) where T : Object { AssetDatabase.ImportAsset(t.GetPath(), ImportAssetOptions.ForceUpdate); return t; }
 
 
 
 #endif
 
+
+
+
+
         #endregion
 
         #region Serialization
+
+
+        [System.Serializable]
+        public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
+        {
+            [SerializeField] List<TKey> keys = new();
+            [SerializeField] List<TValue> values = new();
+
+            public void OnBeforeSerialize()
+            {
+                keys.Clear();
+                values.Clear();
+
+                foreach (KeyValuePair<TKey, TValue> kvp in this)
+                {
+                    keys.Add(kvp.Key);
+                    values.Add(kvp.Value);
+                }
+
+            }
+            public void OnAfterDeserialize()
+            {
+                this.Clear();
+
+                for (int i = 0; i < keys.Count; i++)
+                    this[keys[i]] = values[i];
+
+            }
+
+        }
+
 
 #if UNITY_EDITOR
 
@@ -1078,37 +1232,6 @@ namespace VInspector.Libs
 #endif
 
 
-        [System.Serializable]
-        public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
-        {
-            [SerializeField] List<TKey> keys = new();
-            [SerializeField] List<TValue> values = new();
-
-            public void OnBeforeSerialize()
-            {
-                keys.Clear();
-                values.Clear();
-
-                foreach (KeyValuePair<TKey, TValue> kvp in this)
-                {
-                    keys.Add(kvp.Key);
-                    values.Add(kvp.Value);
-                }
-
-            }
-            public void OnAfterDeserialize()
-            {
-                this.Clear();
-
-                for (int i = 0; i < keys.Count; i++)
-                    this[keys[i]] = values[i];
-
-            }
-
-        }
-
-
-
 
 
         #endregion
@@ -1124,8 +1247,10 @@ namespace VInspector.Libs
             public int GetObjectInstanceId() => GlobalObjectId.GlobalObjectIdentifierToInstanceIDSlow(globalObjectId);
 
 
+            public int idType => globalObjectId.identifierType;
             public string guid => globalObjectId.assetGUID.ToString();
             public ulong fileId => globalObjectId.targetObjectId;
+            public ulong prefabId => globalObjectId.targetPrefabId;
 
             public bool isNull => globalObjectId.identifierType == 0;
             public bool isAsset => globalObjectId.identifierType == 1;
@@ -1151,6 +1276,19 @@ namespace VInspector.Libs
 
 
             public override string ToString() => globalObjectIdString;
+
+
+
+
+            public GlobalID UnpackForPrefab()
+            {
+                var unpackedFileId = (this.fileId ^ this.prefabId) & 0x7fffffffffffffff;
+
+                var unpackedGId = new GlobalID($"GlobalObjectId_V1-{this.idType}-{this.guid}-{unpackedFileId}-0");
+
+                return unpackedGId;
+
+            }
 
         }
 
@@ -1202,162 +1340,290 @@ namespace VInspector.Libs
 
 #if UNITY_EDITOR
 
-        public static void RecordUndo(this Object o, string operationName = "") => Undo.RecordObject(o, operationName);
-        public static void Dirty(this Object o) => UnityEditor.EditorUtility.SetDirty(o);
-        public static void Save(this Object o) => AssetDatabase.SaveAssetIfDirty(o);
 
-
-
-        public static void SetSymbolDefinedInAsmdef(string asmdefName, string symbol, bool defined)
+        public static class EditorUtils
         {
-            var isDefined = IsSymbolDefinedInAsmdef(asmdefName, symbol);
-            var shouldBeDefined = defined;
 
-            if (shouldBeDefined && !isDefined)
-                DefineSymbolInAsmdef(asmdefName, symbol);
-
-            if (!shouldBeDefined && isDefined)
-                UndefineSymbolInAsmdef(asmdefName, symbol);
-
-        }
-        public static bool IsSymbolDefinedInAsmdef(string asmdefName, string symbol)
-        {
-            var path = AssetDatabase.FindAssets("t: asmdef " + asmdefName, null).First().ToPath();
-            var importer = AssetImporter.GetAtPath(path);
-
-            var editorType = typeof(Editor).Assembly.GetType("UnityEditor.AssemblyDefinitionImporterInspector");
-            var editor = Editor.CreateEditor(importer, editorType);
-
-            var state = editor.GetFieldValue<Object[]>("m_ExtraDataTargets").First();
-
-
-            var definesList = state.GetFieldValue<IList>("versionDefines");
-            var isSymbolDefined = Enumerable.Range(0, definesList.Count).Any(i => definesList[i].GetFieldValue<string>("define") == symbol);
-
-
-            Object.DestroyImmediate(editor);
-
-            return isSymbolDefined;
-
-        }
-
-        static void DefineSymbolInAsmdef(string asmdefName, string symbol)
-        {
-            var path = AssetDatabase.FindAssets("t: asmdef " + asmdefName, null).First().ToPath();
-            var importer = AssetImporter.GetAtPath(path);
-
-            var editorType = typeof(Editor).Assembly.GetType("UnityEditor.AssemblyDefinitionImporterInspector");
-            var editor = Editor.CreateEditor(importer, editorType);
-
-            var state = editor.GetFieldValue<Object[]>("m_ExtraDataTargets").First();
-
-
-            var definesList = state.GetFieldValue<IList>("versionDefines");
-
-            var defineType = definesList.GetType().GenericTypeArguments[0];
-            var newDefine = System.Activator.CreateInstance(defineType);
-
-            newDefine.SetFieldValue("name", "Unity");
-            newDefine.SetFieldValue("define", symbol);
-
-            definesList.Add(newDefine);
-
-
-            editor.InvokeMethod("Apply");
-
-            Object.DestroyImmediate(editor);
-
-        }
-        static void UndefineSymbolInAsmdef(string asmdefName, string symbol)
-        {
-            var path = AssetDatabase.FindAssets("t: asmdef " + asmdefName, null).First().ToPath();
-            var importer = AssetImporter.GetAtPath(path);
-
-            var editorType = typeof(Editor).Assembly.GetType("UnityEditor.AssemblyDefinitionImporterInspector");
-            var editor = Editor.CreateEditor(importer, editorType);
-
-            var state = editor.GetFieldValue<Object[]>("m_ExtraDataTargets").First();
-
-
-            var definesList = state.GetFieldValue<IList>("versionDefines");
-
-            var defineIndex = Enumerable.Range(0, definesList.Count).First(i => definesList[i].GetFieldValue<string>("define") == symbol);
-
-            definesList.RemoveAt(defineIndex);
-
-
-            editor.InvokeMethod("Apply");
-
-            Object.DestroyImmediate(editor);
-
-        }
-
-
-
-        public static void PingObject(Object o, bool select = false, bool focusProjectWindow = true)
-        {
-            if (select)
+            public static void OpenFolder(string path)
             {
-                Selection.activeObject = null;
-                Selection.activeObject = o;
+                var folder = AssetDatabase.LoadAssetAtPath(path, typeof(Object));
+
+                var t = typeof(Editor).Assembly.GetType("UnityEditor.ProjectBrowser");
+                var w = (EditorWindow)t.GetField("s_LastInteractedProjectBrowser").GetValue(null);
+
+                var m_ListAreaState = t.GetField("m_ListAreaState", maxBindingFlags).GetValue(w);
+
+                m_ListAreaState.GetType().GetField("m_SelectedInstanceIDs").SetValue(m_ListAreaState, new List<int> { folder.GetInstanceID() });
+
+                t.GetMethod("OpenSelectedFolders", maxBindingFlags).Invoke(null, null);
+
             }
-            if (focusProjectWindow) EditorUtility.FocusProjectWindow();
-            EditorGUIUtility.PingObject(o);
+
+            public static void PingObject(Object o, bool select = false, bool focusProjectWindow = true)
+            {
+                if (select)
+                {
+                    Selection.activeObject = null;
+                    Selection.activeObject = o;
+                }
+                if (focusProjectWindow) EditorUtility.FocusProjectWindow();
+                EditorGUIUtility.PingObject(o);
+
+            }
+            public static void PingObject(string guid, bool select = false, bool focusProjectWindow = true) => PingObject(AssetDatabase.LoadAssetAtPath<Object>(guid.ToPath()));
+
+            public static EditorWindow OpenObjectPicker<T>(Object obj = null, bool allowSceneObjects = false, string searchFilter = "", int controlID = 0) where T : Object
+            {
+                EditorGUIUtility.ShowObjectPicker<T>(obj, allowSceneObjects, searchFilter, controlID);
+
+                return Resources.FindObjectsOfTypeAll(typeof(Editor).Assembly.GetType("UnityEditor.ObjectSelector")).FirstOrDefault() as EditorWindow;
+
+            }
+            public static EditorWindow OpenColorPicker(System.Action<Color> colorChangedCallback, Color color, bool showAlpha = true, bool hdr = false)
+            {
+                typeof(Editor).Assembly.GetType("UnityEditor.ColorPicker").InvokeMethod("Show", colorChangedCallback, color, showAlpha, hdr);
+
+                return typeof(Editor).Assembly.GetType("UnityEditor.ColorPicker").GetPropertyValue<EditorWindow>("instance");
+
+            }
+
+
+
+
+            public static void SetSymbolDefinedInAsmdef(string asmdefName, string symbol, bool defined)
+            {
+                var isDefined = IsSymbolDefinedInAsmdef(asmdefName, symbol);
+                var shouldBeDefined = defined;
+
+                if (shouldBeDefined && !isDefined)
+                    DefineSymbolInAsmdef(asmdefName, symbol);
+
+                if (!shouldBeDefined && isDefined)
+                    UndefineSymbolInAsmdef(asmdefName, symbol);
+
+            }
+            public static bool IsSymbolDefinedInAsmdef(string asmdefName, string symbol)
+            {
+                var path = AssetDatabase.FindAssets("t: asmdef " + asmdefName, null).First().ToPath();
+                var importer = AssetImporter.GetAtPath(path);
+
+                var editorType = typeof(Editor).Assembly.GetType("UnityEditor.AssemblyDefinitionImporterInspector");
+                var editor = Editor.CreateEditor(importer, editorType);
+
+                var state = editor.GetFieldValue<Object[]>("m_ExtraDataTargets").First();
+
+
+                var definesList = state.GetFieldValue<IList>("versionDefines");
+                var isSymbolDefined = Enumerable.Range(0, definesList.Count).Any(i => definesList[i].GetFieldValue<string>("define") == symbol);
+
+
+                Object.DestroyImmediate(editor);
+
+                return isSymbolDefined;
+
+            }
+
+            static void DefineSymbolInAsmdef(string asmdefName, string symbol)
+            {
+                var path = AssetDatabase.FindAssets("t: asmdef " + asmdefName, null).First().ToPath();
+                var importer = AssetImporter.GetAtPath(path);
+
+                var editorType = typeof(Editor).Assembly.GetType("UnityEditor.AssemblyDefinitionImporterInspector");
+                var editor = Editor.CreateEditor(importer, editorType);
+
+                var state = editor.GetFieldValue<Object[]>("m_ExtraDataTargets").First();
+
+
+                var definesList = state.GetFieldValue<IList>("versionDefines");
+
+                var defineType = definesList.GetType().GenericTypeArguments[0];
+                var newDefine = System.Activator.CreateInstance(defineType);
+
+                newDefine.SetFieldValue("name", "Unity");
+                newDefine.SetFieldValue("define", symbol);
+
+                definesList.Add(newDefine);
+
+
+                editor.InvokeMethod("Apply");
+
+                Object.DestroyImmediate(editor);
+
+            }
+            static void UndefineSymbolInAsmdef(string asmdefName, string symbol)
+            {
+                var path = AssetDatabase.FindAssets("t: asmdef " + asmdefName, null).First().ToPath();
+                var importer = AssetImporter.GetAtPath(path);
+
+                var editorType = typeof(Editor).Assembly.GetType("UnityEditor.AssemblyDefinitionImporterInspector");
+                var editor = Editor.CreateEditor(importer, editorType);
+
+                var state = editor.GetFieldValue<Object[]>("m_ExtraDataTargets").First();
+
+
+                var definesList = state.GetFieldValue<IList>("versionDefines");
+
+                var defineIndex = Enumerable.Range(0, definesList.Count).First(i => definesList[i].GetFieldValue<string>("define") == symbol);
+
+                definesList.RemoveAt(defineIndex);
+
+
+                editor.InvokeMethod("Apply");
+
+                Object.DestroyImmediate(editor);
+
+            }
+
+
+
+
+            public static int GetCurrendUndoGroupIndex()
+            {
+                var args = new object[] { _dummyList, 0 };
+
+                typeof(Undo).GetMethodInfo("GetRecords", typeof(List<string>), typeof(int).MakeByRefType())
+                            .Invoke(null, args);
+
+
+                return (int)args[1];
+
+            }
+
+            static List<string> _dummyList = new();
+
+
+
+
+
+            public static void Hide(string path)
+            {
+                if (IsHidden(path)) return;
+
+                if (File.Exists(path))
+                    File.Move(path, path + "~");
+
+
+                path += ".meta";
+                if (File.Exists(path))
+                    File.Move(path, path + "~");
+            }
+            public static void Unhide(string path)
+            {
+                if (!IsHidden(path)) return;
+                if (path.EndsWith("~")) path = path.Substring(0, path.Length - 1);
+
+                if (File.Exists(path + "~"))
+                    File.Move(path + "~", path);
+
+                path += ".meta";
+                if (File.Exists(path + "~"))
+                    File.Move(path + "~", path);
+            }
+            public static bool IsHidden(string path) => path.EndsWith("~") || File.Exists(path + "~");
+
+
+            public static void CopyDirectoryDeep(string sourcePath, string destinationPath)
+            {
+                CopyDirectoryRecursively(sourcePath, destinationPath);
+
+                var metas = GetFilesRecursively(destinationPath, (f) => f.EndsWith(".meta"));
+                var guidTable = new List<(string originalGuid, string newGuid)>();
+
+                foreach (string meta in metas)
+                {
+                    StreamReader file = new(meta);
+                    file.ReadLine();
+                    string guidLine = file.ReadLine();
+                    file.Close();
+                    string originalGuid = guidLine.Substring(6, guidLine.Length - 6);
+                    string newGuid = GUID.Generate().ToString().Replace("-", "");
+                    guidTable.Add((originalGuid, newGuid));
+                }
+
+                var allFiles = GetFilesRecursively(destinationPath);
+
+                foreach (string fileToModify in allFiles)
+                {
+                    string content = File.ReadAllText(fileToModify);
+
+                    foreach (var guidPair in guidTable)
+                    {
+                        content = content.Replace(guidPair.originalGuid, guidPair.newGuid);
+                    }
+
+                    File.WriteAllText(fileToModify, content);
+                }
+
+                AssetDatabase.Refresh();
+            }
+
+            private static void CopyDirectoryRecursively(string sourceDirName, string destDirName)
+            {
+                DirectoryInfo dir = new(sourceDirName);
+
+                DirectoryInfo[] dirs = dir.GetDirectories();
+
+                if (!Directory.Exists(destDirName))
+                {
+                    Directory.CreateDirectory(destDirName);
+                }
+
+                FileInfo[] files = dir.GetFiles();
+                foreach (FileInfo file in files)
+                {
+                    string temppath = Path.Combine(destDirName, file.Name);
+                    file.CopyTo(temppath, false);
+                }
+
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(destDirName, subdir.Name);
+                    CopyDirectoryRecursively(subdir.FullName, temppath);
+                }
+            }
+
+            private static List<string> GetFilesRecursively(string path, System.Func<string, bool> criteria = null, List<string> files = null)
+            {
+                if (files == null)
+                {
+                    files = new List<string>();
+                }
+
+                files.AddRange(Directory.GetFiles(path).Where(f => criteria == null || criteria(f)));
+
+                foreach (string directory in Directory.GetDirectories(path))
+                {
+                    GetFilesRecursively(directory, criteria, files);
+                }
+
+                return files;
+            }
+
+
+
+
+
+            // for non-extension methods
 
         }
-        public static void PingObject(string guid, bool select = false, bool focusProjectWindow = true) => PingObject(AssetDatabase.LoadAssetAtPath<Object>(guid.ToPath()));
-
-        public static void SelectInInspector(this Object[] objects, bool frameInHierarchy = false, bool frameInProject = false)
-        {
-            void setHierarchyLocked(bool isLocked) => allHierarchies.ForEach(r => r?.GetMemberValue("m_SceneHierarchy")?.SetMemberValue("m_RectSelectInProgress", true));
-            void setProjectLocked(bool isLocked) => allProjectBrowsers.ForEach(r => r?.SetMemberValue("m_InternalSelectionChange", isLocked));
-
-
-            if (!frameInHierarchy) setHierarchyLocked(true);
-            if (!frameInProject) setProjectLocked(true);
-
-            Selection.objects = objects?.ToArray();
-
-            if (!frameInHierarchy) EditorApplication.delayCall += () => setHierarchyLocked(false);
-            if (!frameInProject) EditorApplication.delayCall += () => setProjectLocked(false);
-
-        }
-        public static void SelectInInspector(this Object obj, bool frameInHierarchy = false, bool frameInProject = false) => new[] { obj }.SelectInInspector(frameInHierarchy, frameInProject);
-
-        static IEnumerable<EditorWindow> allHierarchies => _allHierarchies ??= typeof(Editor).Assembly.GetType("UnityEditor.SceneHierarchyWindow").GetFieldValue<IList>("s_SceneHierarchyWindows").Cast<EditorWindow>();
-        static IEnumerable<EditorWindow> _allHierarchies;
-
-        static IEnumerable<EditorWindow> allProjectBrowsers => _allProjectBrowsers ??= typeof(Editor).Assembly.GetType("UnityEditor.ProjectBrowser").GetFieldValue<IList>("s_ProjectBrowsers").Cast<EditorWindow>();
-        static IEnumerable<EditorWindow> _allProjectBrowsers;
-
-
-
-
 
 
         public static class EditorPrefsCached
         {
+            public static int GetInt(string key, int defaultValue = 0)
+            {
+                if (ints_byKey.ContainsKey(key))
+                    return ints_byKey[key];
+                else
+                    return ints_byKey[key] = EditorPrefs.GetInt(key, defaultValue);
+
+            }
             public static bool GetBool(string key, bool defaultValue = false)
             {
                 if (bools_byKey.ContainsKey(key))
                     return bools_byKey[key];
                 else
                     return bools_byKey[key] = EditorPrefs.GetBool(key, defaultValue);
-
-            }
-            public static void SetFloat(string key, float value)
-            {
-                floats_byKey[key] = value;
-
-                EditorPrefs.SetFloat(key, value);
-
-            }
-
-            public static void SetBool(string key, bool value)
-            {
-                bools_byKey[key] = value;
-
-                EditorPrefs.SetBool(key, value);
 
             }
             public static float GetFloat(string key, float defaultValue = 0)
@@ -1369,10 +1635,32 @@ namespace VInspector.Libs
 
             }
 
+            public static void SetInt(string key, int value)
+            {
+                ints_byKey[key] = value;
+
+                EditorPrefs.SetInt(key, value);
+
+            }
+            public static void SetBool(string key, bool value)
+            {
+                bools_byKey[key] = value;
+
+                EditorPrefs.SetBool(key, value);
+
+            }
+            public static void SetFloat(string key, float value)
+            {
+                floats_byKey[key] = value;
+
+                EditorPrefs.SetFloat(key, value);
+
+            }
 
 
             static Dictionary<string, bool> bools_byKey = new();
             static Dictionary<string, float> floats_byKey = new();
+            static Dictionary<string, int> ints_byKey = new();
 
         }
 
@@ -1401,19 +1689,38 @@ namespace VInspector.Libs
 
 
 
+        public static void RecordUndo(this Object o, string operationName = "") => Undo.RecordObject(o, operationName);
+        public static void Dirty(this Object o) => UnityEditor.EditorUtility.SetDirty(o);
+        public static void Save(this Object o) => AssetDatabase.SaveAssetIfDirty(o);
+
+
+
+        public static void SelectInInspector(this Object[] objects, bool frameInHierarchy = false, bool frameInProject = false)
+        {
+            void setHierarchyLocked(bool isLocked) => allHierarchies.ForEach(r => r?.GetMemberValue("m_SceneHierarchy")?.SetMemberValue("m_RectSelectInProgress", isLocked));
+            void setProjectLocked(bool isLocked) => allProjectBrowsers.ForEach(r => r?.SetMemberValue("m_InternalSelectionChange", isLocked));
+
+
+            if (!frameInHierarchy) setHierarchyLocked(true);
+            if (!frameInProject) setProjectLocked(true);
+
+            Selection.objects = objects?.ToArray();
+
+            if (!frameInHierarchy) EditorApplication.delayCall += () => setHierarchyLocked(false);
+            if (!frameInProject) EditorApplication.delayCall += () => setProjectLocked(false);
+
+        }
+        public static void SelectInInspector(this Object obj, bool frameInHierarchy = false, bool frameInProject = false) => new[] { obj }.SelectInInspector(frameInHierarchy, frameInProject);
+
+        static IEnumerable<EditorWindow> allHierarchies => _allHierarchies ??= typeof(Editor).Assembly.GetType("UnityEditor.SceneHierarchyWindow").GetFieldValue<IList>("s_SceneHierarchyWindows").Cast<EditorWindow>();
+        static IEnumerable<EditorWindow> _allHierarchies;
+
+        static IEnumerable<EditorWindow> allProjectBrowsers => _allProjectBrowsers ??= typeof(Editor).Assembly.GetType("UnityEditor.ProjectBrowser").GetFieldValue<IList>("s_ProjectBrowsers").Cast<EditorWindow>();
+        static IEnumerable<EditorWindow> _allProjectBrowsers;
+
 
 
 #endif
-
-        #endregion
-
-        #region Other
-
-
-        public static int ToInt(this System.Enum enumValue) => System.Convert.ToInt32(enumValue);
-
-
-
 
         #endregion
 

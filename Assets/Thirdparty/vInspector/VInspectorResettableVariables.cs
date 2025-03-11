@@ -12,7 +12,7 @@ using Type = System.Type;
 using static VInspector.VInspectorState;
 using static VInspector.Libs.VUtils;
 using static VInspector.Libs.VGUI;
-
+// using static VTools.VDebug;
 
 
 namespace VInspector
@@ -22,6 +22,8 @@ namespace VInspector
 
         public static void ResetButtonGUI(Rect fieldRect, SerializedProperty property, FieldInfo fieldInfo, IEnumerable<object> targets)
         {
+            // if (!fieldRect.IsHovered()) return;
+
 
             object targetWithDefaultValues = GetTargetWithDefaulValues(targets.First().GetType());
 
@@ -90,39 +92,14 @@ namespace VInspector
 
             object targetWithDefaultValues = null;
 
-            void script_2023plus()
+            void scriptOrSO()
             {
-#if UNITY_2023_2_OR_NEWER
+                if (!typeof(MonoBehaviour).IsAssignableFrom(targetType)
+                 && !typeof(ScriptableObject).IsAssignableFrom(targetType)) return;
 
-                if (!typeof(MonoBehaviour).IsAssignableFrom(targetType)) return;
+                targetWithDefaultValues = System.Activator.CreateInstance(targetType);
 
-                if (Application.isPlaying || TypeCache.GetTypesWithAttribute<ExecuteInEditMode>().Contains(targetType) || TypeCache.GetTypesWithAttribute<ExecuteAlways>().Contains(targetType))
-                    if ((targetType.GetMethodInfo("Awake") ?? targetType.GetMethodInfo("OnEnable") ?? targetType.GetMethodInfo("OnDisable") ?? targetType.GetMethodInfo("OnDestroy")) != null) return; // to avoid executing user code
-
-
-                var tempGo = EditorUtility.CreateGameObjectWithHideFlags("Dummy object for fetching default variable values for vInspector's resettable variables feature", HideFlags.HideAndDontSave, targetType);
-
-                try { targetWithDefaultValues = tempGo.GetComponent(targetType); }
-
-                finally { Object.DestroyImmediate(tempGo); }
-
-#endif
-            }
-            void script_olderVersions()
-            {
-#if !UNITY_2023_2_OR_NEWER
-
-                if (!typeof(MonoBehaviour).IsAssignableFrom(targetType)) return;
-
-                targetWithDefaultValues = ScriptableObject.CreateInstance(targetType);
-
-#endif
-            }
-            void scriptableObject()
-            {
-                if (!typeof(ScriptableObject).IsAssignableFrom(targetType)) return;
-
-                targetWithDefaultValues = ScriptableObject.CreateInstance(targetType);
+                mi_removeLogEntries.Invoke(null, new object[] { 1 << 9 });
 
             }
             void customClass()
@@ -135,9 +112,7 @@ namespace VInspector
 
             }
 
-            script_2023plus();
-            script_olderVersions();
-            scriptableObject();
+            scriptOrSO();
             customClass();
 
             return targetWithDefaulValues_byType[targetType] = targetWithDefaultValues;
@@ -146,6 +121,7 @@ namespace VInspector
 
         static Dictionary<Type, object> targetWithDefaulValues_byType = new();
 
+        static MethodInfo mi_removeLogEntries = typeof(Editor).Assembly.GetType("UnityEditor.LogEntry").GetMethod("RemoveLogEntriesByMode", maxBindingFlags);
 
 
 
