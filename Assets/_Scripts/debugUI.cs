@@ -17,7 +17,7 @@ public class debugUI : MonoBehaviour {
 
     private void Start() {
         _mc = _gm.mortar;
-        _shell = _mc.currentShell;
+        if (_mc.currentShell) _shell = _mc.currentShell;
     }
 
     private void OnGUI() {
@@ -35,7 +35,7 @@ public class debugUI : MonoBehaviour {
             debugStrings.Add($"Shell Speed: {shellRb.velocity.magnitude}");
         }
         else {
-            _shell = _mc.currentShell;
+            if (_mc.currentShell) _shell = _mc.currentShell;
         }
 
         for (int i = 0; i < debugStrings.Count; i++) {

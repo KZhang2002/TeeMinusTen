@@ -10,6 +10,7 @@ namespace _Scripts {
         [SerializeField] private GameObject barrelObj;
         private Vector3 barrelPos => barrelObj.transform.position;
         private ProjectileManager _pm;
+        
         public Shell currentShell { get; private set; }
         private Transform shellTf => currentShell.transform;
         private Rigidbody _shellRb;
