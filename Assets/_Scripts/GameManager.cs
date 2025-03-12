@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace _Scripts {
@@ -15,6 +16,10 @@ namespace _Scripts {
 
             mortar = GameObject.FindWithTag("Mortar").GetComponent<MortarController>(); // todo replace with reference?
             input = GetComponent<InputManager>();
+        }
+
+        private void Start() {
+            
         }
 
         // enum GameState {

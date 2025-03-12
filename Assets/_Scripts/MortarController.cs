@@ -42,22 +42,26 @@ namespace _Scripts {
         
         public void LoadShell(Shell shell) {
             // if (CurrentShell) Destroy(CurrentShell);
-            
-            Transform shellTr = currentShell.transform;
             currentShell = shell;
+            Transform shellTr = currentShell.transform;
             _shellRb = currentShell.GetComponent<Rigidbody>();
-            currentShell.transform.position = muzzlePos;
+            shellTr.position = muzzlePos;
             
             currentShell.transform.SetParent(barrelObj.transform);
         }
 
         public void FireShell() {
             if (!currentShell) return;
+            LoadShell(currentShell);
             // _pm.FireShell(CurrentShell);
             _shellRb.velocity = Vector3.zero;
             _shellRb.angularVelocity = Vector3.zero;
-            shellTf.localRotation = Quaternion.identity;
+            
+            shellTf.rotation = barrelObj.transform.rotation;
             shellTf.position = muzzlePos;
+            // currentShell.PointShell(barrelObj.transform.up);
+            
+            currentShell.transform.SetParent(null);
             currentShell.Fire();
             
             // CurrentShell = null;

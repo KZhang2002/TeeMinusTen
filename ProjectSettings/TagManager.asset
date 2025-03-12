@@ -7,6 +7,7 @@ TagManager:
   - Mortar
   - GameManager
   - Terrain
+  - Goal
   layers:
   - Default
   - TransparentFX

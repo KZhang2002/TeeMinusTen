@@ -14,7 +14,6 @@ public class debugUI : MonoBehaviour {
     private void Start() {
         _gm = GameManager.instance;
         _mc = _gm.mortar;
-        Debug.Log(_mc.name);
         if (_mc.currentShell) _shell = _mc.currentShell;
     }
 
