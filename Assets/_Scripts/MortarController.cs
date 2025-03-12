@@ -16,14 +16,14 @@ namespace _Scripts {
         private Rigidbody _shellRb;
 
         // Interaction
-        public float firingAngle = 45f;
+        public float firingAngle = -45f;
         public float rotationAngle = 0f;
         
         void Awake() {
             _pm = ProjectileManager.Instance;
         }
         
-        void Update() {
+        void FixedUpdate() {
             UpdatePosition();
         }
 
@@ -43,9 +43,12 @@ namespace _Scripts {
         public void LoadShell(Shell shell) {
             // if (CurrentShell) Destroy(CurrentShell);
             
-            
+            Transform shellTr = currentShell.transform;
             currentShell = shell;
             _shellRb = currentShell.GetComponent<Rigidbody>();
+            currentShell.transform.position = muzzlePos;
+            
+            currentShell.transform.SetParent(barrelObj.transform);
         }
 
         public void FireShell() {

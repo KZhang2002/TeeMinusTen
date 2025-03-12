@@ -217,7 +217,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   muzzlePosObj: {fileID: 68951873212743625}
   barrelObj: {fileID: 7863998719442206706}
-  firingAngle: 45
+  firingAngle: 135
   rotationAngle: 0
 --- !u!1 &5512454092935710273
 GameObject:

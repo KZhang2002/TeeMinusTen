@@ -3,13 +3,22 @@ using UnityEngine;
 
 namespace _Scripts {
     public class Shell : MonoBehaviour {
-        public float launchImpulse { get; private set; } = 20;
+        [SerializeField] private float _launchImpulse = 20;
+        public float launchImpulse => _launchImpulse;
+        
         private Rigidbody _rb;
+        private Collider _col;
         private GameManager _gm;
         private MortarController _mc;
+        private TrailRenderer _trailR;
+        [SerializeField] private GameObject _geo;
+
+        private Boolean _isFired = false;
 
         private void Awake() {
             _rb = GetComponent<Rigidbody>();
+            _col = GetComponent<Collider>();
+            _trailR = GetComponent<TrailRenderer>();
         }
         
         private void Start() {
@@ -21,15 +30,21 @@ namespace _Scripts {
         }
 
         private void Update() {
-            
+            if (_isFired) {
+                
+            }
         }
 
         public void PrepForLoad() {
             _rb.useGravity = false;
+            _col.enabled = false;
         }
         
         public void Fire() {
+            _trailR.Clear();
             _rb.useGravity = true;
+            _col.enabled = true;
+            _isFired = true;
             Fire(launchImpulse);
         }
 
