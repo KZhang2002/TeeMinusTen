@@ -7,8 +7,6 @@ namespace _Scripts {
         public MortarController mortar { get; private set; }
         public InputManager input { get; private set; }
         
-        
-
         private void Awake() {
             if (instance != null && instance != this)
                 Destroy(this);

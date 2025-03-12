@@ -912,10 +912,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1982669910}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e5c330a5c5414a42b960bf27d3d3a3e, type: 3}
+  m_Script: {fileID: 11500000, guid: 82147da5e3dfc264b9d14db1e1466afa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goalRadius: 8.52
+  goalRadius: 0.5
 --- !u!4 &1982669913
 Transform:
   m_ObjectHideFlags: 0
@@ -1144,6 +1144,10 @@ PrefabInstance:
     - target: {fileID: 4014330623276330124, guid: ac0ea8bc5d514bd498a2b8820c1efa2b, type: 3}
       propertyPath: m_Name
       value: DebugUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 4014330623276330124, guid: ac0ea8bc5d514bd498a2b8820c1efa2b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

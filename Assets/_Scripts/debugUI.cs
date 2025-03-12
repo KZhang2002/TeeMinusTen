@@ -11,12 +11,10 @@ public class debugUI : MonoBehaviour {
 
     private readonly GUIStyle _debugGuiStyle = new();
 
-    void Awake() {
-        _gm = GameManager.instance;
-    }
-
     private void Start() {
+        _gm = GameManager.instance;
         _mc = _gm.mortar;
+        Debug.Log(_mc.name);
         if (_mc.currentShell) _shell = _mc.currentShell;
     }
 
@@ -35,7 +33,7 @@ public class debugUI : MonoBehaviour {
             debugStrings.Add($"Shell Speed: {shellRb.velocity.magnitude}");
         }
         else {
-            if (_mc.currentShell) _shell = _mc.currentShell;
+            if (!_mc.currentShell) _shell = _mc.currentShell;
         }
 
         for (int i = 0; i < debugStrings.Count; i++) {
