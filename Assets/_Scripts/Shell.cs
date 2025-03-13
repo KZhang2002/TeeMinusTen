@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace _Scripts {
@@ -22,9 +23,10 @@ namespace _Scripts {
         }
         
         private void Start() {
-            _gm = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
+            _gm = GameManager.instance;
             _mc = _gm.mortar;
             transform.rotation = Quaternion.identity;
+            _trailR.enabled = false;
             
             PrepForLoad();
             _mc.LoadShell(this);
@@ -58,18 +60,23 @@ namespace _Scripts {
             _rb.useGravity = false;
             _col.enabled = false;
         }
-        
-        public void Fire() {
+
+        private void PrepForFire() {
             _trailR.Clear();
+            _trailR.enabled = true;
             _rb.isKinematic = false;  
             _rb.useGravity = true;
             _col.enabled = true;
             _isFired = true;
+            _rb.velocity = Vector3.zero;
+        }
+        
+        public void Fire() {
             Fire(launchImpulse);
         }
 
         public void Fire(float impulseVal) {
-            _rb.velocity = Vector3.zero;
+            PrepForFire();
             _rb.AddForce(transform.up * impulseVal, ForceMode.Impulse);
         }
 
