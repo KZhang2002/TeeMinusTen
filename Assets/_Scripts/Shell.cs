@@ -72,7 +72,6 @@ namespace _Scripts {
             _rb.velocity = Vector3.zero;
             _rb.angularVelocity = Vector3.zero;
             _rb.isKinematic = true;
-            _trailR.enabled = false;
         }
 
         private void PrepForFire() {
