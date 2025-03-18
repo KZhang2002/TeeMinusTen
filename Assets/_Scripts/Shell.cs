@@ -24,7 +24,7 @@ namespace _Scripts {
         }
         
         private void Start() {
-            _gm = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
+            _gm = GameManager.instance;
             _mc = _gm.mortar;
             transform.rotation = Quaternion.identity;
             
@@ -72,20 +72,25 @@ namespace _Scripts {
             _rb.velocity = Vector3.zero;
             _rb.angularVelocity = Vector3.zero;
             _rb.isKinematic = true;
+            _trailR.enabled = false;
         }
-        
+
+        private void PrepForFire() {
+            _trailR.Clear();
+            _trailR.enabled = true;
+            _rb.isKinematic = false;
+            _rb.useGravity = true;
+            _col.enabled = true;
+            _isFired = true;
+            _rb.velocity = Vector3.zero;
+        }
+
         public void Fire() {
             Fire(launchImpulse);
         }
 
         public void Fire(float impulseVal) {
-            _trailR.Clear();
-            _rb.isKinematic = false;  
-            _rb.useGravity = true;
-            _col.enabled = true;
-            _isFired = true;
-            
-            _rb.velocity = Vector3.zero;
+            PrepForFire();
             _rb.AddForce(transform.up * impulseVal, ForceMode.Impulse);
         }
 
