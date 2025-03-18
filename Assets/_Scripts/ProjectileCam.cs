@@ -43,6 +43,7 @@ public class ProjectileCam : MonoBehaviour
 
         // Set the new camera position, placing it at the correct distance along the z-axis
         Vector3 newCamPos = midpoint - transform.forward * newDistance;
+        // newCamPos.y += yOffset;
         _tr.position = newCamPos;
 
         // Ensure the camera always looks at the midpoint between the two targets

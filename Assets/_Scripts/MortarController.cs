@@ -24,10 +24,10 @@ namespace _Scripts {
         }
         
         void FixedUpdate() {
-            UpdatePosition();
+            UpdateAngles();
         }
 
-        void UpdatePosition() { 
+        void UpdateAngles() { 
             transform.eulerAngles = new Vector3(0, rotationAngle, 0);
             barrelObj.transform.localEulerAngles = new Vector3(0, 0, 90f - firingAngle);
         }
@@ -39,26 +39,29 @@ namespace _Scripts {
         public void ChangeRotationAngle(float n) {
             rotationAngle += n;
         }
+
+        public void RegisterShell(Shell shell) {
+            currentShell = shell;
+            _shellRb = currentShell.GetComponent<Rigidbody>();
+        }
         
         public void LoadShell(Shell shell) {
             // if (CurrentShell) Destroy(CurrentShell);
-            currentShell = shell;
-            Transform shellTr = currentShell.transform;
-            _shellRb = currentShell.GetComponent<Rigidbody>();
-            shellTr.position = muzzlePos;
-            
+            RegisterShell(shell);
+            ResetShell();
+        }
+
+        public void ResetShell() {
             currentShell.transform.SetParent(barrelObj.transform);
+            currentShell.LoadShell(muzzlePos);
         }
 
         public void FireShell() {
             if (!currentShell) return;
             LoadShell(currentShell);
-            // _pm.FireShell(CurrentShell);
-            _shellRb.velocity = Vector3.zero;
-            _shellRb.angularVelocity = Vector3.zero;
             
-            shellTf.rotation = barrelObj.transform.rotation;
-            shellTf.position = muzzlePos;
+            // shellTf.rotation = barrelObj.transform.rotation;
+            
             // currentShell.PointShell(barrelObj.transform.up);
             
             currentShell.transform.SetParent(null);

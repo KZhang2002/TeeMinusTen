@@ -32,6 +32,8 @@ namespace _Scripts {
         private void OnEnable() {
             _controls.Enable();
             _controls.Standard.Fire.performed += OnFire;
+            _controls.Standard.Reset.performed += OnReset;
+            
             _controls.Standard.Tilt.performed += OnTilt;
             _controls.Standard.Tilt.canceled += OnTilt;
             _controls.Standard.Rotate.performed += OnRotate;
@@ -54,6 +56,10 @@ namespace _Scripts {
         
         private void OnRotate(InputAction.CallbackContext context) {
             rotateInput = context.ReadValue<float>();
+        }
+
+        private void OnReset(InputAction.CallbackContext context) {
+            _mc.ResetShell();
         }
     }
 }

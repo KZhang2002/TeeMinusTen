@@ -55,6 +55,15 @@ namespace _Scripts
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Reset"",
+                    ""type"": ""Button"",
+                    ""id"": ""9cdf264b-7fd8-4553-8a81-0995c05d233b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -134,6 +143,17 @@ namespace _Scripts
                     ""action"": ""Rotate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b9e5e6f8-181a-49dc-a4db-7eb994439eb6"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -145,6 +165,7 @@ namespace _Scripts
             m_Standard_Fire = m_Standard.FindAction("Fire", throwIfNotFound: true);
             m_Standard_Tilt = m_Standard.FindAction("Tilt", throwIfNotFound: true);
             m_Standard_Rotate = m_Standard.FindAction("Rotate", throwIfNotFound: true);
+            m_Standard_Reset = m_Standard.FindAction("Reset", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -209,6 +230,7 @@ namespace _Scripts
         private readonly InputAction m_Standard_Fire;
         private readonly InputAction m_Standard_Tilt;
         private readonly InputAction m_Standard_Rotate;
+        private readonly InputAction m_Standard_Reset;
         public struct StandardActions
         {
             private @PlayerControls m_Wrapper;
@@ -216,6 +238,7 @@ namespace _Scripts
             public InputAction @Fire => m_Wrapper.m_Standard_Fire;
             public InputAction @Tilt => m_Wrapper.m_Standard_Tilt;
             public InputAction @Rotate => m_Wrapper.m_Standard_Rotate;
+            public InputAction @Reset => m_Wrapper.m_Standard_Reset;
             public InputActionMap Get() { return m_Wrapper.m_Standard; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -234,6 +257,9 @@ namespace _Scripts
                 @Rotate.started += instance.OnRotate;
                 @Rotate.performed += instance.OnRotate;
                 @Rotate.canceled += instance.OnRotate;
+                @Reset.started += instance.OnReset;
+                @Reset.performed += instance.OnReset;
+                @Reset.canceled += instance.OnReset;
             }
 
             private void UnregisterCallbacks(IStandardActions instance)
@@ -247,6 +273,9 @@ namespace _Scripts
                 @Rotate.started -= instance.OnRotate;
                 @Rotate.performed -= instance.OnRotate;
                 @Rotate.canceled -= instance.OnRotate;
+                @Reset.started -= instance.OnReset;
+                @Reset.performed -= instance.OnReset;
+                @Reset.canceled -= instance.OnReset;
             }
 
             public void RemoveCallbacks(IStandardActions instance)
@@ -269,6 +298,7 @@ namespace _Scripts
             void OnFire(InputAction.CallbackContext context);
             void OnTilt(InputAction.CallbackContext context);
             void OnRotate(InputAction.CallbackContext context);
+            void OnReset(InputAction.CallbackContext context);
         }
     }
 }
