@@ -2,17 +2,26 @@ using System;
 using UnityEngine;
 
 namespace _Scripts {
+    public enum shellType {
+        Beacon,
+        Package
+    }
+    
     public class Shell : MonoBehaviour {
         [SerializeField] private float _launchImpulse = 20;
         public float launchImpulse => _launchImpulse;
 
-        private Transform tf => transform;
+        public shellType type { get; private set; } = shellType.Beacon;
+        public int ID = -1;
         
         private Rigidbody _rb;
         private Collider _col;
         private GameManager _gm;
         private MortarController _mc;
         private TrailRenderer _trailR;
+        
+        private Transform tf => transform;
+        
         [SerializeField] private GameObject _geo;
 
         private Boolean _isFired = false;
@@ -22,8 +31,8 @@ namespace _Scripts {
             _col = GetComponent<Collider>();
             _trailR = GetComponent<TrailRenderer>();
         }
-        
-        private void Start() {
+
+        private void OnEnable() {
             _gm = GameManager.instance;
             _mc = _gm.mortar;
             transform.rotation = Quaternion.identity;

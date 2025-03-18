@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Scripts {
@@ -7,6 +8,12 @@ namespace _Scripts {
         
         public MortarController mortar { get; private set; }
         public InputManager input { get; private set; }
+
+        private int _shellIDCounter = 0;
+        private int _goalZoneIDCounter = 0;
+
+        private Dictionary<int, Shell> _shells;
+        private Dictionary<int, GoalZone> _goalZones;
         
         private void Awake() {
             if (instance != null && instance != this)
@@ -16,6 +23,16 @@ namespace _Scripts {
 
             mortar = GameObject.FindWithTag("Mortar").GetComponent<MortarController>(); // todo replace with reference?
             input = GetComponent<InputManager>();
+        }
+
+        public void RegisterShell(Shell shell) {
+            shell.ID = _shellIDCounter++;
+            _shells[shell.ID] = shell;
+        }
+        
+        public void RegisterGoalZone(GoalZone gz) {
+            gz.ID = _goalZoneIDCounter++;
+            _goalZones[gz.ID] = gz;
         }
 
         private void Start() {
