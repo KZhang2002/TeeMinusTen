@@ -191,6 +191,7 @@ MonoBehaviour:
   _launchImpulse: 20
   id: -1
   geo: {fileID: 584066039833928156}
+  isGrounded: 0
 --- !u!135 &2158104167417452974
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -222,7 +223,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -260,7 +261,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 4bb0be0ce465ba746af43229a1d4b868, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
