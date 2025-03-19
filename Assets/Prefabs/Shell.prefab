@@ -190,7 +190,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _launchImpulse: 20
   id: -1
-  _geo: {fileID: 584066039833928156}
+  geo: {fileID: 584066039833928156}
 --- !u!135 &2158104167417452974
 SphereCollider:
   m_ObjectHideFlags: 0

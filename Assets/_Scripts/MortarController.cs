@@ -9,6 +9,8 @@ namespace _Scripts {
         private Vector3 muzzlePos => muzzlePosObj.transform.position;
         [SerializeField] private GameObject barrelObj;
         private Vector3 barrelPos => barrelObj.transform.position;
+        // Direction barrel is pointed towards in world space
+        private Vector3 barrelDir => barrelObj.transform.rotation * Vector3.up;
         private ProjectileManager _pm;
         
         public Shell currentShell { get; private set; }
@@ -52,20 +54,17 @@ namespace _Scripts {
         }
 
         public void ResetShell() {
-            currentShell.transform.SetParent(barrelObj.transform);
-            currentShell.LoadShell(muzzlePos);
+            barrelObj.transform.rotation = Quaternion.identity;
+            shellTf.SetParent(barrelObj.transform, true);
+            currentShell.LoadShell(muzzlePos, barrelDir);
         }
 
         public void FireShell() {
             if (!currentShell) return;
-            LoadShell(currentShell);
-            
-            // shellTf.rotation = barrelObj.transform.rotation;
-            
-            // currentShell.PointShell(barrelObj.transform.up);
-            
-            currentShell.transform.SetParent(null);
-            currentShell.Fire();
+            shellTf.position = muzzlePos;
+            shellTf.rotation = Quaternion.identity;
+            shellTf.SetParent(null, true);
+            currentShell.Fire(barrelDir);
             
             // CurrentShell = null;
         }

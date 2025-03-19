@@ -21,12 +21,15 @@ namespace _Scripts {
         }
     
         private void OnTriggerEnter(Collider other) {
+            if (isCompleted) return;
+            
             GameObject obj = other.gameObject;
             Debug.Log("goal zone hit by obj: " + obj.name);
             bool isShell = obj.CompareTag("Shell");
             if (!isShell) return;
-
+            
             isCompleted = true;
+            Debug.Log($"completed goal: {id}");
         }
 
         // Update is called once per frame

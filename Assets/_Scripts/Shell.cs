@@ -23,7 +23,8 @@ namespace _Scripts {
         
         private Transform tf => transform;
         
-        [SerializeField] private GameObject _geo;
+        [SerializeField] private GameObject geo;
+        private Transform geoTr => geo.transform;
 
         private Boolean _isFired = false;
 
@@ -54,22 +55,30 @@ namespace _Scripts {
             // Debug.Log(transform.position);
             // Debug.Log(velocity.normalized);
         }
-
-        public void LoadShell(Vector3 newPos) {
+        
+        public void LoadShell(Vector3 newPos, Vector3 dir) {
             MakeStatic();
             
             tf.position = newPos;
-            tf.localRotation = Quaternion.identity;
-            PointShell(Vector3.zero);
+            PointShell(dir);
+            tf.rotation = Quaternion.identity;
+        }
+
+        public void LoadShell(Vector3 newPos, Quaternion dir) {
+            LoadShell(newPos, dir.eulerAngles);
+        }
+        
+        public void PointShell(Quaternion dir) {
+            PointShell(dir.eulerAngles);
         }
 
         public void PointShell(Vector3 dir) {
             if (dir.sqrMagnitude > 0f) {
-                var headingChange = Quaternion.FromToRotation(_geo.transform.up, dir);
-                _geo.transform.rotation *= headingChange;
+                var headingChange = Quaternion.FromToRotation(geo.transform.up, dir);
+                geo.transform.rotation *= headingChange;
             }
         }
-
+        
         private void OnCollisionEnter(Collision other) {
             GameObject obj = other.gameObject;
             if (!obj.CompareTag("Terrain")) return;
@@ -99,13 +108,13 @@ namespace _Scripts {
             _isFired = true;
         }
 
-        public void Fire() {
-            Fire(launchImpulse);
+        public void Fire(Vector3 dir) {
+            Fire(launchImpulse, dir);
         }
 
-        public void Fire(float impulseVal) {
+        public void Fire(float impulseVal, Vector3 dir) {
             MakeDynamic();
-            _rb.AddForce(transform.up * impulseVal, ForceMode.Impulse);
+            _rb.AddForce(dir * impulseVal, ForceMode.Impulse);
         }
     }
 }

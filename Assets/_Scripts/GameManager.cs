@@ -29,11 +29,13 @@ namespace _Scripts {
         public void RegisterShell(Shell shell) {
             shell.id = _shellIDCounter++;
             _shells[shell.id] = shell;
+            Debug.Log($"shell {shell.id} registered");
         }
         
         public void RegisterGoalZone(GoalZone gz) {
             gz.id = _goalZoneIDCounter++;
             _goalZones[gz.id] = gz;
+            Debug.Log($"goal {gz.id} registered");
         }
 
         private void Start() {
