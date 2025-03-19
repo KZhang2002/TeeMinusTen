@@ -27,6 +27,7 @@ namespace _Scripts {
         private Transform geoTr => geo.transform;
 
         private Boolean _isFired = false;
+        public Boolean isGrounded = false;
 
         private void Awake() {
             _rb = GetComponent<Rigidbody>();
@@ -45,15 +46,11 @@ namespace _Scripts {
             _gm.RegisterShell(this);
         }
 
-        private void FixedUpdate() {
-            Vector3 velocity = _rb.velocity;
+        private void LateUpdate() {
             if (_isFired) {
+                Vector3 velocity = _rb.velocity;
                 PointShell(velocity.normalized);
             }
-            
-            // Debug.DrawRay(transform.position, velocity.normalized * 5f, Color.magenta);
-            // Debug.Log(transform.position);
-            // Debug.Log(velocity.normalized);
         }
         
         public void LoadShell(Vector3 newPos, Vector3 dir) {
@@ -83,6 +80,7 @@ namespace _Scripts {
             GameObject obj = other.gameObject;
             if (!obj.CompareTag("Terrain")) return;
             MakeStatic();
+            isGrounded = true;
         }
 
         public void MakeStatic() {

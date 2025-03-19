@@ -9,9 +9,10 @@ namespace _Scripts {
         private Vector3 muzzlePos => muzzlePosObj.transform.position;
         [SerializeField] private GameObject barrelObj;
         private Vector3 barrelPos => barrelObj.transform.position;
+        
         // Direction barrel is pointed towards in world space
         private Vector3 barrelDir => barrelObj.transform.rotation * Vector3.up;
-        private ProjectileManager _pm;
+        
         
         public Shell currentShell { get; private set; }
         private Transform shellTf => currentShell.transform;
@@ -20,10 +21,6 @@ namespace _Scripts {
         // Interaction
         public float firingAngle = -45f;
         public float rotationAngle = 0f;
-        
-        void Awake() {
-            _pm = ProjectileManager.Instance;
-        }
         
         void FixedUpdate() {
             UpdateAngles();

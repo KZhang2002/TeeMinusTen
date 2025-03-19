@@ -24,13 +24,27 @@ namespace _Scripts {
             if (isCompleted) return;
             
             GameObject obj = other.gameObject;
-            Debug.Log("goal zone hit by obj: " + obj.name);
+            // Debug.Log("goal zone hit by obj: " + obj.name);
             bool isShell = obj.CompareTag("Shell");
             if (!isShell) return;
             
             isCompleted = true;
-            Debug.Log($"completed goal: {id}");
+            Debug.Log($"completed goal. ID: {id}");
+            _gm.CompleteGoal(id);
         }
+        
+        // private void OnTriggerExit(Collider other) {
+        //     if (isCompleted) return;
+        //     
+        //     GameObject obj = other.gameObject;
+        //     // Debug.Log("goal zone hit by obj: " + obj.name);
+        //     bool isShell = obj.CompareTag("Shell");
+        //     if (!isShell) return;
+        //     
+        //     isCompleted = true;
+        //     Debug.Log($"completed goal. ID: {id}");
+        //     _gm.CompleteGoal(id);
+        // }
 
         // Update is called once per frame
         void Update() {

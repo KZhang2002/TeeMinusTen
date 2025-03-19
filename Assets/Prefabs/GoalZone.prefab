@@ -46,6 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goalRadius: 0.5
+  isCompleted: 0
+  id: -1
 --- !u!135 &88076825934270281
 SphereCollider:
   m_ObjectHideFlags: 0
