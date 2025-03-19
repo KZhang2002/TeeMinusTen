@@ -8,6 +8,7 @@ TagManager:
   - GameManager
   - Terrain
   - Goal
+  - Shell
   layers:
   - Default
   - TransparentFX

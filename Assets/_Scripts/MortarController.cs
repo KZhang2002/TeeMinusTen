@@ -40,14 +40,14 @@ namespace _Scripts {
             rotationAngle += n;
         }
 
-        public void RegisterShell(Shell shell) {
+        public void RegisterShellRef(Shell shell) {
             currentShell = shell;
             _shellRb = currentShell.GetComponent<Rigidbody>();
         }
         
         public void LoadShell(Shell shell) {
             // if (CurrentShell) Destroy(CurrentShell);
-            RegisterShell(shell);
+            RegisterShellRef(shell);
             ResetShell();
         }
 

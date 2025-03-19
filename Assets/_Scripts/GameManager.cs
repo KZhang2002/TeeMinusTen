@@ -6,14 +6,15 @@ namespace _Scripts {
     public class GameManager : MonoBehaviour {
         public static GameManager instance { get; private set; }
         
-        public MortarController mortar { get; private set; }
+        // public MortarController mortar { get; private set; }
+        public MortarController mortar;
         public InputManager input { get; private set; }
 
         private int _shellIDCounter = 0;
         private int _goalZoneIDCounter = 0;
 
-        private Dictionary<int, Shell> _shells;
-        private Dictionary<int, GoalZone> _goalZones;
+        private Dictionary<int, Shell> _shells = new();
+        private Dictionary<int, GoalZone> _goalZones = new();
         
         private void Awake() {
             if (instance != null && instance != this)
@@ -26,13 +27,13 @@ namespace _Scripts {
         }
 
         public void RegisterShell(Shell shell) {
-            shell.ID = _shellIDCounter++;
-            _shells[shell.ID] = shell;
+            shell.id = _shellIDCounter++;
+            _shells[shell.id] = shell;
         }
         
         public void RegisterGoalZone(GoalZone gz) {
-            gz.ID = _goalZoneIDCounter++;
-            _goalZones[gz.ID] = gz;
+            gz.id = _goalZoneIDCounter++;
+            _goalZones[gz.id] = gz;
         }
 
         private void Start() {

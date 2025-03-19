@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts {
     public enum shellType {
@@ -12,7 +13,7 @@ namespace _Scripts {
         public float launchImpulse => _launchImpulse;
 
         public shellType type { get; private set; } = shellType.Beacon;
-        public int ID = -1;
+        public int id = -1;
         
         private Rigidbody _rb;
         private Collider _col;
@@ -32,14 +33,15 @@ namespace _Scripts {
             _trailR = GetComponent<TrailRenderer>();
         }
 
-        private void OnEnable() {
+        private void Start() {
             _gm = GameManager.instance;
             _mc = _gm.mortar;
             transform.rotation = Quaternion.identity;
             
             MakeStatic();
             // _mc.LoadShell(this);
-            _mc.RegisterShell(this);
+            _mc.RegisterShellRef(this);
+            _gm.RegisterShell(this);
         }
 
         private void FixedUpdate() {
@@ -69,28 +71,32 @@ namespace _Scripts {
         }
 
         private void OnCollisionEnter(Collision other) {
-            if (other.gameObject.CompareTag("Terrain")) {
-                MakeStatic();
-            }
+            GameObject obj = other.gameObject;
+            if (!obj.CompareTag("Terrain")) return;
+            MakeStatic();
         }
 
         public void MakeStatic() {
             _isFired = false;
+            
             _rb.useGravity = false;
-            _col.enabled = false;
-            _rb.velocity = Vector3.zero;
-            _rb.angularVelocity = Vector3.zero;
             _rb.isKinematic = true;
+            
+            _col.enabled = false;
+            
+            _trailR.emitting = false;
         }
 
-        private void PrepForFire() {
+        private void MakeDynamic() {
             _trailR.Clear();
-            _trailR.enabled = true;
+            _trailR.emitting = true;
+            
             _rb.isKinematic = false;
             _rb.useGravity = true;
+            _rb.velocity = Vector3.zero;
+            
             _col.enabled = true;
             _isFired = true;
-            _rb.velocity = Vector3.zero;
         }
 
         public void Fire() {
@@ -98,14 +104,8 @@ namespace _Scripts {
         }
 
         public void Fire(float impulseVal) {
-            PrepForFire();
+            MakeDynamic();
             _rb.AddForce(transform.up * impulseVal, ForceMode.Impulse);
         }
-
-        // private void OnCollisionEnter(Collision col) {
-        //     GameObject obj = col.gameObject;
-        //     if (!obj.CompareTag("Terrain")) return;
-        //     if ()
-        // }
     }
 }

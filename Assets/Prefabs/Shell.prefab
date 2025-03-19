@@ -150,12 +150,12 @@ GameObject:
   m_Component:
   - component: {fileID: 5967970088581577049}
   - component: {fileID: 8692520086812046307}
-  - component: {fileID: 4103687968312224196}
+  - component: {fileID: 2158104167417452974}
   - component: {fileID: 9042503928350092408}
   - component: {fileID: 8482815735346819093}
   m_Layer: 0
   m_Name: Shell
-  m_TagString: Untagged
+  m_TagString: Shell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -189,9 +189,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _launchImpulse: 20
+  id: -1
   _geo: {fileID: 584066039833928156}
---- !u!136 &4103687968312224196
-CapsuleCollider:
+--- !u!135 &2158104167417452974
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -208,10 +209,8 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.155
-  m_Height: 0.6
-  m_Direction: 1
+  serializedVersion: 3
+  m_Radius: 0.14
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &9042503928350092408
 Rigidbody:
