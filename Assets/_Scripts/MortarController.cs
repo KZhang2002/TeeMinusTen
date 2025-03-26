@@ -1,34 +1,52 @@
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VInspector.Libs;
 
 namespace _Scripts {
     public class MortarController : MonoBehaviour {
-        // References
+        // Inspector References
         [SerializeField] private GameObject muzzlePosObj;
         private Vector3 muzzlePos => muzzlePosObj.transform.position;
         [SerializeField] private GameObject barrelObj;
         private Vector3 barrelPos => barrelObj.transform.position;
+        private Vector3 barrelDir => barrelObj.transform.rotation * Vector3.up; // Direction the barrel is pointed towards in world space
         
-        // Direction barrel is pointed towards in world space
-        private Vector3 barrelDir => barrelObj.transform.rotation * Vector3.up;
+        // Mortar Attributes
+        public float minFiringAngle = 10f;
+        public float maxFiringAngle = 100f;
+        public float startingFiringAngle = 45f;
+        public float startingRotationAngle = 0f;
         
-        
+        // Shell References
         public Shell currentShell { get; private set; }
         private Transform shellTf => currentShell.transform;
-        private Rigidbody _shellRb;
-
-        // Interaction
-        public float firingAngle = -45f;
-        public float rotationAngle = 0f;
         
+        // Interaction
+        public float firingAngle;
+        public float rotationAngle = 0f;
+
+        private void Awake() {
+            firingAngle = startingFiringAngle;
+        }
+
+        private void ResetAngles() {
+            ResetAngles(startingFiringAngle, startingRotationAngle);
+        }
+
+        private void ResetAngles(float fireAngle, float rotAngle) {
+            firingAngle = fireAngle;
+            rotationAngle = rotAngle;
+        }
+
         void FixedUpdate() {
             UpdateAngles();
         }
 
-        void UpdateAngles() { 
+        void UpdateAngles() {
+            firingAngle = Mathf.Clamp(firingAngle, minFiringAngle, maxFiringAngle);
             transform.eulerAngles = new Vector3(0, rotationAngle, 0);
-            barrelObj.transform.localEulerAngles = new Vector3(0, 0, 90f - firingAngle);
+            barrelObj.transform.localEulerAngles = new Vector3(0, 0, firingAngle - 90f);
         }
 
         public void ChangeFiringAngle(float n) {
@@ -41,7 +59,6 @@ namespace _Scripts {
 
         public void RegisterShellRef(Shell shell) {
             currentShell = shell;
-            _shellRb = currentShell.GetComponent<Rigidbody>();
         }
         
         public void LoadShell(Shell shell) {

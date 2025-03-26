@@ -14,15 +14,16 @@ namespace _Scripts {
         public static GameManager instance { get; private set; }
         
         public MortarController mortar;
-        public InputManager input { get; private set; }
+        // public InputManager input { get; private set; }
 
         private int _shellIDCounter = 0;
-        private int _goalZoneIDCounter = 0;
-        private int _goalCount = 0;
-        private int _completedGoalsCounter = 0;
+        private int _zoneIDCounter = 0;
+        private int _targetCount = 0;
+        private int _completedTargetsCounter = 0;
+        private bool _reachedExtract = false;
 
         private Dictionary<int, Shell> _shells = new();
-        private Dictionary<int, GoalZone> _goalZones = new();
+        private Dictionary<int, Zone> _zones = new();
 
         private void Awake() {
             if (instance != null && instance != this)
@@ -31,20 +32,34 @@ namespace _Scripts {
                 instance = this;
 
             mortar = GameObject.FindWithTag("Mortar").GetComponent<MortarController>(); // todo replace with reference?
-            input = GetComponent<InputManager>();
+            // input = GetComponent<InputManager>();
         }
 
-        public void RegisterGoalZone(GoalZone gz) {
-            gz.id = _goalZoneIDCounter++;
-            _goalZones[gz.id] = gz;
-            Debug.Log($"goal {gz.id} registered");
-            ++_goalCount;
+        public void RegisterZone(Zone zone) {
+            zone.id = _zoneIDCounter++;
+            _zones[zone.id] = zone;
+            Debug.Log($"goal {zone.id} registered");
+            if (zone.Type == zoneType.Target) {
+                ++_targetCount;
+            }
+        }
+        
+        public void TriggerZone(int zoneID) {
+            Zone zone = _zones[zoneID];
+            if (zone.Type == zoneType.Extract) {
+                _reachedExtract = true;
+                return;
+            }
+            ++_completedTargetsCounter;
+            if (_targetCount > 0 && _completedTargetsCounter == _targetCount) {
+                Debug.Log("Level completed");
+            }
         }
 
         public void CompleteGoal(int goalID) {
-            _goalZones[goalID].isCompleted = true;
-            ++_completedGoalsCounter;
-            if (_goalCount > 0 && _completedGoalsCounter == _goalCount) {
+            // _zones[goalID].IsCompleted = true;
+            ++_completedTargetsCounter;
+            if (_targetCount > 0 && _completedTargetsCounter == _targetCount) {
                 Debug.Log("Level completed");
             }
         }

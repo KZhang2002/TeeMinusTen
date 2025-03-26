@@ -92,7 +92,7 @@ namespace _Scripts
                 {
                     ""name"": ""negative"",
                     ""id"": ""51e2dccd-529b-4f8a-a2f2-da805d95ae06"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -103,7 +103,7 @@ namespace _Scripts
                 {
                     ""name"": ""positive"",
                     ""id"": ""8d2b2186-65b7-4023-b6bd-f9b80357dd68"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

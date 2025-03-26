@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 9042503928350092408}
   - component: {fileID: 8482815735346819093}
   m_Layer: 0
-  m_Name: Shell
+  m_Name: Shell - M49A2
   m_TagString: Shell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -188,7 +188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30ec6080f41c44a0b88e928ac7a51fd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _launchImpulse: 20
+  _launchImpulse: 210
   id: -1
   geo: {fileID: 584066039833928156}
   isGrounded: 0
@@ -221,8 +221,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7742661667753852487}
   serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
+  m_Mass: 1.25
+  m_Drag: 0.1
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
