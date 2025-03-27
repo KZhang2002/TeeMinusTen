@@ -21,6 +21,8 @@ namespace _Scripts {
         private int _targetCount = 0;
         private int _completedTargetsCounter = 0;
         private bool _reachedExtract = false;
+        
+        private Zone _extractZone;
 
         private Dictionary<int, Shell> _shells = new();
         private Dictionary<int, Zone> _zones = new();
@@ -36,9 +38,22 @@ namespace _Scripts {
         }
 
         public void RegisterZone(Zone zone) {
+            if (zone.Type == zoneType.Extract) {
+                if (_extractZone) {
+                    Debug.LogWarning("Encountered extra extract zone. Please use only one extract zone per level.");
+                }
+                else {
+                    _extractZone = zone;
+                }
+                
+                return;
+            }
+            
             zone.id = _zoneIDCounter++;
             _zones[zone.id] = zone;
+            
             Debug.Log($"goal {zone.id} registered");
+            // unnecessary type check
             if (zone.Type == zoneType.Target) {
                 ++_targetCount;
             }
@@ -68,6 +83,10 @@ namespace _Scripts {
             shell.id = _shellIDCounter++;
             _shells[shell.id] = shell;
             Debug.Log($"shell {shell.id} registered");
+        }
+
+        private void TeleportMortar(Vector3 position) {
+            
         }
 
     }

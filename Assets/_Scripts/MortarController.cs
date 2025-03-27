@@ -39,11 +39,11 @@ namespace _Scripts {
             rotationAngle = rotAngle;
         }
 
-        void FixedUpdate() {
+        private void FixedUpdate() {
             UpdateAngles();
         }
 
-        void UpdateAngles() {
+        private void UpdateAngles() {
             firingAngle = Mathf.Clamp(firingAngle, minFiringAngle, maxFiringAngle);
             transform.eulerAngles = new Vector3(0, rotationAngle, 0);
             barrelObj.transform.localEulerAngles = new Vector3(0, 0, firingAngle - 90f);

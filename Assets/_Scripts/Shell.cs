@@ -39,8 +39,8 @@ namespace _Scripts {
             transform.rotation = Quaternion.identity;
 
             MakeStatic();
-            // _mc.LoadShell(this);
-            _mc.RegisterShellRef(this);
+            _mc.LoadShell(this);
+            // _mc.RegisterShellRef(this);
             _gm.RegisterShell(this);
         }
 

@@ -60,7 +60,7 @@ namespace _Scripts {
     
         void OnDrawGizmos() {
             Color sphereColor;
-            if (IsCompleted) sphereColor = Color.green;
+            if (IsCompleted) sphereColor = Color.black;
             else sphereColor = gizmoColor;
         
             sphereColor.a = 0.5f; // make transparent
