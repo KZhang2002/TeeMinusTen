@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts {
     public enum zoneType {
@@ -11,9 +12,10 @@ namespace _Scripts {
         [SerializeField] protected float goalRadius = 0.5f;
         protected SphereCollider Col;
         protected GameManager Gm;
-        public bool IsCompleted { get; protected set; } = false;
-        public zoneType Type = zoneType.Target;
+        public bool isCompleted { get; protected set; } = false;
+        public zoneType type = zoneType.Target;
         [SerializeField] protected Color gizmoColor = Color.blue;
+        [SerializeField] private bool _isOpen = true;
     
         public int id = -1;
 
@@ -25,17 +27,20 @@ namespace _Scripts {
         private void Start() {
             Gm = GameManager.instance;
             Gm.RegisterZone(this);
+            if (type == zoneType.Extract) {
+                _isOpen = false;
+            }
         }
     
         private void OnTriggerEnter(Collider other) {
-            if (IsCompleted) return;
+            if (isCompleted) return;
             
             GameObject obj = other.gameObject;
             // Debug.Log("goal zone hit by obj: " + obj.name);
             bool isShell = obj.CompareTag("Shell");
             if (!isShell) return;
             
-            IsCompleted = true;
+            isCompleted = true;
             Debug.Log($"completed goal. ID: {id}");
             Gm.CompleteGoal(id);
         }
@@ -55,13 +60,18 @@ namespace _Scripts {
 
         // Update is called once per frame
         void Update() {
-        
+            
         }
     
         void OnDrawGizmos() {
-            Color sphereColor;
-            if (IsCompleted) sphereColor = Color.black;
-            else sphereColor = gizmoColor;
+            Color sphereColor = Color.magenta;
+
+            if (type == zoneType.Extract) {
+                sphereColor = _isOpen ? Color.green : Color.black;
+            }
+            else if (type == zoneType.Target) {
+                sphereColor = isCompleted ? Color.black : gizmoColor;
+            }
         
             sphereColor.a = 0.5f; // make transparent
             Gizmos.color = sphereColor;

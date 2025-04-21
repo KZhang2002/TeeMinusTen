@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 
 namespace _Scripts {
-    public class ProjectileManager : MonoBehaviour {
-        public static ProjectileManager Instance { get; private set; }
+    public class ShellPrediction : MonoBehaviour {
+        public static ShellPrediction Instance { get; private set; }
         private Shell _shell;
         private Rigidbody _shellRB;
 
@@ -14,12 +14,6 @@ namespace _Scripts {
             else {
                 Instance = this;
             }
-        }
-
-        public void FireShell(Shell shell) {
-            _shellRB = shell.GetComponent<Rigidbody>();
-            _shellRB.velocity = transform.up * shell.launchImpulse;
-            
         }
         
     }

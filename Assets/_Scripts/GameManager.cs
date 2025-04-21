@@ -38,7 +38,7 @@ namespace _Scripts {
         }
 
         public void RegisterZone(Zone zone) {
-            if (zone.Type == zoneType.Extract) {
+            if (zone.type == zoneType.Extract) {
                 if (_extractZone) {
                     Debug.LogWarning("Encountered extra extract zone. Please use only one extract zone per level.");
                 }
@@ -54,14 +54,14 @@ namespace _Scripts {
             
             Debug.Log($"goal {zone.id} registered");
             // unnecessary type check
-            if (zone.Type == zoneType.Target) {
+            if (zone.type == zoneType.Target) {
                 ++_targetCount;
             }
         }
         
         public void TriggerZone(int zoneID) {
             Zone zone = _zones[zoneID];
-            if (zone.Type == zoneType.Extract) {
+            if (zone.type == zoneType.Extract) {
                 _reachedExtract = true;
                 return;
             }
@@ -75,7 +75,7 @@ namespace _Scripts {
             // _zones[goalID].IsCompleted = true;
             ++_completedTargetsCounter;
             if (_targetCount > 0 && _completedTargetsCounter == _targetCount) {
-                Debug.Log("Level completed");
+                Debug.Log("All goals completed. Go to extract.");
             }
         }
 

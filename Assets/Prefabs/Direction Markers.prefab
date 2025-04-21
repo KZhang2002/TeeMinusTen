@@ -47,6 +47,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MarkerNorth
       objectReference: {fileID: 0}
+    - target: {fileID: 6224026449774808099, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7064674924596377248, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -112,6 +116,10 @@ PrefabInstance:
     - target: {fileID: 463305008681563328, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
       propertyPath: m_Name
       value: MarkerEast
+      objectReference: {fileID: 0}
+    - target: {fileID: 6224026449774808099, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7064674924596377248, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -179,6 +187,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MarkerSouth
       objectReference: {fileID: 0}
+    - target: {fileID: 6224026449774808099, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7064674924596377248, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -244,6 +256,10 @@ PrefabInstance:
     - target: {fileID: 463305008681563328, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
       propertyPath: m_Name
       value: MarkerWest
+      objectReference: {fileID: 0}
+    - target: {fileID: 6224026449774808099, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7064674924596377248, guid: acc2fc2e4126b154d955427b1b05f59e, type: 3}
       propertyPath: m_Materials.Array.data[0]

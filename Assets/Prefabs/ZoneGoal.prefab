@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5104625458890189504}
   - component: {fileID: 88076825934270281}
   m_Layer: 0
-  m_Name: GoalZone
+  m_Name: ZoneGoal
   m_TagString: Goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,11 +42,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2009475952230656519}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82147da5e3dfc264b9d14db1e1466afa, type: 3}
+  m_Script: {fileID: 11500000, guid: 66ccbb7812d74bb28c62c02909901c2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   goalRadius: 0.5
-  isCompleted: 0
+  Type: 1
+  gizmoColor: {r: 0, g: 0, b: 1, a: 1}
   id: -1
 --- !u!135 &88076825934270281
 SphereCollider:
