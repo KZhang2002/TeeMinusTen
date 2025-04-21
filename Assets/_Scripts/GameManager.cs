@@ -76,6 +76,7 @@ namespace _Scripts {
             ++_completedTargetsCounter;
             if (_targetCount > 0 && _completedTargetsCounter == _targetCount) {
                 Debug.Log("All goals completed. Go to extract.");
+                _extractZone.OpenExtract();
             }
         }
 
@@ -83,6 +84,11 @@ namespace _Scripts {
             shell.id = _shellIDCounter++;
             _shells[shell.id] = shell;
             Debug.Log($"shell {shell.id} registered");
+        }
+
+        public void Extract() {
+            //todo add code for ending level here.
+            Debug.Log("End level.");
         }
 
         private void TeleportMortar(Vector3 position) {

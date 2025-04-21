@@ -15,7 +15,8 @@ namespace _Scripts {
         public bool isCompleted { get; protected set; } = false;
         public zoneType type = zoneType.Target;
         [SerializeField] protected Color gizmoColor = Color.blue;
-        [SerializeField] private bool _isOpen = true;
+        
+        [SerializeField] private bool _isOpen = false;
     
         public int id = -1;
 
@@ -43,6 +44,18 @@ namespace _Scripts {
             isCompleted = true;
             Debug.Log($"completed goal. ID: {id}");
             Gm.CompleteGoal(id);
+
+            if (type == zoneType.Extract && _isOpen) {
+                isCompleted = true;
+                Gm.Extract();
+            }
+        }
+
+        //todo connect to event system
+        public void OpenExtract() {
+            if (type != zoneType.Extract) return;
+
+            _isOpen = true;
         }
         
         // private void OnTriggerExit(Collider other) {
@@ -64,14 +77,13 @@ namespace _Scripts {
         }
     
         void OnDrawGizmos() {
-            Color sphereColor = Color.magenta;
+            Color sphereColor = gizmoColor;
 
-            if (type == zoneType.Extract) {
-                sphereColor = _isOpen ? Color.green : Color.black;
-            }
-            else if (type == zoneType.Target) {
-                sphereColor = isCompleted ? Color.black : gizmoColor;
-            }
+            // if (type == zoneType.Extract) {
+            //     sphereColor = _isOpen ? Color.green : Color.black;
+            // }
+
+            if (isCompleted || !_isOpen) sphereColor = Color.black;
         
             sphereColor.a = 0.5f; // make transparent
             Gizmos.color = sphereColor;
