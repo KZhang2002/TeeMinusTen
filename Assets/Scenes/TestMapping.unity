@@ -1084,7 +1084,7 @@ PrefabInstance:
     - target: {fileID: 2714505241964273963, guid: 7acf7d9fef203f840b7ee2438cac5472, type: 3}
       propertyPath: m_MaterialTemplate
       value: 
-      objectReference: {fileID: 2100000, guid: 5329c279cf98d2c4982c988548099e55, type: 2}
+      objectReference: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
     - target: {fileID: 5511220608585494124, guid: 7acf7d9fef203f840b7ee2438cac5472, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
@@ -1214,6 +1214,10 @@ PrefabInstance:
     - target: {fileID: 6834509242250494344, guid: fc547d8db88bbdf4f9a0c12c76fc4a24, type: 3}
       propertyPath: m_Name
       value: Map
+      objectReference: {fileID: 0}
+    - target: {fileID: 6834509242250494344, guid: fc547d8db88bbdf4f9a0c12c76fc4a24, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
