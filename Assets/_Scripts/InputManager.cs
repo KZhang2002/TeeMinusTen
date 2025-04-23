@@ -39,7 +39,7 @@ namespace _Scripts {
             _controls.Standard.Rotate.performed += OnRotate;
             _controls.Standard.Rotate.canceled += OnRotate;
         }
-
+        
         private void OnDisable() {
             _controls.Disable();
         }
