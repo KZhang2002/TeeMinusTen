@@ -64,6 +64,15 @@ namespace _Scripts
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FastRotate"",
+                    ""type"": ""Value"",
+                    ""id"": ""9b239141-614a-40d4-b5b8-54aeadea2020"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -145,6 +154,39 @@ namespace _Scripts
                     ""isPartOfComposite"": true
                 },
                 {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""d83d7f0c-47d7-46b3-8132-a5d38d7f931b"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""b4fd631e-491e-4d01-bc74-ac7752f26b3a"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""63a06d9f-73d5-4cc4-9b72-50bf673a6c9f"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": """",
                     ""id"": ""b9e5e6f8-181a-49dc-a4db-7eb994439eb6"",
                     ""path"": ""<Keyboard>/r"",
@@ -154,6 +196,50 @@ namespace _Scripts
                     ""action"": ""Reset"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""237c8a19-98d3-4b89-a088-2959cb4b93f4"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FastRotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""28ab82b5-6649-4cc3-8fd2-5e6af077be67"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FastRotate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Negative"",
+                    ""id"": ""0ee8108a-bb1e-468a-b4dd-98e15860eb2a"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FastRotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Positive"",
+                    ""id"": ""70a5b926-9f5a-4f32-a7fc-aa673c768a4a"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FastRotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -166,6 +252,7 @@ namespace _Scripts
             m_Standard_Tilt = m_Standard.FindAction("Tilt", throwIfNotFound: true);
             m_Standard_Rotate = m_Standard.FindAction("Rotate", throwIfNotFound: true);
             m_Standard_Reset = m_Standard.FindAction("Reset", throwIfNotFound: true);
+            m_Standard_FastRotate = m_Standard.FindAction("FastRotate", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -231,6 +318,7 @@ namespace _Scripts
         private readonly InputAction m_Standard_Tilt;
         private readonly InputAction m_Standard_Rotate;
         private readonly InputAction m_Standard_Reset;
+        private readonly InputAction m_Standard_FastRotate;
         public struct StandardActions
         {
             private @PlayerControls m_Wrapper;
@@ -239,6 +327,7 @@ namespace _Scripts
             public InputAction @Tilt => m_Wrapper.m_Standard_Tilt;
             public InputAction @Rotate => m_Wrapper.m_Standard_Rotate;
             public InputAction @Reset => m_Wrapper.m_Standard_Reset;
+            public InputAction @FastRotate => m_Wrapper.m_Standard_FastRotate;
             public InputActionMap Get() { return m_Wrapper.m_Standard; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -260,6 +349,9 @@ namespace _Scripts
                 @Reset.started += instance.OnReset;
                 @Reset.performed += instance.OnReset;
                 @Reset.canceled += instance.OnReset;
+                @FastRotate.started += instance.OnFastRotate;
+                @FastRotate.performed += instance.OnFastRotate;
+                @FastRotate.canceled += instance.OnFastRotate;
             }
 
             private void UnregisterCallbacks(IStandardActions instance)
@@ -276,6 +368,9 @@ namespace _Scripts
                 @Reset.started -= instance.OnReset;
                 @Reset.performed -= instance.OnReset;
                 @Reset.canceled -= instance.OnReset;
+                @FastRotate.started -= instance.OnFastRotate;
+                @FastRotate.performed -= instance.OnFastRotate;
+                @FastRotate.canceled -= instance.OnFastRotate;
             }
 
             public void RemoveCallbacks(IStandardActions instance)
@@ -299,6 +394,7 @@ namespace _Scripts
             void OnTilt(InputAction.CallbackContext context);
             void OnRotate(InputAction.CallbackContext context);
             void OnReset(InputAction.CallbackContext context);
+            void OnFastRotate(InputAction.CallbackContext context);
         }
     }
 }
