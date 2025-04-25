@@ -15,6 +15,8 @@ namespace _Scripts {
         private float tiltInput = 0f;
         private float rotateInput = 0f;
 
+        private bool isSpeedMod = false;
+
         private void Awake() {
             _controls = new PlayerControls();
         }
@@ -25,6 +27,7 @@ namespace _Scripts {
         }
 
         private void Update() {
+           
             _mc.ChangeFiringAngle(tiltInput * firingAngleIncrement);
             _mc.ChangeRotationAngle(rotateInput * rotationAngleIncrement);
         }
@@ -36,8 +39,12 @@ namespace _Scripts {
             
             _controls.Standard.Tilt.performed += OnTilt;
             _controls.Standard.Tilt.canceled += OnTilt;
+            
             _controls.Standard.Rotate.performed += OnRotate;
             _controls.Standard.Rotate.canceled += OnRotate;
+            
+            _controls.Standard.SpeedModifier.performed += _ => isSpeedMod = true;
+            _controls.Standard.SpeedModifier.canceled += _ => isSpeedMod = false;
         }
         
         private void OnDisable() {
