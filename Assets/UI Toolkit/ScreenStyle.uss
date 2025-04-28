@@ -1,0 +1,19 @@
+.header {
+    font-size: 40px;
+    color: rgb(255, 255, 255);
+}
+
+.button {
+    font-size: 75px;
+    -unity-font: url("project://database/Assets/Fonts/modern-proggy-tiny/ProggyTiny.ttf?fileID=12800000&guid=33f1463ca56a5f2469e4ee94d71b5478&type=3#ProggyTiny");
+    -unity-font-definition: initial;
+    -unity-font-style: normal;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.text {
+    -unity-font-definition: initial;
+    -unity-font: url("project://database/Assets/Fonts/modern-proggy-tiny/ProggyTiny.ttf?fileID=12800000&guid=33f1463ca56a5f2469e4ee94d71b5478&type=3#ProggyTiny");
+    font-size: 75px;
+}

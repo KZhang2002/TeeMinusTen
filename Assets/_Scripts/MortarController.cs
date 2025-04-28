@@ -55,6 +55,8 @@ namespace _Scripts {
         
         public void ChangeRotationAngle(float n) {
             rotationAngle += n;
+            if (rotationAngle >= 360) rotationAngle -= 360;
+            else if (rotationAngle < 0) rotationAngle += 360;
         }
 
         public void RegisterShellRef(Shell shell) {

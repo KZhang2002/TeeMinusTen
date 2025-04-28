@@ -1,17 +1,22 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace _Scripts {
     public class TopoLines : MonoBehaviour 
     {
         public Terrain terrain;
 	
-        public int numberOfBands = 100;
+        public int numberOfBands = 10;
+        public int bandDistance = 100;
+        public bool useDistance = false;
 	
         public Color bandColor = Color.white;
         public Color bkgColor = Color.clear;
 	
         public Renderer outputPlain;
+        public RawImage outputUI;
+        public Texture2D outputTexture;
 	
         public Texture2D topoMap;
         public Texture2D topoUpscaleMap;
@@ -63,10 +68,15 @@ namespace _Scripts {
         {
             //topoMap = ContourMap.FromTerrain( terrain );
             //topoMap = ContourMap.FromTerrain( terrain, numberOfBands );
-            topoMap = ContourMap.FromTerrain( terrain, numberOfBands, bandColor, bkgColor, true );
+            topoMap = ContourMap.FromTerrain( terrain, useDistance ? bandDistance : numberOfBands, bandColor, bkgColor, true );
 		
             if ( outputPlain ) {
                 outputPlain.material.mainTexture = topoMap;
+                outputTexture = topoMap;
+            }
+            
+            if (outputUI) {
+                outputUI.texture = topoMap;
             }
         }
         

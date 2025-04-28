@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/ScreenStyle.uss?fileID=7433441132597879392&amp;guid=955a0bfd08a05d94e93b69d4cc59b850&amp;type=3#ScreenStyle" />
+    <ui:VisualElement name="Frame" style="background-image: url(&quot;project://database/Assets/Images/terminalFrame.png?fileID=2800000&amp;guid=dcbc8d09ce84c494896d88205683d8b7&amp;type=3#terminalFrame&quot;); flex-direction: row; height: 1080px; width: 1920px; position: absolute; background-color: rgb(7, 7, 7);" />
+    <ui:VisualElement name="TopoGraph" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Terrain/MapTextures/map.jpg?fileID=2800000&amp;guid=5699231ba4f28aa43a91172b6e35da3c&amp;type=3#map&quot;); width: 480px; height: 480px; position: absolute; top: 61px; left: 1303px;" />
+    <ui:VisualElement name="MortarCam" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Visuals/TrailCamRenderTexture.renderTexture?fileID=8400000&amp;guid=f79daf8bb760cc34b8a9401b9d0eefc2&amp;type=2#TrailCamRenderTexture&quot;); width: 640px; height: 480px; align-items: auto; justify-content: space-around; align-self: center; position: absolute; top: 61px; left: 609px;" />
+    <ui:VisualElement name="Container" style="flex-grow: 1; margin-top: 34px; margin-right: 34px; margin-bottom: 34px; margin-left: 34px; padding-left: 13px; padding-top: 6px; padding-bottom: 6px; padding-right: 13px; align-items: center; background-color: rgba(14, 13, 13, 0);">
+        <ui:VisualElement style="flex-grow: 1; position: absolute; top: 57px; left: 74px;">
+            <ui:Label tabindex="-1" text="TERMINAL" parse-escape-sequences="true" display-tooltip-when-elided="true" name="header" class="text" style="color: rgb(255, 255, 255);" />
+            <ui:Button text="BUTTON" parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" style="width: 220px; height: 60px; -unity-text-align: middle-right;" />
+            <ui:Label tabindex="-1" text="TERMINAL" parse-escape-sequences="true" display-tooltip-when-elided="true" name="header" class="text" style="color: rgb(255, 255, 255); -unity-font: url(&quot;project://database/Assets/Fonts/1981-ibm-pc/PxPlus_IBM_BIOS.ttf?fileID=12800000&amp;guid=f4af8604efd2f594fabb9c7c7dba89cf&amp;type=3#PxPlus_IBM_BIOS&quot;);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

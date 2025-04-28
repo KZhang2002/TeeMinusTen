@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace _Scripts {
@@ -31,6 +32,7 @@ namespace _Scripts {
             _rb = GetComponent<Rigidbody>();
             _col = GetComponent<Collider>();
             _trailR = GetComponent<TrailRenderer>();
+            Time.timeScale = 2.0f;
         }
 
         private void Start() {

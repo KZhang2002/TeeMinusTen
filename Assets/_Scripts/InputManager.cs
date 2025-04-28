@@ -27,7 +27,6 @@ namespace _Scripts {
         }
 
         private void Update() {
-           
             _mc.ChangeFiringAngle(tiltInput * firingAngleIncrement);
             _mc.ChangeRotationAngle(rotateInput * rotationAngleIncrement);
         }

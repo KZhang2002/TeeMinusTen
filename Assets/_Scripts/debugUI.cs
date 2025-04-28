@@ -32,9 +32,9 @@ public class debugUI : MonoBehaviour {
             debugStrings.Add($"Shell Rotation: {shellTf.eulerAngles}");
             debugStrings.Add($"Shell Velocity: {_shellRb.velocity}");
             debugStrings.Add($"Shell Speed: {_shellRb.velocity.magnitude}");
-            debugStrings.Add($"Mortar firing angle: {_mc.firingAngle}");
-            debugStrings.Add($"Mortar rotation angle: {_mc.rotationAngle}");
-            
+            debugStrings.Add($"Mortar firing angle: {Mathf.Round(_mc.firingAngle * 10f) / 10f}° ");
+            debugStrings.Add($"Mortar rotation angle: {Mathf.Round(_mc.rotationAngle * 10f) / 10f}");
+            debugStrings.Add($"Shell Distance: {Vector3.Distance(_mc.gameObject.transform.position, _shell.transform.position)}m");
         }
         else {
             _shell = _mc.currentShell;
