@@ -4,7 +4,7 @@ using UnityEngine;
 namespace _Scripts {
     public class ContourMap : MonoBehaviour {
         // Creates contour map from terrain heightmap data as Texture2D
-
+        
         // use default colours and optional parameter numberOfBands
         public static Texture2D FromTerrain(Terrain terrain, int bandNum = 12, bool useBandNumAsDistance = false) {
             return FromTerrain(terrain, bandNum, Color.white, Color.clear, useBandNumAsDistance);

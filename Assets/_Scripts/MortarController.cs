@@ -28,6 +28,7 @@ namespace _Scripts {
 
         private void Awake() {
             firingAngle = startingFiringAngle;
+            rotationAngle = startingRotationAngle;
         }
 
         private void ResetAngles() {
