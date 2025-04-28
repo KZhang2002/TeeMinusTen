@@ -18,15 +18,19 @@ namespace _Scripts {
 
         private int _shellIDCounter = 0;
         private int _zoneIDCounter = 0;
+        
+        private int _targetTotalCount = 0; // max num of targets for target count to check itself against
         private int _targetCount = 0;
         private int _completedTargetsCounter = 0;
         private bool _reachedExtract = false;
         
-        private Zone _extractZone;
+        public Zone _extractZone;
 
         private Dictionary<int, Shell> _shells = new();
-        private Dictionary<int, Zone> _zones = new();
+        public Dictionary<int, Zone> _zones = new();
 
+        private TerminalUIEvents _UI;
+        
         private void Awake() {
             if (instance != null && instance != this)
                 Destroy(this);
@@ -34,7 +38,13 @@ namespace _Scripts {
                 instance = this;
 
             mortar = GameObject.FindWithTag("Mortar").GetComponent<MortarController>(); // todo replace with reference?
+
+            _targetTotalCount = GameObject.FindGameObjectsWithTag("Goal").Length;
             // input = GetComponent<InputManager>();
+        }
+
+        private void Start() {
+            _UI = TerminalUIEvents.instance;
         }
 
         public void RegisterZone(Zone zone) {
@@ -44,6 +54,8 @@ namespace _Scripts {
                 }
                 else {
                     _extractZone = zone;
+                    Debug.Log("Setting zone points on map.");
+                    _UI.UpdateZonePoints(_zones, zone);
                 }
                 
                 return;
@@ -57,6 +69,10 @@ namespace _Scripts {
             if (zone.type == zoneType.Target) {
                 ++_targetCount;
             }
+
+            // if (_targetCount == _targetTotalCount - 1) {
+            //     _UI.UpdateZonePoints(_zones, _extractZone);
+            // }
         }
         
         public void TriggerZone(int zoneID) {

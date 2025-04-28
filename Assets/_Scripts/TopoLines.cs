@@ -12,7 +12,9 @@ namespace _Scripts {
         public bool useDistance = false;
 	
         public Color bandColor = Color.white;
+        private Color _srgbBandColor;
         public Color bkgColor = Color.clear;
+        private Color _srgbBkgColor;
 	
         public Renderer outputPlain;
         public RawImage outputUI;
@@ -21,14 +23,30 @@ namespace _Scripts {
         public Texture2D topoMap;
         public Texture2D topoUpscaleMap;
         
+        public static Color SRGBToLinear(Color color) {
+            float r = color.r <= 0.04045f ? color.r / 12.92f : Mathf.Pow((color.r + 0.055f) / 1.055f, 2.4f);
+            float g = color.g <= 0.04045f ? color.g / 12.92f : Mathf.Pow((color.g + 0.055f) / 1.055f, 2.4f);
+            float b = color.b <= 0.04045f ? color.b / 12.92f : Mathf.Pow((color.b + 0.055f) / 1.055f, 2.4f);
+
+            return new Color(r, g, b, color.a); // Preserves alpha
+        }
+        
         void Start() {
             Debug.Log("Application.dataPath: " + Application.dataPath);
             Debug.Log("folderPath: " + folderPath);
+            
+            _srgbBkgColor = SRGBToLinear(bkgColor);
+            _srgbBandColor = SRGBToLinear(bandColor);
             
             GenerateTopoLines();
             // topoUpscaleMap = ThickenLines(topoMap, 4, 4);
             SaveTextureAsImage(topoMap, fileName, false);
             // SaveTextureAsImage(topoUpscaleMap, fileName + "2x", true);
+        }
+
+        void Update() 
+        {
+            // GenerateTopoLines();
         }
         
         public string folderPath = "";
@@ -42,32 +60,43 @@ namespace _Scripts {
                 return;
             }
 
-            byte[] bytes = saveAsPng ? tex.EncodeToPNG() : tex.EncodeToJPG(100);
+            Texture2D correctedTex = FixTexture(tex);
+            byte[] bytes = saveAsPng ? correctedTex.EncodeToPNG() : correctedTex.EncodeToJPG(100);
     
             string extension = saveAsPng ? ".png" : ".jpg";
             string fullPath = Path.Combine(Application.dataPath, folderPath);
             Directory.CreateDirectory(fullPath);
 
             string fullFilePath = Path.Combine(fullPath, name + extension);
-            Debug.Log("Texture attempt save to: " + fullFilePath);
+            // Debug.Log("Texture attempt save to: " + fullFilePath);
             File.WriteAllBytes(fullFilePath, bytes);
 
-            Debug.Log("Texture saved to: " + fullFilePath);
+            // Debug.Log("Texture saved to: " + fullFilePath);
+        }
+        
+        Texture2D FixTexture(Texture2D original)
+        {
+            int width = original.width;
+            int height = original.height;
+            Texture2D fixedTex = new Texture2D(height, width, original.format, false); // Notice swapped width/height!
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    fixedTex.SetPixel(y, x, original.GetPixel(x, y));
+                }
+            }
+            fixedTex.Apply();
+            return fixedTex;
         }
 
-	
-        void Update() 
-        {
-            // if ( Input.GetMouseButtonDown(0) )
-            // {
-            //     GenerateTopoLines();
-            // }
-        }
 	
         void GenerateTopoLines() 
         {
             //topoMap = ContourMap.FromTerrain( terrain );
             //topoMap = ContourMap.FromTerrain( terrain, numberOfBands );
+            
             topoMap = ContourMap.FromTerrain( terrain, useDistance ? bandDistance : numberOfBands, bandColor, bkgColor, true );
 		
             if ( outputPlain ) {

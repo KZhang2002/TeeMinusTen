@@ -8,7 +8,7 @@
 }
 
 .header {
-    font-size: 40px;
+    font-size: 64px;
     color: rgb(255, 255, 255);
     -unity-font: url("project://database/Assets/Fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
     -unity-font-definition: initial;
@@ -39,4 +39,13 @@
     -unity-font: url("project://database/Assets/Fonts/modern-proggy-tiny/ProggyTiny.ttf?fileID=12800000&guid=33f1463ca56a5f2469e4ee94d71b5478&type=3#ProggyTiny");
     font-size: 50px;
     color: rgb(255, 255, 255);
+}
+
+.mapText {
+    -unity-font-definition: initial;
+    -unity-font: url("project://database/Assets/Fonts/modern-proggy-tiny/ProggyTiny.ttf?fileID=12800000&guid=33f1463ca56a5f2469e4ee94d71b5478&type=3#ProggyTiny");
+    font-size: 50px;
+    background-color: rgba(255, 255, 255, 0);
+    color: rgb(255, 255, 255);
+    word-spacing: -10px;
 }

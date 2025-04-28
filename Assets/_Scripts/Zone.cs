@@ -54,7 +54,7 @@ namespace _Scripts {
         //todo connect to event system
         public void OpenExtract() {
             if (type != zoneType.Extract) return;
-
+            
             _isOpen = true;
         }
         

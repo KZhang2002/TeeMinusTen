@@ -297,6 +297,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 191887874}
   m_CullTransparentMesh: 1
+--- !u!1 &258117419 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8995580312898834933, guid: ce42ba3e4eae1cd499c88e7ef6d2e46c, type: 3}
+  m_PrefabInstance: {fileID: 2899115332644393329}
+  m_PrefabAsset: {fileID: 0}
 --- !u!23 &357975118 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 5356052430488321085, guid: fc547d8db88bbdf4f9a0c12c76fc4a24, type: 3}
@@ -1577,6 +1582,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Terminal
       objectReference: {fileID: 0}
+    - target: {fileID: 5405426781092108093, guid: c5db28b0e9bdbaa46b0c6eebe31da9f8, type: 3}
+      propertyPath: Terrain
+      value: 
+      objectReference: {fileID: 1218615822}
+    - target: {fileID: 5405426781092108093, guid: c5db28b0e9bdbaa46b0c6eebe31da9f8, type: 3}
+      propertyPath: terrain
+      value: 
+      objectReference: {fileID: 1218615822}
+    - target: {fileID: 5405426781092108093, guid: c5db28b0e9bdbaa46b0c6eebe31da9f8, type: 3}
+      propertyPath: MapCursor
+      value: 
+      objectReference: {fileID: 258117419}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1747,6 +1764,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TopoMapGenerator
       objectReference: {fileID: 0}
+    - target: {fileID: 3300351981697633186, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6952506268726055211, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
       propertyPath: terrain
       value: 
@@ -1761,15 +1782,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6952506268726055211, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
       propertyPath: bkgColor.b
-      value: 1
+      value: 0.02745098
       objectReference: {fileID: 0}
     - target: {fileID: 6952506268726055211, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
       propertyPath: bkgColor.g
-      value: 1
+      value: 0.02745098
       objectReference: {fileID: 0}
     - target: {fileID: 6952506268726055211, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
       propertyPath: bkgColor.r
-      value: 1
+      value: 0.02745098
       objectReference: {fileID: 0}
     - target: {fileID: 6952506268726055211, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
       propertyPath: folderPath
@@ -1777,15 +1798,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6952506268726055211, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
       propertyPath: bandColor.b
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6952506268726055211, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
       propertyPath: bandColor.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6952506268726055211, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
       propertyPath: bandColor.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6952506268726055211, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
       propertyPath: outputPlain
@@ -1808,6 +1829,35 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2092c1be1ba497c4ab23cf0b89c31057, type: 3}
+--- !u!1001 &2899115332644393329
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2336215350724147176, guid: ce42ba3e4eae1cd499c88e7ef6d2e46c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2336215350724147176, guid: ce42ba3e4eae1cd499c88e7ef6d2e46c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2336215350724147176, guid: ce42ba3e4eae1cd499c88e7ef6d2e46c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8995580312898834933, guid: ce42ba3e4eae1cd499c88e7ef6d2e46c, type: 3}
+      propertyPath: m_Name
+      value: MapCursor
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ce42ba3e4eae1cd499c88e7ef6d2e46c, type: 3}
 --- !u!1001 &6875629563582120403
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2264,6 +2314,7 @@ SceneRoots:
   - {fileID: 703392039}
   - {fileID: 975916476}
   - {fileID: 1309401552}
+  - {fileID: 2899115332644393329}
   - {fileID: 957064209755911008}
   - {fileID: 552140342}
   - {fileID: 1016851276}

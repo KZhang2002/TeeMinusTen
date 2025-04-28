@@ -20,7 +20,10 @@ namespace _Scripts {
             var heightmap = terrain.terrainData.GetHeights(0, 0, width, height);
 
             // Create Output Texture2D with heightmap dimensions
-            var topoMap = new Texture2D(width, height);
+            // this format keeps it linear
+            var topoMap = new Texture2D(
+                width, height, TextureFormat.RGBA32, false, true
+            );
             topoMap.anisoLevel = 16;
 
             // array for storing colours to be applied to texture
@@ -43,11 +46,11 @@ namespace _Scripts {
             }
 
             var realHeight = maxHeight * terrain.terrainData.size.y;
-            Debug.Log("realHeight: " + realHeight);
+            // Debug.Log("realHeight: " + realHeight);
 
             // Create height band list
             var bandDistance = useBandNumAsDistance ? bandNum * maxHeight/realHeight : (maxHeight - minHeight) / bandNum; // Number of height bands to create
-            Debug.Log("bandDistance: " + bandDistance);
+            // Debug.Log("bandDistance: " + bandDistance);
 
             var bands = new List<float>();
 
@@ -56,7 +59,7 @@ namespace _Scripts {
             while (r < maxHeight) {
                 bands.Add(r);
                 r += bandDistance;
-                Debug.Log("band added: " + r);
+                // Debug.Log("band added: " + r);
             }
 
             // Create slice buffer
