@@ -12,6 +12,10 @@
             <ui:Label tabindex="-1" text="SHELL SPEED:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="shellSpeed" class="text data" style="color: rgb(255, 255, 255);" />
             <ui:Label tabindex="-1" text="SHELL DISTANCE:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="shellDistance" class="text data" style="color: rgb(255, 255, 255); text-overflow: ellipsis;" />
         </ui:VisualElement>
+        <ui:VisualElement name="RangeTable" style="flex-grow: 1; position: absolute; top: 645px; left: 618px; flex-direction: row;">
+            <ui:Label tabindex="-1" text="ANGLE&#10;30&#10;40&#10;45&#10;50&#10;60&#10;70&#10;80" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Angle" class="text data" style="color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
+            <ui:Label tabindex="-1" text="RANGE&#10;1095&#10;1058&#10;1005&#10;933&#10;748&#10;520&#10;266&#10;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Range" class="text data" style="color: rgb(255, 255, 255); -unity-text-align: upper-center; padding-left: 35px;" />
+        </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="LEGALESE" style="flex-grow: 1; height: 42px; width: 1004px; position: absolute; top: 997px; left: 801px;">
         <ui:Label tabindex="-1" text="THIS TERMINAL IS PROPERTY OF BALLISTA LONGSHOT LOGISTICS&lt;sup&gt;®&lt;/sup&gt;. UNAUTHORIZED ACCESS BY NON BLL&lt;sup&gt;®&lt;/sup&gt; EMPLOYEES OR MISUSE BY DESIGNATED OPERATORS IS PROHIBITED." parse-escape-sequences="true" display-tooltip-when-elided="true" name="legalese" class="legalese text" style="font-size: 18px; -unity-text-align: upper-right;" />

@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.Serialization;
-using VInspector.Libs;
 
 namespace _Scripts {
     public class MortarController : MonoBehaviour {
