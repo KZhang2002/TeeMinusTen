@@ -58,12 +58,12 @@ namespace _Scripts {
 
         private void OnTilt(InputAction.CallbackContext context) {
             tiltInput = context.ReadValue<float>();
-            if (isSpeedMod) tiltInput *= 2;
+            if (isSpeedMod) tiltInput *= 0.1f;
         }
         
         private void OnRotate(InputAction.CallbackContext context) {
             rotateInput = context.ReadValue<float>();
-            if (isSpeedMod) rotateInput *= 2;
+            if (isSpeedMod) rotateInput *= 0.1f;
         }
 
         private void OnReset(InputAction.CallbackContext context) {
