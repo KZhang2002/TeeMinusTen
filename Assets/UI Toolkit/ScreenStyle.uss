@@ -69,13 +69,21 @@
 }
 
 .tableData {
-    -unity-paragraph-spacing: 9px;
+    -unity-paragraph-spacing: 20px;
 }
 
 .tableHeader {
-    margin-bottom: 50px;
+    margin-bottom: 39px;
 }
 
 .tableCollumn {
     max-height: 47px;
+}
+
+.zoneTarget {
+    -unity-background-image-tint-color: rgba(0, 0, 255, 0.78);
+}
+
+.zoneCompleted {
+    -unity-background-image-tint-color: rgba(135, 135, 135, 0.78);
 }

@@ -28,6 +28,8 @@ namespace _Scripts {
         private Transform tf => transform;
         private Transform geoTr => geo.transform;
 
+        private TerminalUIEvents _ui;
+
         private void Awake() {
             _rb = GetComponent<Rigidbody>();
             _col = GetComponent<Collider>();
@@ -39,6 +41,7 @@ namespace _Scripts {
             _gm = GameManager.instance;
             _mc = _gm.mortar;
             transform.rotation = Quaternion.identity;
+            _ui = TerminalUIEvents.instance;
 
             MakeStatic();
             _mc.LoadShell(this);
@@ -68,7 +71,7 @@ namespace _Scripts {
         private void OnCollisionEnter(Collision other) {
             var obj = other.gameObject;
             if (!obj.CompareTag("Terrain")) return;
-            if (!obj.CompareTag("KillBarrier")) {
+            if (obj.CompareTag("KillBarrier")) {
                 _mc.LoadShell(this);
             }
             MakeStatic();
@@ -84,6 +87,7 @@ namespace _Scripts {
             tf.rotation = Quaternion.identity;
 
             ShellEvent.ShellLoaded();
+            _ui.HideShellIcon();
         }
 
         public void LoadShell(Vector3 newPos, Quaternion dir) {
@@ -132,6 +136,7 @@ namespace _Scripts {
         public void Fire(float impulseVal, Vector3 dir) {
             MakeDynamic();
             _rb.AddForce(dir * impulseVal, ForceMode.Impulse);
+            _ui.ShowShellIcon();
         }
 
         private void HandleShellLanded() {

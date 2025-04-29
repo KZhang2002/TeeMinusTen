@@ -27,8 +27,14 @@ namespace _Scripts {
         }
 
         private void Update() {
-            _mc.ChangeFiringAngle(tiltInput * firingAngleIncrement);
-            _mc.ChangeRotationAngle(rotateInput * rotationAngleIncrement);
+            float rawTilt = _controls.Standard.Tilt.ReadValue<float>();
+            float rawRotate = _controls.Standard.Rotate.ReadValue<float>();
+
+            tiltInput = rawTilt * (isSpeedMod ? 0.1f : 1f);
+            rotateInput = rawRotate * (isSpeedMod ? 0.1f : 1f);
+
+            _mc.ChangeFiringAngle(tiltInput * firingAngleIncrement * Time.deltaTime * 100f);
+            _mc.ChangeRotationAngle(rotateInput * rotationAngleIncrement * Time.deltaTime * 100f);
         }
 
         private void OnEnable() {
@@ -36,11 +42,11 @@ namespace _Scripts {
             _controls.Standard.Fire.performed += OnFire;
             _controls.Standard.Reset.performed += OnReset;
             
-            _controls.Standard.Tilt.performed += OnTilt;
-            _controls.Standard.Tilt.canceled += OnTilt;
-            
-            _controls.Standard.Rotate.performed += OnRotate;
-            _controls.Standard.Rotate.canceled += OnRotate;
+            // _controls.Standard.Tilt.performed += OnTilt;
+            // _controls.Standard.Tilt.canceled += OnTilt;
+            //
+            // _controls.Standard.Rotate.performed += OnRotate;
+            // _controls.Standard.Rotate.canceled += OnRotate;
             
             _controls.Standard.SpeedModifier.performed += _ => isSpeedMod = true;
             _controls.Standard.SpeedModifier.canceled += _ => isSpeedMod = false;
@@ -56,15 +62,15 @@ namespace _Scripts {
             _mc.FireShell();
         }
 
-        private void OnTilt(InputAction.CallbackContext context) {
-            tiltInput = context.ReadValue<float>();
-            if (isSpeedMod) tiltInput *= 0.1f;
-        }
-        
-        private void OnRotate(InputAction.CallbackContext context) {
-            rotateInput = context.ReadValue<float>();
-            if (isSpeedMod) rotateInput *= 0.1f;
-        }
+        // private void OnTilt(InputAction.CallbackContext context) {
+        //     tiltInput = context.ReadValue<float>();
+        //     if (isSpeedMod) tiltInput *= 0.1f;
+        // }
+        //
+        // private void OnRotate(InputAction.CallbackContext context) {
+        //     rotateInput = context.ReadValue<float>();
+        //     if (isSpeedMod) rotateInput *= 0.1f;
+        // }
 
         private void OnReset(InputAction.CallbackContext context) {
             _mc.ResetShell();

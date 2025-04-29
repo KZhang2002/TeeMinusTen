@@ -9,14 +9,14 @@ namespace _Scripts {
     }
     
     public class Zone : MonoBehaviour {
-        [SerializeField] protected float goalRadius = 0.5f;
+        [SerializeField] public float goalRadius = 0.5f;
         protected SphereCollider Col;
         protected GameManager Gm;
         public bool isCompleted { get; protected set; } = false;
         public zoneType type = zoneType.Target;
         [SerializeField] protected Color gizmoColor = Color.blue;
         
-        [SerializeField] private bool _isOpen = false;
+        [SerializeField] public bool isOpen = true;
     
         public int id = -1;
 
@@ -29,7 +29,7 @@ namespace _Scripts {
             Gm = GameManager.instance;
             Gm.RegisterZone(this);
             if (type == zoneType.Extract) {
-                _isOpen = false;
+                isOpen = false;
             }
         }
     
@@ -45,7 +45,7 @@ namespace _Scripts {
             Debug.Log($"completed goal. ID: {id}");
             Gm.CompleteGoal(id);
 
-            if (type == zoneType.Extract && _isOpen) {
+            if (type == zoneType.Extract && isOpen) {
                 isCompleted = true;
                 Gm.Extract();
             }
@@ -55,7 +55,7 @@ namespace _Scripts {
         public void OpenExtract() {
             if (type != zoneType.Extract) return;
             
-            _isOpen = true;
+            isOpen = true;
         }
         
         // private void OnTriggerExit(Collider other) {
@@ -83,7 +83,7 @@ namespace _Scripts {
             //     sphereColor = _isOpen ? Color.green : Color.black;
             // }
 
-            if (isCompleted || !_isOpen) sphereColor = Color.black;
+            if (isCompleted || !isOpen) sphereColor = Color.black;
         
             sphereColor.a = 0.5f; // make transparent
             Gizmos.color = sphereColor;
