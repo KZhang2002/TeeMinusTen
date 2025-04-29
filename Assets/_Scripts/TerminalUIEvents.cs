@@ -231,9 +231,10 @@ namespace _Scripts {
             Vector3 delta = MapCursor.transform.position - _mc.gameObject.transform.position;
             Vector2 flatDelta = new Vector2(delta.x, delta.z); // Ignore Y
             
-            float angle = Mathf.Atan2(flatDelta.y, flatDelta.x) * Mathf.Rad2Deg;
-            if (angle < 0f)
-                angle += 360f; // Ensure angle is always 0-360 degrees
+            float angle = Mathf.Atan2(flatDelta.y, flatDelta.x) * Mathf.Rad2Deg * -1;
+            
+            if (angle < 0f) angle += 360f;
+            else if (angle > 360f) angle -= 360f;
 
             _angleLabel.text = $"{Round(angle)}°";
             
