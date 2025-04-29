@@ -9,6 +9,7 @@ TagManager:
   - Terrain
   - Goal
   - Shell
+  - KillBarrier
   layers:
   - Default
   - TransparentFX

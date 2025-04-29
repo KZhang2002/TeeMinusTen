@@ -68,6 +68,9 @@ namespace _Scripts {
         private void OnCollisionEnter(Collision other) {
             var obj = other.gameObject;
             if (!obj.CompareTag("Terrain")) return;
+            if (!obj.CompareTag("KillBarrier")) {
+                _mc.LoadShell(this);
+            }
             MakeStatic();
             isGrounded = true;
             ShellEvent.ShellLanded();
