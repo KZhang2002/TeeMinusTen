@@ -491,6 +491,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shell - M49A2
       objectReference: {fileID: 0}
+    - target: {fileID: 8482815735346819093, guid: eac4f2c6b20c8c44eaa1688d70370a22, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
