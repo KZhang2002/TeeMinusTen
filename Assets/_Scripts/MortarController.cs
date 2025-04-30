@@ -24,10 +24,29 @@ namespace _Scripts {
         // Interaction
         public float firingAngle;
         public float rotationAngle = 0f;
+        
+        private float _timer;
+        private float updateInterval = 0.2f;
+
+        public Light muzzleFlash;
+        private bool flashOn;
 
         private void Awake() {
             firingAngle = startingFiringAngle;
             rotationAngle = startingRotationAngle;
+            
+            _timer = 0f;
+            muzzleFlash.enabled = false;
+            flashOn = false;
+        }
+
+        private void Update() {
+            if (flashOn) _timer += Time.deltaTime;
+            if (_timer >= updateInterval) {
+                flashOn = false;
+                muzzleFlash.enabled = false;
+                _timer = 0f;
+            }
         }
 
         private void ResetAngles() {
@@ -70,7 +89,7 @@ namespace _Scripts {
         }
 
         public void ResetShell() {
-            barrelObj.transform.rotation = Quaternion.identity;
+            // barrelObj.transform.rotation = Quaternion.identity;
             shellTf.SetParent(barrelObj.transform, true);
             currentShell.LoadShell(muzzlePos, barrelDir);
         }
@@ -81,6 +100,9 @@ namespace _Scripts {
             shellTf.rotation = Quaternion.identity;
             shellTf.SetParent(null, true);
             currentShell.Fire(barrelDir);
+            
+            flashOn = true;
+            muzzleFlash.enabled = true;
             
             // CurrentShell = null;
         }

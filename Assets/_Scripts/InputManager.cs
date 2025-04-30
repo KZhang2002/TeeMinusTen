@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace _Scripts {
     public class InputManager : MonoBehaviour {
@@ -35,6 +36,12 @@ namespace _Scripts {
 
             _mc.ChangeFiringAngle(tiltInput * firingAngleIncrement * Time.deltaTime * 100f);
             _mc.ChangeRotationAngle(rotateInput * rotationAngleIncrement * Time.deltaTime * 100f);
+            
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                Scene currentScene = SceneManager.GetActiveScene();
+                SceneManager.LoadScene(currentScene.name);
+            }
         }
 
         private void OnEnable() {

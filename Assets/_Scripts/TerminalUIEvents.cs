@@ -117,7 +117,7 @@ namespace _Scripts {
             // _playerIcon.visible = false;
             // _shellIcon.visible = false;
             // _cursorPoint.visible = false;
-            // _extractPoint.visible = false;
+            _extractPoint.visible = false;
             // _targetPointOriginal.visible = false;
             // _shellPath.visible = false;
 

@@ -52,7 +52,7 @@ namespace _Scripts {
         private void LateUpdate() {
             if (_isFired) {
                 var velocity = _rb.velocity;
-                PointShell(velocity.normalized);
+                // PointShell(velocity.normalized);
             }
         }
 
