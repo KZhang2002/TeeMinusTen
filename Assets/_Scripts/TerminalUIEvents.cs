@@ -88,6 +88,8 @@ namespace _Scripts {
             _topoMap.RegisterCallback<MouseDownEvent>(evt => {
                 // Get the point clicked on the map
                 var mousePos = evt.localMousePosition;
+                mousePos.y = _topoMap.resolvedStyle.height - mousePos.y;
+                Debug.Log(mousePos);
                 // mousePos.x += 22f;
                 // mousePos.y -= 22f;
                 var worldPos = ConvertMapToWorldPosition(mousePos);
@@ -118,7 +120,7 @@ namespace _Scripts {
             // _shellIcon.visible = false;
             // _cursorPoint.visible = false;
             _extractPoint.visible = false;
-            // _targetPointOriginal.visible = false;
+            _targetPointOriginal.visible = false;
             // _shellPath.visible = false;
 
             // Debug.Log($"Distance Label: {_distanceLabel}");
@@ -202,7 +204,7 @@ namespace _Scripts {
 
             float pixelsPerUnitX = mapWidth / terrainWidth;
             float pixelsPerUnitY = mapHeight / terrainHeight; 
-            Debug.Log(pixelsPerUnitX+ "," + pixelsPerUnitY);
+            // Debug.Log(pixelsPerUnitX+ "," + pixelsPerUnitY);
             return Mathf.Min(pixelsPerUnitX, pixelsPerUnitY);
         }
 
@@ -215,11 +217,11 @@ namespace _Scripts {
             
             float pixelsPerUnitX = mapWidth / terrainWidth;
             float pixelsPerUnitY = mapHeight / terrainHeight;
-            Debug.Log(pixelsPerUnitX+ "," + pixelsPerUnitY);
+            // Debug.Log(pixelsPerUnitX+ "," + pixelsPerUnitY);
 
             // Normalize mapPos from [0, mapWidth] and [0, mapHeight] to [0, 1]
             var normalizedX = mapPos.x / mapWidth;
-            var normalizedY = 1f - mapPos.y / mapHeight; // Invert Y because UI toolkit Y is down, world Z is up
+            var normalizedY = mapPos.y / mapHeight; // Invert Y because UI toolkit Y is down, world Z is up
 
             // Convert normalized coords to world coords centered at (0,0)
             var worldX = (normalizedX - 0.5f) * terrainWidth; // -22f
