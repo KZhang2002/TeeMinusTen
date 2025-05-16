@@ -29,7 +29,7 @@ namespace _Scripts {
         private Dictionary<int, Shell> _shells = new();
         public Dictionary<int, Zone> _zones = new();
 
-        private TerminalUIEvents _UI;
+        private TerminalUI _UI;
         
         private void Awake() {
             if (instance != null && instance != this)
@@ -44,7 +44,7 @@ namespace _Scripts {
         }
 
         private void Start() {
-            _UI = TerminalUIEvents.instance;
+            _UI = TerminalUI.instance;
         }
 
         public void RegisterZone(Zone zone) {
@@ -64,7 +64,7 @@ namespace _Scripts {
             zone.id = _zoneIDCounter++;
             _zones[zone.id] = zone;
             
-            Debug.Log($"goal {zone.id} registered");
+            Debug.Log($"goal {zone.id} registered at position {zone.transform.position}");
             // unnecessary type check
             if (zone.type == zoneType.Target) {
                 ++_targetCount;

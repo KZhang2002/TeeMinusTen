@@ -83,7 +83,7 @@ namespace _Scripts {
             //     sphereColor = _isOpen ? Color.green : Color.black;
             // }
 
-            if (isCompleted || !isOpen) sphereColor = Color.black;
+            if (isCompleted || !isOpen) sphereColor = Color.white;
         
             sphereColor.a = 0.5f; // make transparent
             Gizmos.color = sphereColor;

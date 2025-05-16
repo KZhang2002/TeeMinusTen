@@ -106,5 +106,12 @@ namespace _Scripts {
             
             // CurrentShell = null;
         }
+
+        public void TeleportToShell() {
+            if (!currentShell || !currentShell.isGrounded) return;
+            
+            Debug.Log("Teleporting to shell.");
+            transform.position = shellTf.position;
+        }
     }
 }

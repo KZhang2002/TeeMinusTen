@@ -45,11 +45,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrain: {fileID: 0}
-  numberOfBands: 12
-  bandDistance: 100
-  useDistance: 1
-  bandColor: {r: 0, g: 0, b: 0, a: 1}
-  bkgColor: {r: 1, g: 1, b: 1, a: 0}
+  numberOfBands: 10
+  bandDistance: 15
+  useDistance: 0
+  bandColor: {r: 1, g: 1, b: 1, a: 1}
+  bkgColor: {r: 0.02745098, g: 0.02745098, b: 0.02745098, a: 1}
   outputPlain: {fileID: 0}
   outputUI: {fileID: 0}
   outputTexture: {fileID: 0}

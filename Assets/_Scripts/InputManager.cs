@@ -30,7 +30,7 @@ namespace _Scripts {
         private void Update() {
             float rawTilt = _controls.Standard.Tilt.ReadValue<float>();
             float rawRotate = _controls.Standard.Rotate.ReadValue<float>();
-
+            
             tiltInput = rawTilt * (isSpeedMod ? 0.1f : 1f);
             rotateInput = rawRotate * (isSpeedMod ? 0.1f : 1f);
 
@@ -48,12 +48,8 @@ namespace _Scripts {
             _controls.Enable();
             _controls.Standard.Fire.performed += OnFire;
             _controls.Standard.Reset.performed += OnReset;
-            
-            // _controls.Standard.Tilt.performed += OnTilt;
-            // _controls.Standard.Tilt.canceled += OnTilt;
-            //
-            // _controls.Standard.Rotate.performed += OnRotate;
-            // _controls.Standard.Rotate.canceled += OnRotate;
+
+            _controls.Standard.TeleportDEBUG.performed += OnTeleport;
             
             _controls.Standard.SpeedModifier.performed += _ => isSpeedMod = true;
             _controls.Standard.SpeedModifier.canceled += _ => isSpeedMod = false;
@@ -69,15 +65,9 @@ namespace _Scripts {
             _mc.FireShell();
         }
 
-        // private void OnTilt(InputAction.CallbackContext context) {
-        //     tiltInput = context.ReadValue<float>();
-        //     if (isSpeedMod) tiltInput *= 0.1f;
-        // }
-        //
-        // private void OnRotate(InputAction.CallbackContext context) {
-        //     rotateInput = context.ReadValue<float>();
-        //     if (isSpeedMod) rotateInput *= 0.1f;
-        // }
+        private void OnTeleport(InputAction.CallbackContext context) {
+            _mc.TeleportToShell();
+        }
 
         private void OnReset(InputAction.CallbackContext context) {
             _mc.ResetShell();

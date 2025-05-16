@@ -66,18 +66,18 @@ namespace _Scripts
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""FastRotate"",
-                    ""type"": ""Value"",
-                    ""id"": ""9b239141-614a-40d4-b5b8-54aeadea2020"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
                     ""name"": ""SpeedModifier"",
                     ""type"": ""Button"",
                     ""id"": ""37932d34-a8e4-41a7-b684-cbdb46b3c842"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TeleportDEBUG"",
+                    ""type"": ""Button"",
+                    ""id"": ""195e3cd7-1d1f-4ca8-844f-bd3ab2236046"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -97,7 +97,7 @@ namespace _Scripts
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""Q-E"",
+                    ""name"": ""S-W"",
                     ""id"": ""fe818559-15da-421b-ab9b-50b2e72879a6"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
@@ -110,7 +110,7 @@ namespace _Scripts
                 {
                     ""name"": ""negative"",
                     ""id"": ""51e2dccd-529b-4f8a-a2f2-da805d95ae06"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -121,7 +121,7 @@ namespace _Scripts
                 {
                     ""name"": ""positive"",
                     ""id"": ""8d2b2186-65b7-4023-b6bd-f9b80357dd68"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -175,56 +175,23 @@ namespace _Scripts
                 },
                 {
                     ""name"": """",
-                    ""id"": ""237c8a19-98d3-4b89-a088-2959cb4b93f4"",
-                    ""path"": ""<Keyboard>/leftShift"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""FastRotate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""28ab82b5-6649-4cc3-8fd2-5e6af077be67"",
-                    ""path"": ""1DAxis"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""FastRotate"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Negative"",
-                    ""id"": ""0ee8108a-bb1e-468a-b4dd-98e15860eb2a"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""FastRotate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Positive"",
-                    ""id"": ""70a5b926-9f5a-4f32-a7fc-aa673c768a4a"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""FastRotate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
                     ""id"": ""0ede222b-6394-465f-9aca-257fd10e32d1"",
                     ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""SpeedModifier"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f82ac53f-6d31-4f96-8b77-cf16eef2e8fa"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TeleportDEBUG"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -239,8 +206,8 @@ namespace _Scripts
             m_Standard_Tilt = m_Standard.FindAction("Tilt", throwIfNotFound: true);
             m_Standard_Rotate = m_Standard.FindAction("Rotate", throwIfNotFound: true);
             m_Standard_Reset = m_Standard.FindAction("Reset", throwIfNotFound: true);
-            m_Standard_FastRotate = m_Standard.FindAction("FastRotate", throwIfNotFound: true);
             m_Standard_SpeedModifier = m_Standard.FindAction("SpeedModifier", throwIfNotFound: true);
+            m_Standard_TeleportDEBUG = m_Standard.FindAction("TeleportDEBUG", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -306,8 +273,8 @@ namespace _Scripts
         private readonly InputAction m_Standard_Tilt;
         private readonly InputAction m_Standard_Rotate;
         private readonly InputAction m_Standard_Reset;
-        private readonly InputAction m_Standard_FastRotate;
         private readonly InputAction m_Standard_SpeedModifier;
+        private readonly InputAction m_Standard_TeleportDEBUG;
         public struct StandardActions
         {
             private @PlayerControls m_Wrapper;
@@ -316,8 +283,8 @@ namespace _Scripts
             public InputAction @Tilt => m_Wrapper.m_Standard_Tilt;
             public InputAction @Rotate => m_Wrapper.m_Standard_Rotate;
             public InputAction @Reset => m_Wrapper.m_Standard_Reset;
-            public InputAction @FastRotate => m_Wrapper.m_Standard_FastRotate;
             public InputAction @SpeedModifier => m_Wrapper.m_Standard_SpeedModifier;
+            public InputAction @TeleportDEBUG => m_Wrapper.m_Standard_TeleportDEBUG;
             public InputActionMap Get() { return m_Wrapper.m_Standard; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -339,12 +306,12 @@ namespace _Scripts
                 @Reset.started += instance.OnReset;
                 @Reset.performed += instance.OnReset;
                 @Reset.canceled += instance.OnReset;
-                @FastRotate.started += instance.OnFastRotate;
-                @FastRotate.performed += instance.OnFastRotate;
-                @FastRotate.canceled += instance.OnFastRotate;
                 @SpeedModifier.started += instance.OnSpeedModifier;
                 @SpeedModifier.performed += instance.OnSpeedModifier;
                 @SpeedModifier.canceled += instance.OnSpeedModifier;
+                @TeleportDEBUG.started += instance.OnTeleportDEBUG;
+                @TeleportDEBUG.performed += instance.OnTeleportDEBUG;
+                @TeleportDEBUG.canceled += instance.OnTeleportDEBUG;
             }
 
             private void UnregisterCallbacks(IStandardActions instance)
@@ -361,12 +328,12 @@ namespace _Scripts
                 @Reset.started -= instance.OnReset;
                 @Reset.performed -= instance.OnReset;
                 @Reset.canceled -= instance.OnReset;
-                @FastRotate.started -= instance.OnFastRotate;
-                @FastRotate.performed -= instance.OnFastRotate;
-                @FastRotate.canceled -= instance.OnFastRotate;
                 @SpeedModifier.started -= instance.OnSpeedModifier;
                 @SpeedModifier.performed -= instance.OnSpeedModifier;
                 @SpeedModifier.canceled -= instance.OnSpeedModifier;
+                @TeleportDEBUG.started -= instance.OnTeleportDEBUG;
+                @TeleportDEBUG.performed -= instance.OnTeleportDEBUG;
+                @TeleportDEBUG.canceled -= instance.OnTeleportDEBUG;
             }
 
             public void RemoveCallbacks(IStandardActions instance)
@@ -390,8 +357,8 @@ namespace _Scripts
             void OnTilt(InputAction.CallbackContext context);
             void OnRotate(InputAction.CallbackContext context);
             void OnReset(InputAction.CallbackContext context);
-            void OnFastRotate(InputAction.CallbackContext context);
             void OnSpeedModifier(InputAction.CallbackContext context);
+            void OnTeleportDEBUG(InputAction.CallbackContext context);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace _Scripts {
@@ -22,6 +23,9 @@ namespace _Scripts {
 	
         public Texture2D topoMap;
         public Texture2D topoUpscaleMap;
+
+        private TerminalUI _ui;
+        private string _filePath;
         
         public static Color SRGBToLinear(Color color) {
             float r = color.r <= 0.04045f ? color.r / 12.92f : Mathf.Pow((color.r + 0.055f) / 1.055f, 2.4f);
@@ -39,18 +43,15 @@ namespace _Scripts {
             _srgbBandColor = SRGBToLinear(bandColor);
             
             GenerateTopoLines();
-            // topoUpscaleMap = ThickenLines(topoMap, 4, 4);
-            SaveTextureAsImage(topoMap, fileName, false);
-            // SaveTextureAsImage(topoUpscaleMap, fileName + "2x", true);
-        }
+            string sceneName = SceneManager.GetActiveScene().name;
+            SaveTextureAsImage(topoMap, sceneName + "_map", false);
+            _ui.reloadTopoMapImage(_filePath);
 
-        void Update() 
-        {
-            // GenerateTopoLines();
+
+            _ui = GetComponent<TerminalUI>();
         }
         
         public string folderPath = "";
-        public string fileName = "map";
 
         public void SaveTextureAsImage(Texture2D tex, string name, bool saveAsPng = false)
         {
@@ -59,37 +60,43 @@ namespace _Scripts {
                 Debug.LogError("No texture assigned.");
                 return;
             }
-
-            Texture2D correctedTex = FixTexture(tex);
-            byte[] bytes = saveAsPng ? correctedTex.EncodeToPNG() : correctedTex.EncodeToJPG(100);
+            
+            byte[] bytes = saveAsPng ? tex.EncodeToPNG() : tex.EncodeToJPG(100);
     
             string extension = saveAsPng ? ".png" : ".jpg";
-            string fullPath = Path.Combine(Application.dataPath, folderPath);
+            string fullPath = Path.Combine(Application.persistentDataPath, folderPath);
             Directory.CreateDirectory(fullPath);
-
-            string fullFilePath = Path.Combine(fullPath, name + extension);
-            // Debug.Log("Texture attempt save to: " + fullFilePath);
-            File.WriteAllBytes(fullFilePath, bytes);
+            
+            _filePath = Path.Combine(fullPath, name + extension);
+            File.WriteAllBytes(_filePath, bytes);
+            
+            _filePath = Path.Combine(Application.persistentDataPath, name + extension);
+            File.WriteAllBytes(_filePath, bytes);
+           
+            
+            
 
             // Debug.Log("Texture saved to: " + fullFilePath);
         }
         
-        Texture2D FixTexture(Texture2D original)
+        Texture2D FlipTextureY(Texture2D original)
         {
             int width = original.width;
             int height = original.height;
-            Texture2D fixedTex = new Texture2D(height, width, original.format, false); // Notice swapped width/height!
+            Texture2D flippedTex = new Texture2D(width, height, original.format, false);
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    fixedTex.SetPixel(y, x, original.GetPixel(x, y));
+                    // Flip on Y-axis: take pixel from the mirrored y position
+                    flippedTex.SetPixel(x, height - y - 1, original.GetPixel(x, y));
                 }
             }
-            fixedTex.Apply();
-            return fixedTex;
+            flippedTex.Apply();
+            return flippedTex;
         }
+
 
 	
         void GenerateTopoLines() 

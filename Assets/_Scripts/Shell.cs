@@ -28,7 +28,7 @@ namespace _Scripts {
         private Transform tf => transform;
         private Transform geoTr => geo.transform;
 
-        private TerminalUIEvents _ui;
+        private TerminalUI _ui;
 
         private void Awake() {
             _rb = GetComponent<Rigidbody>();
@@ -41,7 +41,7 @@ namespace _Scripts {
             _gm = GameManager.instance;
             _mc = _gm.mortar;
             transform.rotation = Quaternion.identity;
-            _ui = TerminalUIEvents.instance;
+            _ui = TerminalUI.instance;
 
             MakeStatic();
             _mc.LoadShell(this);
