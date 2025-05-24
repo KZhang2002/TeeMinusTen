@@ -48,6 +48,7 @@ namespace _Scripts {
         private float _terrainWidth;
 
         private VisualElement _bg;
+        private VisualElement _cursor;
 
         private float _timer;
 
@@ -55,6 +56,9 @@ namespace _Scripts {
         private VisualElement _topoMap;
         public static TerminalUI instance { get; private set; }
         private Transform shellTf => _shell.transform;
+        
+        // Cursor stuff
+        public float cursorSizePx = 50;
 
         public bool isDragging { get; set; }
 
@@ -111,6 +115,7 @@ namespace _Scripts {
             _doc = GetComponent<UIDocument>();
 
             InitLabels();
+            // InitMouseInteraction();
             if (Terrain) InitMap();
 
             _timer = updateInterval;
@@ -150,7 +155,7 @@ namespace _Scripts {
         }
 
         private void InitMap() {
-            _topoMap = _doc.rootVisualElement.Q("TopoMap");
+            AssignVE(ref _topoMap, "TopoMap");
 
             _topoMap.RegisterCallback<MouseDownEvent>(evt => {
                 if (evt.button == 0) // Left-click
@@ -197,29 +202,49 @@ namespace _Scripts {
 
             // _topoMap.RegisterCallback<GeometryChangedEvent>(OnMapLayoutReady);
 
-            _distanceLabel = _doc.rootVisualElement.Q<Label>("distance");
-            _angleLabel = _doc.rootVisualElement.Q<Label>("angle");
+            AssignLabel(ref _distanceLabel, "distance");
+            AssignLabel(ref _angleLabel, "angle");
 
-            _playerIcon = _doc.rootVisualElement.Q<VisualElement>("playerIcon");
-            _shellIcon = _doc.rootVisualElement.Q<VisualElement>("shellIcon");
-            _cursorPoint = _doc.rootVisualElement.Q<VisualElement>("cursorPoint");
-            _extractPoint = _doc.rootVisualElement.Q<VisualElement>("extractPoint");
-            _targetPoint = _doc.rootVisualElement.Q<VisualElement>("targetPoint");
-            _targetLabel = _targetPoint.Q<Label>("targetLabel");
-            _shellPath = _doc.rootVisualElement.Q<VisualElement>("shellPath");
+            AssignVE(ref _playerIcon, "playerIcon");
+            AssignVE(ref _shellIcon, "shellIcon");
+            AssignVE(ref _cursorPoint, "cursorPoint");
+            AssignVE(ref _extractPoint, "extractPoint");
+            AssignVE(ref _targetPoint, "targetPoint");
+            AssignLabel(ref _targetLabel, "targetLabel");
+            AssignVE(ref _shellPath, "shellPath");
             
             _extractPoint.visible = false;
             _targetPoint.visible = false;
         }
 
         //todo cursor stuff
-        private void InitMouseInteraction() {
-            _bg = _doc.rootVisualElement.Q("BG");
-            
-            _bg.RegisterCallback<MouseMoveEvent>(evt => {
-                
-            });
-        }
+        // private void InitMouseInteraction() {
+        //     AssignVE(ref _bg, "BG");
+        //     _bg.style.width = cursorSizePx;
+        //     _bg.style.height = cursorSizePx;
+        //     
+        //     AssignVE(ref _cursor, "cursor");
+        //     
+        //     _bg.RegisterCallback<MouseDownEvent>(evt => {
+        //         // Get the point clicked on the map
+        //         var mousePos = evt.localMousePosition;
+        //         mousePos.y = _bg.resolvedStyle.height - mousePos.y;
+        //         mousePos.x = _bg.resolvedStyle.width - mousePos.x;
+        //         Debug.Log($"{mousePos}");
+        //         
+        //         SetElementPosToMap(mousePos, _cursor);
+        //     });
+        //     
+        //     _bg.RegisterCallback<MouseMoveEvent>(evt => {
+        //         // Get the point clicked on the map
+        //         var mousePos = evt.localMousePosition;
+        //         mousePos.y = _bg.resolvedStyle.height - mousePos.y;
+        //         mousePos.x = _bg.resolvedStyle.width - mousePos.x;
+        //         Debug.Log($"{mousePos}");
+        //         
+        //         SetElementPosToMap(mousePos, _cursor);
+        //     });
+        // }
 
         public void reloadTopoMapImage(string fileName) {
             if (File.Exists(fileName))
@@ -283,7 +308,7 @@ namespace _Scripts {
                             copy.AddToClassList(className);
                     });
 
-                    // ** Create a copy of the label **
+                    // Create a copy of the label
                     var labelCopy = new Label {
                         name = _targetLabel.name + "_" + kvp.Key,
                         text = IntToLetter(kvp.Key)
@@ -368,14 +393,33 @@ namespace _Scripts {
 
             return new Vector2(left, top);
         }
+        
+        private Vector2 SetElementPosToMap(Vector3 elementPos, VisualElement element) {
+            var left = elementPos.x;
+            var top = elementPos.y;
+            
+            element.style.left = left;
+            element.style.top = top;
 
+            return new Vector2(left, top);
+        }
+        
+        void AssignLabel(ref Label target, string name) {
+            target = _doc.rootVisualElement.Q(name) as Label;
+            if (target == null) Debug.LogError($"Missing Label: {name}");
+        }
+        
+        void AssignVE(ref VisualElement target, string name) {
+            target = _doc.rootVisualElement.Q(name);
+            if (target == null) Debug.LogError($"Missing Label: {name}");
+        }
 
         private void InitLabels() {
-            _firingAngle = _doc.rootVisualElement.Q("firingAngle") as Label;
-            _mortarRotation = _doc.rootVisualElement.Q("mortarRotation") as Label;
-            _shellHeight = _doc.rootVisualElement.Q("shellHeight") as Label;
-            _shellDistance = _doc.rootVisualElement.Q("shellDistance") as Label;
-
+            AssignLabel(ref _firingAngle, "firingAngle");
+            AssignLabel(ref _mortarRotation, "mortarRotation");
+            AssignLabel(ref _shellHeight, "shellHeight");
+            AssignLabel(ref _shellDistance, "shellDistance");
+            
             _fAPrefix = _firingAngle.text;
             _mRPrefix = _mortarRotation.text;
             _sHPrefix = _shellHeight.text;
@@ -420,7 +464,7 @@ namespace _Scripts {
             if (angle < 0f) angle += 360f;
             else if (angle > 360f) angle -= 360f;
 
-            _angleLabel.text = $"{Round(angle)}°  mortar angle required";
+            _angleLabel.text = $"{Round(angle)}° heading required";
         }
 
         private void UpdatePkgStatusList() {
