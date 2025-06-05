@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
 namespace _Scripts {
-    public class CursorFollower : MonoBehaviour
+    public class Cursor : MonoBehaviour
     {
         public UIDocument uiDocument;
 
@@ -13,9 +13,8 @@ namespace _Scripts {
         {
             var root = uiDocument.rootVisualElement;
             cursor = root.Q<VisualElement>("cursor");
-
-            // Optional: hide system cursor
-            Cursor.visible = false;
+            
+            UnityEngine.Cursor.visible = false; // hide cursor
         }
 
         void Update()

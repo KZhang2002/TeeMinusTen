@@ -87,10 +87,9 @@ namespace Samples.Runtime.Rendering
         private Vector2 ScreenCoordinatesToRenderTexture(Vector2 screenPosition) { 
             var invalidPosition = new Vector2(float.NaN, float.NaN);
 
+            // counter distortion calculations, not super necessary
             screenPosition.y = Screen.height - screenPosition.y;
-            
             Vector2 distortedUV = ApplyLensDistortion(screenPosition / new Vector2(Screen.width, Screen.height));
-            
             Vector2 distortedScreenPos = new Vector2(distortedUV.x * Screen.width, (1 - distortedUV.y) * Screen.height);
             
             var cameraRay = targetCamera.ScreenPointToRay(distortedScreenPos);
