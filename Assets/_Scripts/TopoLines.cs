@@ -25,7 +25,8 @@ namespace _Scripts {
         public Texture2D topoMap;
         // public Texture2D topoUpscaleMap;
 
-        private TerminalUI _ui;
+        private UIManager _uiManager;
+        private UITopoMap _map;
         private string _filePath;
         
         public static Color SRGBToLinear(Color color) {
@@ -37,8 +38,11 @@ namespace _Scripts {
         }
 
         private void Awake() {
-            _ui = GetComponent<TerminalUI>();
-            if (_ui == null) Debug.LogError("Topo Line Generator cannot find a UI component to output to!");
+            _uiManager = GetComponent<UIManager>();
+            if (_uiManager == null) Debug.LogError("Topo Line Generator cannot find a UI component to output to!");
+            
+            _map = GetComponent<UITopoMap>();
+            if (_map == null) Debug.LogError("Topo Line Generator cannot find a UITopoMap component to output to!");
         }
 
         void Start() {
@@ -50,9 +54,9 @@ namespace _Scripts {
             
             GenerateTopoLines();
             string sceneName = SceneManager.GetActiveScene().name;
-            // SaveTextureAsImage(topoMap, sceneName + "_map", false);
+            SaveTextureAsImage(topoMap, sceneName + "_map", false);
             // _ui.loadTopoMapImageFromFile(_filePath);
-            _ui.loadTopoMapTexture(topoMap);
+            _uiManager.loadTopoMapTexture(topoMap);
         }
         
         public string folderPath = "";

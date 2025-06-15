@@ -28,7 +28,7 @@ namespace _Scripts {
         private Transform tf => transform;
         private Transform geoTr => geo.transform;
 
-        private TerminalUI _ui;
+        private UIManager _uiManager;
 
         private void Awake() {
             _rb = GetComponent<Rigidbody>();
@@ -41,7 +41,7 @@ namespace _Scripts {
             _gm = GameManager.instance;
             _mc = _gm.mortar;
             transform.rotation = Quaternion.identity;
-            _ui = TerminalUI.instance;
+            _uiManager = UIManager.instance;
 
             MakeStatic();
             _mc.LoadShell(this);
@@ -87,7 +87,7 @@ namespace _Scripts {
             tf.rotation = Quaternion.identity;
 
             ShellEvent.ShellLoaded();
-            _ui.HideShellIcon();
+            _uiManager.HideShellIcon();
         }
 
         public void LoadShell(Vector3 newPos, Quaternion dir) {
@@ -136,7 +136,7 @@ namespace _Scripts {
         public void Fire(float impulseVal, Vector3 dir) {
             MakeDynamic();
             _rb.AddForce(dir * impulseVal, ForceMode.Impulse);
-            _ui.ShowShellIcon();
+            _uiManager.ShowShellIcon();
         }
 
         private void HandleShellLanded() {

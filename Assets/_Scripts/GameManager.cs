@@ -29,7 +29,7 @@ namespace _Scripts {
         private Dictionary<int, Shell> _shells = new();
         public Dictionary<int, Zone> _zones = new();
 
-        private TerminalUI _UI;
+        private UIManager _uiManager;
         
         private void Awake() {
             if (instance != null && instance != this)
@@ -44,7 +44,7 @@ namespace _Scripts {
         }
 
         private void Start() {
-            _UI = TerminalUI.instance;
+            _uiManager = UIManager.instance;
         }
 
         public void RegisterZone(Zone zone) {
@@ -55,7 +55,7 @@ namespace _Scripts {
                 else {
                     _extractZone = zone;
                     Debug.Log("Setting zone points on map.");
-                    _UI.UpdateZonePoints(_zones, zone);
+                    _uiManager.UpdateZonePoints(_zones, zone);
                 }
                 
                 return;
