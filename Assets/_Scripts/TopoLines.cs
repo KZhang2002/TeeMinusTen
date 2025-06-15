@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,16 +14,16 @@ namespace _Scripts {
         public bool useDistance = false;
 	
         public Color bandColor = Color.white;
-        private Color _srgbBandColor;
+        // private Color _srgbBandColor;
         public Color bkgColor = Color.clear;
-        private Color _srgbBkgColor;
+        // private Color _srgbBkgColor;
 	
         public Renderer outputPlain;
         public RawImage outputUI;
         public Texture2D outputTexture;
 	
         public Texture2D topoMap;
-        public Texture2D topoUpscaleMap;
+        // public Texture2D topoUpscaleMap;
 
         private TerminalUI _ui;
         private string _filePath;
@@ -34,21 +35,24 @@ namespace _Scripts {
 
             return new Color(r, g, b, color.a); // Preserves alpha
         }
-        
+
+        private void Awake() {
+            _ui = GetComponent<TerminalUI>();
+            if (_ui == null) Debug.LogError("Topo Line Generator cannot find a UI component to output to!");
+        }
+
         void Start() {
             Debug.Log("Application.dataPath: " + Application.dataPath);
             Debug.Log("folderPath: " + folderPath);
             
-            _srgbBkgColor = SRGBToLinear(bkgColor);
-            _srgbBandColor = SRGBToLinear(bandColor);
+            // _srgbBkgColor = SRGBToLinear(bkgColor);
+            // _srgbBandColor = SRGBToLinear(bandColor);
             
             GenerateTopoLines();
             string sceneName = SceneManager.GetActiveScene().name;
-            SaveTextureAsImage(topoMap, sceneName + "_map", false);
-            // _ui.reloadTopoMapImage(_filePath);
-
-
-            _ui = GetComponent<TerminalUI>();
+            // SaveTextureAsImage(topoMap, sceneName + "_map", false);
+            // _ui.loadTopoMapImageFromFile(_filePath);
+            _ui.loadTopoMapTexture(topoMap);
         }
         
         public string folderPath = "";

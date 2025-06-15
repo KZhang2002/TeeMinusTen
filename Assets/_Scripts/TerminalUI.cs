@@ -145,7 +145,6 @@ namespace _Scripts {
             if (!_gm || !_gm.mortar) return;
 
             _mc = _gm.mortar;
-            Debug.Log("_mc set as " + _mc.name);
             _shell = _mc.currentShell;
             _shellRb = _shell.GetComponent<Rigidbody>();
         }
@@ -265,7 +264,8 @@ namespace _Scripts {
         //     });
         // }
 
-        public void reloadTopoMapImage(string fileName) {
+        public void loadTopoMapImageFromFile(string fileName) {
+            Debug.Log("Attempting topo map load at " + fileName);
             if (File.Exists(fileName))
             {
                 byte[] fileData = File.ReadAllBytes(fileName);
@@ -277,8 +277,18 @@ namespace _Scripts {
             {
                 Debug.LogError($"Image not found at path: {fileName}");
             }
-            
         }
+        
+        public void loadTopoMapTexture(Texture2D texture) {
+            if (texture == null) {
+                Debug.LogError("Provided texture is null. Cannot assign to topo map.");
+                return;
+            }
+
+            TopoMapBG = texture;
+            _topoMap.style.backgroundImage = TopoMapBG;
+        }
+
 
         private void UpdateEntityIcons() {
             _playerIcon.visible = true;
