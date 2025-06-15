@@ -422,6 +422,26 @@ PrefabInstance:
       propertyPath: terrain
       value: 
       objectReference: {fileID: 1218615822}
+    - target: {fileID: 3531450890905917005, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
+      propertyPath: bkgColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3531450890905917005, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
+      propertyPath: bkgColor.b
+      value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 3531450890905917005, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
+      propertyPath: bkgColor.g
+      value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 3531450890905917005, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
+      propertyPath: bkgColor.r
+      value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 3531450890905917005, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
+      propertyPath: folderPath
+      value: Terrain/MapTextures
+      objectReference: {fileID: 0}
     - target: {fileID: 3592303488979663894, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -490,7 +510,8 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8428972755877013856, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
     m_RemovedGameObjects:
     - {fileID: 8929875630974167229, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
     - {fileID: 4843507389233579502, guid: 724638a0209520b44bbb2a902df9342a, type: 3}

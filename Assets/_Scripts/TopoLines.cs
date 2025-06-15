@@ -45,7 +45,7 @@ namespace _Scripts {
             GenerateTopoLines();
             string sceneName = SceneManager.GetActiveScene().name;
             SaveTextureAsImage(topoMap, sceneName + "_map", false);
-            _ui.reloadTopoMapImage(_filePath);
+            // _ui.reloadTopoMapImage(_filePath);
 
 
             _ui = GetComponent<TerminalUI>();
@@ -72,11 +72,8 @@ namespace _Scripts {
             
             _filePath = Path.Combine(Application.persistentDataPath, name + extension);
             File.WriteAllBytes(_filePath, bytes);
-           
             
-            
-
-            // Debug.Log("Texture saved to: " + fullFilePath);
+            Debug.Log("Texture saved to: " + _filePath);
         }
         
         Texture2D FlipTextureY(Texture2D original)
@@ -96,9 +93,7 @@ namespace _Scripts {
             flippedTex.Apply();
             return flippedTex;
         }
-
-
-	
+        
         void GenerateTopoLines() 
         {
             //topoMap = ContourMap.FromTerrain( terrain );

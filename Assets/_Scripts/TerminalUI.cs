@@ -7,104 +7,123 @@ using UnityEngine.UIElements;
 namespace _Scripts {
     public class TerminalUI : MonoBehaviour {
         public float updateInterval = 0.2f;
-        public Terrain Terrain;
-        public GameObject MapCursor;
-
-        public Texture2D TopoMapBG;
-
-        private readonly Dictionary<int, VisualElement> _targetPointsDict = new();
-        private Label _angleLabel;
-        private VisualElement _cursorPoint;
-
-        private Label _distanceLabel;
-
-        private UIDocument _doc;
-        private VisualElement _extractPoint;
-        private string _fAPrefix;
-        private Label _firingAngle;
-
-        private GameManager _gm;
-        private float _mapHeight;
-
-        private float _mapWidth;
-        private MortarController _mc;
-        private Label _mortarRotation;
-        private string _mRPrefix;
-
-        private Label _objList;
-        private float _pixelsPerUnit;
-        private VisualElement _playerIcon;
-        private string _sDPrefix;
-        private Shell _shell;
-        private Label _shellDistance;
-        private Label _shellHeight;
-        private VisualElement _shellIcon;
-        private VisualElement _shellPath;
-        private Rigidbody _shellRb;
-        private string _sHPrefix;
-        private VisualElement _targetPoint;
-        private Label _targetLabel;
-        private float _terrainHeight;
-        private float _terrainWidth;
-
-        private VisualElement _bg;
-        private VisualElement _cursor;
-
         private float _timer;
-
-        // Map stuff
-        private VisualElement _topoMap;
+        
+        // References
+        private UIDocument _doc;
+        private GameManager _gm;
+        private MortarController _mc;
+        private Shell _shell;
+        private Rigidbody _shellRb;
         public static TerminalUI instance { get; private set; }
         private Transform shellTf => _shell.transform;
         
-        // Cursor stuff
-        public float cursorSizePx = 50;
+        // Debug
+        // Visual indicator of where map calculator pointer is pointing at in world space.
+        public GameObject MapCursor;
 
-        public bool isDragging { get; set; }
+        #region Terminal Data
 
-        private float mapWidth {
-            get {
-                if (_mapWidth != 0 && !float.IsNaN(_mapWidth)) return _mapWidth;
-                _mapWidth = _topoMap.resolvedStyle.width;
-                return _mapWidth;
+            // Operational Data
+            private Label _firingAngle;
+            private string _fAPrefix;
+            
+            private Label _mortarRotation; // aka mortar heading
+            private string _mRPrefix;
+            
+            private Label _shellDistance;
+            private string _sDPrefix;
+            private Label _shellHeight;
+            private string _sHPrefix;
+            
+            // Package Status Data
+            private Label _pkgStatusList;
+            
+        #endregion
+
+        #region Map Stuff
+        
+            public Terrain Terrain;
+            public Texture2D TopoMapBG;
+            
+            private VisualElement _cursorPoint;
+            
+            private Label _angleLabel;
+            private Label _distanceLabel;
+            
+            // Map Icons
+            private VisualElement _playerIcon;
+            private VisualElement _shellIcon;
+            private VisualElement _shellPath;
+            private VisualElement _targetPoint;
+            private Label _targetLabel;
+            
+            private VisualElement _extractPoint;
+            private readonly Dictionary<int, VisualElement> _targetPointsDict = new();
+            
+            private VisualElement _topoMap;
+            
+            // Cursor Stuff
+            public bool isDragging { get; set; }
+
+        #endregion
+
+        #region Cached Constants and Getters
+
+            // Constants - calculated at runtime!
+            private float _mapHeight;
+            private float _mapWidth;
+            private float _pixelsPerUnit;
+            private float _terrainHeight;
+            private float _terrainWidth;
+            
+            // General behavior: Calculate when first called then cache value
+            private float mapWidth {
+                get {
+                    if (_mapWidth != 0 && !float.IsNaN(_mapWidth)) return _mapWidth;
+                    _mapWidth = _topoMap.resolvedStyle.width;
+                    return _mapWidth;
+                }
             }
-        }
 
-        private float mapHeight {
-            get {
-                if (_mapHeight != 0 && !float.IsNaN(_mapHeight)) return _mapHeight;
-                _mapHeight = _topoMap.resolvedStyle.height;
-                return _mapHeight;
+            private float mapHeight {
+                get {
+                    if (_mapHeight != 0 && !float.IsNaN(_mapHeight)) return _mapHeight;
+                    _mapHeight = _topoMap.resolvedStyle.height;
+                    return _mapHeight;
+                }
             }
-        }
 
-        private float terrainWidth {
-            get {
-                if (_terrainWidth != 0 && !float.IsNaN(_terrainWidth)) return _terrainWidth;
-                _terrainWidth = Terrain.terrainData.size.x;
-                return _terrainWidth;
+            private float terrainWidth {
+                get {
+                    if (_terrainWidth != 0 && !float.IsNaN(_terrainWidth)) return _terrainWidth;
+                    _terrainWidth = Terrain.terrainData.size.x;
+                    return _terrainWidth;
+                }
             }
-        }
 
-        private float terrainHeight {
-            get {
-                if (_terrainHeight != 0 && !float.IsNaN(_terrainHeight)) return _terrainHeight;
-                _terrainHeight = Terrain.terrainData.size.z;
-                return _terrainHeight;
+            private float terrainHeight {
+                get {
+                    if (_terrainHeight != 0 && !float.IsNaN(_terrainHeight)) return _terrainHeight;
+                    _terrainHeight = Terrain.terrainData.size.z;
+                    return _terrainHeight;
+                }
             }
-        }
 
-        private float pixelsPerUnit {
-            get {
-                if (_pixelsPerUnit != 0 && !float.IsNaN(_pixelsPerUnit)) return _pixelsPerUnit;
+            // used for map space to world space conversions
+            private float pixelsPerUnit {
+                get {
+                    if (_pixelsPerUnit != 0 && !float.IsNaN(_pixelsPerUnit)) return _pixelsPerUnit;
 
-                var pixelsPerUnitX = mapWidth / terrainWidth;
-                var pixelsPerUnitY = mapHeight / terrainHeight;
+                    var pixelsPerUnitX = mapWidth / terrainWidth;
+                    var pixelsPerUnitY = mapHeight / terrainHeight;
 
-                _pixelsPerUnit = Mathf.Min(pixelsPerUnitX, pixelsPerUnitY);
-                return _pixelsPerUnit;
+                    _pixelsPerUnit = Mathf.Min(pixelsPerUnitX, pixelsPerUnitY);
+                    return _pixelsPerUnit;
+                }
             }
-        }
+
+        #endregion
 
         private void Awake() {
             if (instance != null && instance != this)
@@ -126,6 +145,7 @@ namespace _Scripts {
             if (!_gm || !_gm.mortar) return;
 
             _mc = _gm.mortar;
+            Debug.Log("_mc set as " + _mc.name);
             _shell = _mc.currentShell;
             _shellRb = _shell.GetComponent<Rigidbody>();
         }
@@ -198,8 +218,7 @@ namespace _Scripts {
                     evt.StopPropagation();
                 }
             });
-
-
+            
             // _topoMap.RegisterCallback<GeometryChangedEvent>(OnMapLayoutReady);
 
             AssignLabel(ref _distanceLabel, "distance");
@@ -404,14 +423,14 @@ namespace _Scripts {
             return new Vector2(left, top);
         }
         
-        void AssignLabel(ref Label target, string name) {
-            target = _doc.rootVisualElement.Q(name) as Label;
-            if (target == null) Debug.LogError($"Missing Label: {name}");
+        void AssignLabel(ref Label target, string labelName) {
+            target = _doc.rootVisualElement.Q(labelName) as Label;
+            if (target == null) Debug.LogError($"Missing Label: {labelName}");
         }
         
-        void AssignVE(ref VisualElement target, string name) {
-            target = _doc.rootVisualElement.Q(name);
-            if (target == null) Debug.LogError($"Missing Label: {name}");
+        void AssignVE(ref VisualElement target, string veName) {
+            target = _doc.rootVisualElement.Q(veName);
+            if (target == null) Debug.LogError($"Missing Visual Element: {veName}");
         }
 
         private void InitLabels() {
@@ -425,7 +444,7 @@ namespace _Scripts {
             _sHPrefix = _shellHeight.text;
             _sDPrefix = _shellDistance.text;
 
-            _objList = _doc.rootVisualElement.Q<Label>("objList");
+            _pkgStatusList = _doc.rootVisualElement.Q<Label>("objList");
         }
 
         private string Round(float num) {
@@ -475,7 +494,7 @@ namespace _Scripts {
                 output += $"PKG {IntToLetter(kvp.Key)}: {status}\n";
             }
 
-            _objList.text = output;
+            _pkgStatusList.text = output;
         }
     }
 }
