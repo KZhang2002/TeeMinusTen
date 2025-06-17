@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace _Scripts {
-    public class UITopoMap : MonoBehaviour{
+    public class UITopoMap : MonoBehaviour {
         
         // References
         private UIDocument _doc;
@@ -20,10 +20,10 @@ namespace _Scripts {
         
             public Terrain Terrain;
             private Texture2D TopoMapBG;
-                
-            private VisualElement _cursorPoint;
+            
             // Visual indicator of where map calculator pointer is pointing at in world space.
             public GameObject MapCursor;
+            private VisualElement _cursorPoint;
                 
             private Label _angleLabel;
             private Label _distanceLabel;
@@ -66,23 +66,26 @@ namespace _Scripts {
 
         #endregion
         
-        // Publicly exposed functions
-        public void UpdateMap() {
-            if (Terrain) {
-                UpdateEntityIcons();
-                UpdateZonePoints(_gm._zones, _gm._extractZone);
-                UpdateCalculatorText();
-                // UpdatePkgStatusList();
-            }
-        }
+        #region Publicly Exposed Functions
         
-        public void ShowShellIcon() {
-            _shellIcon.visible = true;
-        }
+            public void UpdateMap() {
+                if (Terrain) {
+                    UpdateEntityIcons();
+                    UpdateZonePoints(_gm._zones, _gm._extractZone);
+                    UpdateCalculatorText();
+                    // UpdatePkgStatusList();
+                }
+            }
+            
+            public void ShowShellIcon() {
+                _shellIcon.visible = true;
+            }
 
-        public void HideShellIcon() {
-            _shellIcon.visible = false;
-        }
+            public void HideShellIcon() {
+                _shellIcon.visible = false;
+            }
+            
+        #endregion
 
         #region Start Up Functions
 
