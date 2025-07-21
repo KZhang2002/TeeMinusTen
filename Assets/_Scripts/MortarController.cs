@@ -17,6 +17,7 @@ namespace _Scripts {
         public float startingFiringAngle = 45f;
         public float startingRotationAngle = 0f;
         
+        
         // Shell References
         public Shell currentShell { get; private set; }
         private Transform shellTf => currentShell.transform;
@@ -112,6 +113,7 @@ namespace _Scripts {
             
             Debug.Log("Teleporting to shell.");
             transform.position = shellTf.position;
+            
         }
     }
 }

@@ -109,6 +109,10 @@
     -unity-background-image-tint-color: rgba(63, 63, 63, 0.78);
 }
 
+.zoneExtract {
+    -unity-background-image-tint-color: rgba(0, 255, 25, 0.67);
+}
+
 .pointLabel {
     -unity-font: url("project://database/Assets/Fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
     font-size: 40px;

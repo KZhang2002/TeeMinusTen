@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 namespace _Scripts {
     public class UITopoMap : MonoBehaviour {
         
-        // References
+        // External References
         private UIDocument _doc;
         private GameManager _gm;
         private MortarController _mc;
@@ -13,16 +14,13 @@ namespace _Scripts {
         private Rigidbody _shellRb;
         private Transform shellTf => shell.transform;
         
-        public float updateInterval = 0.2f;
-        private float _timer;
-        
         #region Map Stuff
         
             public Terrain Terrain;
             private Texture2D TopoMapBG;
             
             // Visual indicator of where map calculator pointer is pointing at in world space.
-            public GameObject MapCursor;
+            [FormerlySerializedAs("MapCursor")] public GameObject MapMarker;
             private VisualElement _cursorPoint;
                 
             private Label _angleLabel;
@@ -36,6 +34,7 @@ namespace _Scripts {
             private Label _targetLabel;
                 
             private VisualElement _extractPoint;
+            private VisualElement _extractIcon;
             private readonly Dictionary<int, VisualElement> _targetPointsDict = new();
                 
             private VisualElement _topoMap;
@@ -112,69 +111,70 @@ namespace _Scripts {
             
             private void InitMap() {
                 UIHelper.AssignVE(ref _topoMap, "TopoMap", _doc);
-
+                
                 _topoMap.RegisterCallback<MouseDownEvent>(evt => {
-                    if (evt.button == 0) // Left-click
-                    {
+                    // Left-click
+                    if (evt.button == 0) {
                         isDragging = true;
                         evt.StopPropagation();
-
-                        // Get the point clicked on the map
-                        var mousePos = evt.localMousePosition;
-                        mousePos.y = _topoMap.resolvedStyle.height - mousePos.y;
-                        mousePos.x = _topoMap.resolvedStyle.width - mousePos.x;
-
-                        // Convert to world position
-                        var worldPos = ConvertMapToWorldPosition(mousePos);
-                        MapCursor.transform.position = worldPos;
-                        SetElementPositionWorldToTopoMap(worldPos, _cursorPoint);
+                        MoveMapCursor(evt.localMousePosition);
                     }
                 });
 
                 _topoMap.RegisterCallback<MouseMoveEvent>(evt => {
                     if (isDragging) {
-                        // Get the point clicked on the map
-                        var mousePos = evt.localMousePosition;
-                        mousePos.y = _topoMap.resolvedStyle.height - mousePos.y;
-                        mousePos.x = _topoMap.resolvedStyle.height - mousePos.x;
-
-                        // Convert to world position
-                        var worldPos = ConvertMapToWorldPosition(mousePos);
-
-                        // Update cursor and map point positions
-                        MapCursor.transform.position = worldPos;
-                        SetElementPositionWorldToTopoMap(worldPos, _cursorPoint);
+                        MoveMapCursor(evt.localMousePosition);
                     }
                 });
 
                 _topoMap.RegisterCallback<MouseUpEvent>(evt => {
-                    if (evt.button == 0) // Left-click
-                    {
+                    // Left-click
+                    if (evt.button == 0) {
                         isDragging = false;
                         evt.StopPropagation();
                     }
                 });
-                
-                // _topoMap.RegisterCallback<GeometryChangedEvent>(OnMapLayoutReady);
 
+                // Calculator Text
                 UIHelper.AssignLabel(ref _distanceLabel, "distance", _doc);
                 UIHelper.AssignLabel(ref _angleLabel, "angle", _doc);
 
+                // Map Icons
+                UIHelper.AssignVE(ref _cursorPoint, "cursorPoint", _doc);
                 UIHelper.AssignVE(ref _playerIcon, "playerIcon", _doc);
                 UIHelper.AssignVE(ref _shellIcon, "shellIcon", _doc);
-                UIHelper.AssignVE(ref _cursorPoint, "cursorPoint", _doc);
                 UIHelper.AssignVE(ref _extractPoint, "extractPoint", _doc);
+                UIHelper.AssignVE(ref _extractIcon, "extractIcon", _doc);
                 UIHelper.AssignVE(ref _targetPoint, "targetPoint", _doc);
                 UIHelper.AssignLabel(ref _targetLabel, "targetLabel", _doc);
                 UIHelper.AssignVE(ref _shellPath, "shellPath", _doc);
                 
                 _extractPoint.visible = false;
                 _targetPoint.visible = false;
+                
+                // Change extract icon size to match zone size
+                _topoMap.RegisterCallback((GeometryChangedEvent _) => {
+                    var diameterPixels = _gm._extractZone.goalRadius * 2f * pixelsPerUnit;
+                    _extractPoint.style.width = diameterPixels;
+                    _extractPoint.style.height = diameterPixels;
+                });
+            }
+
+            private void MoveMapCursor(Vector2 localMousePosition) {
+                // Get the point clicked on the map
+                var mousePos = localMousePosition;
+                mousePos.y = _topoMap.resolvedStyle.height - mousePos.y;
+                mousePos.x = _topoMap.resolvedStyle.width - mousePos.x;
+
+                // Convert to world position
+                var worldPos = ConvertMapToWorldPosition(mousePos);
+                MapMarker.transform.position = worldPos;
+                SetElementPositionWorldToTopoMap(worldPos, _cursorPoint);
             }
             
             public void loadTopoMapTexture(Texture2D texture) {
                 if (texture == null) {
-                    Debug.LogError("Provided texture is null. Cannot assign to topo map.");
+                    Debug.LogError("Provided map texture is null. Cannot assign to topo map.");
                     return;
                 }
 
@@ -188,10 +188,9 @@ namespace _Scripts {
             
             private void UpdateEntityIcons() {
                 _playerIcon.visible = true;
-                // _shellIcon.visible = true;
                 _cursorPoint.visible = true;
                 _shellPath.visible = true;
-
+                
                 SetElementPositionWorldToTopoMap(_mc.gameObject.transform.position, _playerIcon);
                 // _playerIcon.style.rotate = new Rotate(_mc.gameObject.transform.eulerAngles.y + 45f);
                 _playerIcon.style.rotate = new Rotate((_mc.rotationAngle - 90 + 360) % 360);
@@ -202,53 +201,11 @@ namespace _Scripts {
             public void UpdateZonePoints(Dictionary<int, Zone> zoneDict) {
                 foreach (var kvp in zoneDict) {
                     if (!_targetPointsDict.TryGetValue(kvp.Key, out var target) || target == null) {
-                        var copy = new VisualElement {
-                            name = _targetPoint.name + "_" + kvp.Key
-                        };
-                        copy.visible = true;
-
-                        // Set position on the map
-                        SetElementPositionWorldToTopoMap(kvp.Value.transform.position, copy);
-
-                        // Change icon size to match zone size
-                        _topoMap.RegisterCallback((GeometryChangedEvent _) => {
-                            var diameterPixels = kvp.Value.goalRadius * 2f * pixelsPerUnit;
-                            copy.style.width = diameterPixels;
-                            copy.style.height = diameterPixels;
-                        });
-
-                        // Apply zone icon through class addition
-                        _targetPoint.RegisterCallback((GeometryChangedEvent _) => {
-                            copy.style.backgroundImage = _targetPoint.resolvedStyle.backgroundImage;
-
-                            foreach (var className in _targetPoint.GetClasses())
-                                copy.AddToClassList(className);
-                        });
-
-                        // Create a copy of the label
-                        var labelCopy = new Label {
-                            name = _targetLabel.name + "_" + kvp.Key,
-                            text = UIHelper.IntToLetter(kvp.Key)
-                        };
-
-                        // Copy the styles and classes
-                        foreach (var className in _targetLabel.GetClasses())
-                            labelCopy.AddToClassList(className);
-
-                        // Add the label copy to the visual element copy
-                        copy.Add(labelCopy);
-
-                        // Add to parent and dictionary
-                        _targetPoint.parent.Add(copy);
-                        _targetPointsDict[kvp.Key] = copy;
+                        CreateNewZonePoint(kvp);
                     }
-
                     
                     var targetCopy = _targetPointsDict[kvp.Key];
-
-                    if (targetCopy.ClassListContains("zoneCompleted")) {
-                        return;
-                    }
+                    if (targetCopy.ClassListContains("zoneCompleted")) return;
                     
                     if (kvp.Value.isCompleted) {
                         targetCopy.AddToClassList("zoneCompleted");
@@ -267,17 +224,59 @@ namespace _Scripts {
                     SetElementPositionWorldToTopoMap(extractZone.transform.position, _extractPoint);
                 }
             }
-            
-            private void UpdateCalculatorText() {
 
+            private void CreateNewZonePoint(KeyValuePair<int, Zone> kvp) {
+                // Create a copy of visual element
+                var copy = new VisualElement {
+                    name = _targetPoint.name + "_" + kvp.Key
+                };
+                copy.visible = true;
+
+                // Set position on the map
+                SetElementPositionWorldToTopoMap(kvp.Value.transform.position, copy);
+
+                // Change icon size to match zone size
+                _topoMap.RegisterCallback((GeometryChangedEvent _) => {
+                    var diameterPixels = kvp.Value.goalRadius * 2f * pixelsPerUnit;
+                    copy.style.width = diameterPixels;
+                    copy.style.height = diameterPixels;
+                });
+
+                // Apply zone icon through class addition
+                _targetPoint.RegisterCallback((GeometryChangedEvent _) => {
+                    copy.style.backgroundImage = _targetPoint.resolvedStyle.backgroundImage;
+
+                    foreach (var className in _targetPoint.GetClasses())
+                        copy.AddToClassList(className);
+                });
+
+                // Create a copy of the label
+                var labelCopy = new Label {
+                    name = _targetLabel.name + "_" + kvp.Key,
+                    text = UIHelper.IntToLetter(kvp.Key)
+                };
+
+                // Copy the styles and classes
+                foreach (var className in _targetLabel.GetClasses())
+                    labelCopy.AddToClassList(className);
+
+                // Add the label copy to the visual element copy
+                copy.Add(labelCopy);
+
+                // Add to parent and dictionary
+                _targetPoint.parent.Add(copy);
+                _targetPointsDict[kvp.Key] = copy;
+            }
+
+            private void UpdateCalculatorText() {
                 var dist = Vector2.Distance(new Vector2(_mc.transform.position.x, _mc.transform.position.z),
                     new Vector2(shellTf.position.x, shellTf.position.z));
                 if (dist < 5f) dist = 0;
             
-                var cursorDist = Vector3.Distance(_mc.gameObject.transform.position, MapCursor.transform.position);
+                var cursorDist = Vector3.Distance(_mc.gameObject.transform.position, MapMarker.transform.position);
                 _distanceLabel.text = $"{UIHelper.RoundFloatToStr(cursorDist)} m from target";
 
-                var delta = MapCursor.transform.position - _mc.gameObject.transform.position;
+                var delta = MapMarker.transform.position - _mc.gameObject.transform.position;
                 var flatDelta = new Vector2(delta.x, delta.z); // Ignore Y
 
                 var angle = Mathf.Atan2(flatDelta.y, flatDelta.x) * Mathf.Rad2Deg * -1;
@@ -287,17 +286,6 @@ namespace _Scripts {
 
                 _angleLabel.text = $"{UIHelper.RoundFloatToStr(angle)}° heading advised";
             }
-            
-            // private void UpdatePkgStatusList() {
-            //     var output = "";
-            //
-            //     foreach (var kvp in _gm._zones) {
-            //         var status = kvp.Value.isCompleted ? "DELIVERED" : "IN TRANSIT";
-            //         output += $"PKG {UIHelper.IntToLetter(kvp.Key)}: {status}\n";
-            //     }
-            //
-            //     _pkgStatusList.text = output;
-            // }
 
         #endregion
 

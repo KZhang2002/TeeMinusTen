@@ -33,7 +33,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Reset",
+                    "name": "Reload",
                     "type": "Button",
                     "id": "9cdf264b-7fd8-4553-8a81-0995c05d233b",
                     "expectedControlType": "Button",
@@ -145,7 +145,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Reset",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

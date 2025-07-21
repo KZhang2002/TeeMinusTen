@@ -46,8 +46,9 @@ namespace _Scripts {
 
         private void OnEnable() {
             _controls.Enable();
+            
             _controls.Standard.Fire.performed += OnFire;
-            _controls.Standard.Reset.performed += OnReset;
+            _controls.Standard.Reload.performed += OnReload;
 
             _controls.Standard.TeleportDEBUG.performed += OnTeleport;
             
@@ -60,8 +61,6 @@ namespace _Scripts {
         }
 
         private void OnFire(InputAction.CallbackContext context) {
-            // Vector2 move = context.ReadValue<Vector2>();
-            // Debug.Log($"Moving: {move}");
             _mc.FireShell();
         }
 
@@ -69,7 +68,7 @@ namespace _Scripts {
             _mc.TeleportToShell();
         }
 
-        private void OnReset(InputAction.CallbackContext context) {
+        private void OnReload(InputAction.CallbackContext context) {
             _mc.ResetShell();
         }
     }

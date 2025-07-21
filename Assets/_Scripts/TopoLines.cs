@@ -46,16 +46,15 @@ namespace _Scripts {
         }
 
         void Start() {
-            Debug.Log("Application.dataPath: " + Application.dataPath);
-            Debug.Log("folderPath: " + folderPath);
+            // Debug.Log("Application.dataPath: " + Application.dataPath);
+            // Debug.Log("folderPath: " + folderPath);
             
             // _srgbBkgColor = SRGBToLinear(bkgColor);
             // _srgbBandColor = SRGBToLinear(bandColor);
             
             GenerateTopoLines();
-            string sceneName = SceneManager.GetActiveScene().name;
-            SaveTextureAsImage(topoMap, sceneName + "_map", false);
-            // _ui.loadTopoMapImageFromFile(_filePath);
+            // string sceneName = SceneManager.GetActiveScene().name;
+            // SaveTextureAsImage(topoMap, sceneName + "_map", false);
             _uiManager.loadTopoMapTexture(topoMap);
         }
         

@@ -16,12 +16,12 @@ namespace _Scripts {
         public MortarController mortar;
         // public InputManager input { get; private set; }
 
-        private int _shellIDCounter = 0;
-        private int _zoneIDCounter = 0;
+        private int _shellIDCounter;
+        private int _zoneIDCounter;
         
-        private int _targetTotalCount = 0; // max num of targets for target count to check itself against
-        private int _targetCount = 0;
-        private int _completedTargetsCounter = 0;
+        private int _targetTotalCount; // max num of targets for target count to check itself against
+        private int _targetCount;
+        private int _completedTargetsCounter;
         private bool _reachedExtract = false;
         
         public Zone _extractZone;
@@ -30,6 +30,8 @@ namespace _Scripts {
         public Dictionary<int, Zone> _zones = new();
 
         private UIManager _uiManager;
+        
+        public int currentZoneID = -1; // The zone the current shell is inside, change to private
         
         private void Awake() {
             if (instance != null && instance != this)
@@ -88,7 +90,12 @@ namespace _Scripts {
         }
 
         public void CompleteGoal(int goalID) {
-            // _zones[goalID].IsCompleted = true;
+            if (goalID < 0) {
+                Debug.LogError("Goal ID cannot be negative!");
+                return;
+            }
+            
+            _zones[goalID].CompleteGoal();
             ++_completedTargetsCounter;
             if (_targetCount > 0 && _completedTargetsCounter == _targetCount) {
                 Debug.Log("All goals completed. Go to extract.");
@@ -106,10 +113,35 @@ namespace _Scripts {
             //todo add code for ending level here.
             Debug.Log("End level.");
         }
-
-        private void TeleportMortar(Vector3 position) {
-            
+        
+        public void SetCurrentZone(int zoneID) {
+            currentZoneID = zoneID;
+        }
+        
+        private void OnEnable() {
+            ShellEvent.OnShellLanded += HandleShellLanded;
+            ShellEvent.OnShellFired += HandleShellFired;
+            ShellEvent.OnShellLoaded += HandleShellLoaded;
         }
 
+        private void OnDisable() {
+            ShellEvent.OnShellLanded -= HandleShellLanded;
+            ShellEvent.OnShellFired -= HandleShellFired;
+            ShellEvent.OnShellLoaded -= HandleShellLoaded;
+        }
+        
+        private void HandleShellLanded() {
+            Debug.Log("Shell has landed. Current zone is " + currentZoneID);
+            CompleteGoal(currentZoneID);
+        }
+
+        private void HandleShellFired() {
+            Debug.Log("Shell has been fired.");
+        }
+
+        private void HandleShellLoaded() {
+            Debug.Log("Shell has been loaded.");
+            currentZoneID = -1; // unset currentZoneID
+        }
     }
 }

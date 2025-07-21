@@ -56,18 +56,6 @@ namespace _Scripts {
             }
         }
 
-        private void OnEnable() {
-            ShellEvent.OnShellLanded += HandleShellLanded;
-            ShellEvent.OnShellFired += HandleShellFired;
-            ShellEvent.OnShellLoaded += HandleShellLoaded;
-        }
-
-        private void OnDisable() {
-            ShellEvent.OnShellLanded -= HandleShellLanded;
-            ShellEvent.OnShellFired -= HandleShellFired;
-            ShellEvent.OnShellLoaded -= HandleShellLoaded;
-        }
-
         private void OnCollisionEnter(Collision other) {
             var obj = other.gameObject;
             if (!obj.CompareTag("Terrain")) return;
@@ -138,17 +126,12 @@ namespace _Scripts {
             _rb.AddForce(dir * impulseVal, ForceMode.Impulse);
             _uiManager.ShowShellIcon();
         }
-
-        private void HandleShellLanded() {
-            Debug.Log("Shell has landed.");
-        }
-
-        private void HandleShellFired() {
-            Debug.Log("Shell has been fired.");
-        }
-
-        private void HandleShellLoaded() {
-            _trailR.Clear();
+        
+        void OnDrawGizmos() {
+            Color sphereColor = Color.magenta;
+            sphereColor.a = 0.5f; // make transparent
+            Gizmos.color = sphereColor;
+            Gizmos.DrawSphere(transform.position, 1.0f);
         }
     }
 }

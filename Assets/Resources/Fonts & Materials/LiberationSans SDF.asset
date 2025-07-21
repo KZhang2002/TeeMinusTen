@@ -191,6 +191,7 @@ Material:
     - _GradientScale: 10
     - _OutlineSoftness: 0
     - _OutlineWidth: 0
+    - _PerspectiveFilter: 0.875
     - _ScaleRatioA: 1
     - _ScaleRatioB: 1
     - _ScaleRatioC: 1

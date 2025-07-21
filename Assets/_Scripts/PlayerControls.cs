@@ -57,7 +57,7 @@ namespace _Scripts
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Reset"",
+                    ""name"": ""Reload"",
                     ""type"": ""Button"",
                     ""id"": ""9cdf264b-7fd8-4553-8a81-0995c05d233b"",
                     ""expectedControlType"": ""Button"",
@@ -169,7 +169,7 @@ namespace _Scripts
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Reset"",
+                    ""action"": ""Reload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -205,7 +205,7 @@ namespace _Scripts
             m_Standard_Fire = m_Standard.FindAction("Fire", throwIfNotFound: true);
             m_Standard_Tilt = m_Standard.FindAction("Tilt", throwIfNotFound: true);
             m_Standard_Rotate = m_Standard.FindAction("Rotate", throwIfNotFound: true);
-            m_Standard_Reset = m_Standard.FindAction("Reset", throwIfNotFound: true);
+            m_Standard_Reload = m_Standard.FindAction("Reload", throwIfNotFound: true);
             m_Standard_SpeedModifier = m_Standard.FindAction("SpeedModifier", throwIfNotFound: true);
             m_Standard_TeleportDEBUG = m_Standard.FindAction("TeleportDEBUG", throwIfNotFound: true);
         }
@@ -272,7 +272,7 @@ namespace _Scripts
         private readonly InputAction m_Standard_Fire;
         private readonly InputAction m_Standard_Tilt;
         private readonly InputAction m_Standard_Rotate;
-        private readonly InputAction m_Standard_Reset;
+        private readonly InputAction m_Standard_Reload;
         private readonly InputAction m_Standard_SpeedModifier;
         private readonly InputAction m_Standard_TeleportDEBUG;
         public struct StandardActions
@@ -282,7 +282,7 @@ namespace _Scripts
             public InputAction @Fire => m_Wrapper.m_Standard_Fire;
             public InputAction @Tilt => m_Wrapper.m_Standard_Tilt;
             public InputAction @Rotate => m_Wrapper.m_Standard_Rotate;
-            public InputAction @Reset => m_Wrapper.m_Standard_Reset;
+            public InputAction @Reload => m_Wrapper.m_Standard_Reload;
             public InputAction @SpeedModifier => m_Wrapper.m_Standard_SpeedModifier;
             public InputAction @TeleportDEBUG => m_Wrapper.m_Standard_TeleportDEBUG;
             public InputActionMap Get() { return m_Wrapper.m_Standard; }
@@ -303,9 +303,9 @@ namespace _Scripts
                 @Rotate.started += instance.OnRotate;
                 @Rotate.performed += instance.OnRotate;
                 @Rotate.canceled += instance.OnRotate;
-                @Reset.started += instance.OnReset;
-                @Reset.performed += instance.OnReset;
-                @Reset.canceled += instance.OnReset;
+                @Reload.started += instance.OnReload;
+                @Reload.performed += instance.OnReload;
+                @Reload.canceled += instance.OnReload;
                 @SpeedModifier.started += instance.OnSpeedModifier;
                 @SpeedModifier.performed += instance.OnSpeedModifier;
                 @SpeedModifier.canceled += instance.OnSpeedModifier;
@@ -325,9 +325,9 @@ namespace _Scripts
                 @Rotate.started -= instance.OnRotate;
                 @Rotate.performed -= instance.OnRotate;
                 @Rotate.canceled -= instance.OnRotate;
-                @Reset.started -= instance.OnReset;
-                @Reset.performed -= instance.OnReset;
-                @Reset.canceled -= instance.OnReset;
+                @Reload.started -= instance.OnReload;
+                @Reload.performed -= instance.OnReload;
+                @Reload.canceled -= instance.OnReload;
                 @SpeedModifier.started -= instance.OnSpeedModifier;
                 @SpeedModifier.performed -= instance.OnSpeedModifier;
                 @SpeedModifier.canceled -= instance.OnSpeedModifier;
@@ -356,7 +356,7 @@ namespace _Scripts
             void OnFire(InputAction.CallbackContext context);
             void OnTilt(InputAction.CallbackContext context);
             void OnRotate(InputAction.CallbackContext context);
-            void OnReset(InputAction.CallbackContext context);
+            void OnReload(InputAction.CallbackContext context);
             void OnSpeedModifier(InputAction.CallbackContext context);
             void OnTeleportDEBUG(InputAction.CallbackContext context);
         }

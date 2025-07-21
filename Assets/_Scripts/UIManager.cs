@@ -143,7 +143,7 @@ namespace _Scripts {
             if (height < 5f) height = 0;
             _shellHeight.text = _sHPrefix + $" {UIHelper.RoundFloatToStr(height)} M";
         }
-
+        
         private void UpdatePkgStatusList() {
             var output = "";
 

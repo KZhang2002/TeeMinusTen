@@ -12,7 +12,7 @@ namespace _Scripts {
         [SerializeField] public float goalRadius = 0.5f;
         protected SphereCollider Col;
         protected GameManager Gm;
-        public bool isCompleted { get; protected set; } = false;
+        [SerializeField] public bool isCompleted = false;
         public zoneType type = zoneType.Target;
         [SerializeField] protected Color gizmoColor = Color.blue;
         
@@ -41,10 +41,13 @@ namespace _Scripts {
             bool isShell = obj.CompareTag("Shell");
             if (!isShell) return;
             
+            Gm.SetCurrentZone(id);
+        }
+
+        public void CompleteGoal() {
             isCompleted = true;
             Debug.Log($"completed goal. ID: {id}");
-            Gm.CompleteGoal(id);
-
+            
             if (type == zoneType.Extract && isOpen) {
                 isCompleted = true;
                 Gm.Extract();
@@ -54,7 +57,6 @@ namespace _Scripts {
         //todo connect to event system
         public void OpenExtract() {
             if (type != zoneType.Extract) return;
-            
             isOpen = true;
         }
         
