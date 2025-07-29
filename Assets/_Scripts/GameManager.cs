@@ -132,7 +132,7 @@ namespace _Scripts {
         
         private void HandleShellLanded() {
             Debug.Log("Shell has landed. Current zone is " + currentZoneID);
-            CompleteGoal(currentZoneID);
+            if (currentZoneID >= 0) CompleteGoal(currentZoneID);
         }
 
         private void HandleShellFired() {

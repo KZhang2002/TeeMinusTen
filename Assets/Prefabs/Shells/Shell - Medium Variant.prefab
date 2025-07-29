@@ -57,6 +57,10 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8692520086812046307, guid: f22417e6450dc9a4db5050353578bb4e, type: 3}
+      propertyPath: _impulseType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8692520086812046307, guid: f22417e6450dc9a4db5050353578bb4e, type: 3}
       propertyPath: _launchImpulse
       value: 100
       objectReference: {fileID: 0}

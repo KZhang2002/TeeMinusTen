@@ -110,7 +110,7 @@
 }
 
 .zoneExtract {
-    -unity-background-image-tint-color: rgba(0, 255, 25, 0.67);
+    -unity-background-image-tint-color: rgba(0, 201, 25, 0.67);
 }
 
 .pointLabel {

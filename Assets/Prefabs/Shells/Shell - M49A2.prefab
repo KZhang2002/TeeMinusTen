@@ -189,6 +189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _launchImpulse: 210
+  _impulseType: 2
   id: -1
   geo: {fileID: 584066039833928156}
   isGrounded: 0

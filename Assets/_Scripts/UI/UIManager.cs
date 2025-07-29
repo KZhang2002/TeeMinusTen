@@ -36,36 +36,90 @@ namespace _Scripts {
             private string _sDPrefix;
             private Label _shellHeight;
             private string _sHPrefix;
+
+            private Label _rangeData;
             
             // Package Status Data
             private Label _pkgStatusList;
             
         #endregion
 
-        private void Awake() {
-            if (instance != null && instance != this)
-                Destroy(this);
-            else
-                instance = this;
+        #region Start Up
+            private void Awake() {
+                if (instance != null && instance != this)
+                    Destroy(this);
+                else
+                    instance = this;
 
-            _doc = GetComponent<UIDocument>();
-            _map = GetComponent<UITopoMap>();
+                _doc = GetComponent<UIDocument>();
+                _map = GetComponent<UITopoMap>();
 
-            InitLabels();
+                InitLabels();
 
-            _timer = updateInterval;
-        }
-
-        private void Start() {
-            _gm = GameManager.instance;
-            if (!_gm || !_gm.mortar) return;
-
-            _mc = _gm.mortar;
-            if (_mc) {
-                if (!_shell) _shell = _mc.currentShell;
-                if (_shell && !_shellRb) _shellRb = _shell.GetComponent<Rigidbody>();
+                _timer = updateInterval;
             }
-        }
+
+            private void Start() {
+                _gm = GameManager.instance;
+                if (!_gm || !_gm.mortar) return;
+
+                _mc = _gm.mortar;
+                if (_mc) {
+                    if (!_shell) _shell = _mc.currentShell;
+                    if (_shell && !_shellRb) _shellRb = _shell.GetComponent<Rigidbody>();
+                }
+            }
+            
+            public void loadTopoMapTexture(Texture2D texture) {
+                // if (texture == null) {
+                //     Debug.LogError("Provided texture is null. Cannot assign to topo map.");
+                //     return;
+                // }
+                //
+                // TopoMapBG = texture;
+                // _topoMap.style.backgroundImage = TopoMapBG;
+                _map.loadTopoMapTexture(texture);
+            }
+            
+            private void InitLabels() {
+                UIHelper.AssignLabel(ref _firingAngle, "firingAngle", _doc);
+                UIHelper.AssignLabel(ref _mortarRotation, "mortarRotation", _doc);
+                UIHelper.AssignLabel(ref _shellHeight, "shellHeight", _doc);
+                UIHelper.AssignLabel(ref _shellDistance, "shellDistance", _doc);
+                UIHelper.AssignLabel(ref _rangeData, "RangeData", _doc);
+                
+                _fAPrefix = _firingAngle.text;
+                _mRPrefix = _mortarRotation.text;
+                _sHPrefix = _shellHeight.text;
+                _sDPrefix = _shellDistance.text;
+
+                _pkgStatusList = _doc.rootVisualElement.Q<Label>("objList");
+            }
+            
+        #endregion
+        
+        #region Event Responses
+            private void OnEnable() {
+                ShellEvent.OnShellLanded += HandleShellLanded;
+                // ShellEvent.OnShellFired += HandleShellFired;
+                ShellEvent.OnShellLoaded += HandleShellLoaded;
+            }
+
+            private void OnDisable() {
+                ShellEvent.OnShellLanded -= HandleShellLanded;
+                // ShellEvent.OnShellFired -= HandleShellFired;
+                ShellEvent.OnShellLoaded -= HandleShellLoaded;
+            }
+            
+            private void HandleShellLanded() {
+                // add switch to static rendering here
+                UpdatePkgStatusList();
+            }
+
+            private void HandleShellLoaded() {
+                UpdateRangeData();
+            }
+        #endregion
 
         private void Update() {
             _timer += Time.deltaTime;
@@ -77,34 +131,16 @@ namespace _Scripts {
                 }
 
                 // UpdatePkgStatusList();
-                // _map.UpdateMap();
 
                 _timer = 0f;
             }
+            
+            // _map.UpdateDynamic();
 
-            _map.UpdateMap();
+            _map.UpdateMapAll();
             UpdatePkgStatusList();
         }
         
-        public void loadTopoMapTexture(Texture2D texture) {
-            // if (texture == null) {
-            //     Debug.LogError("Provided texture is null. Cannot assign to topo map.");
-            //     return;
-            // }
-            //
-            // TopoMapBG = texture;
-            // _topoMap.style.backgroundImage = TopoMapBG;
-            _map.loadTopoMapTexture(texture);
-        }
-
-        public void ShowShellIcon() {
-            _map.ShowShellIcon();
-        }
-
-        public void HideShellIcon() {
-            _map.HideShellIcon();
-        }
-
         public void UpdateZonePoints(Dictionary<int, Zone> zoneDict, Zone extractZone) {
             _map.UpdateZonePoints(zoneDict, extractZone);
             // UpdateZonePoints(zoneDict);
@@ -112,20 +148,6 @@ namespace _Scripts {
             //     _extractPoint.visible = extractZone.isOpen;
             //     SetElementPositionWorldToTopoMap(extractZone.transform.position, _extractPoint);
             // }
-        }
-
-        private void InitLabels() {
-            UIHelper.AssignLabel(ref _firingAngle, "firingAngle", _doc);
-            UIHelper.AssignLabel(ref _mortarRotation, "mortarRotation", _doc);
-            UIHelper.AssignLabel(ref _shellHeight, "shellHeight", _doc);
-            UIHelper.AssignLabel(ref _shellDistance, "shellDistance", _doc);
-            
-            _fAPrefix = _firingAngle.text;
-            _mRPrefix = _mortarRotation.text;
-            _sHPrefix = _shellHeight.text;
-            _sDPrefix = _shellDistance.text;
-
-            _pkgStatusList = _doc.rootVisualElement.Q<Label>("objList");
         }
 
         private void UpdateDataText() {
@@ -153,6 +175,11 @@ namespace _Scripts {
             }
 
             _pkgStatusList.text = output;
+        }
+        
+        private void UpdateRangeData() {
+            impulseType type = _shell.impulseType;
+            _rangeData.text = ShellRangeData.RangeTable[type];
         }
     }
 }

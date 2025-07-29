@@ -67,13 +67,23 @@ namespace _Scripts {
         
         #region Publicly Exposed Functions
         
-            public void UpdateMap() {
+            public void UpdateMapAll() {
                 if (Terrain) {
                     UpdateEntityIcons();
                     UpdateZonePoints(_gm._zones, _gm._extractZone);
                     UpdateCalculatorText();
                     // UpdatePkgStatusList();
                 }
+            }
+
+            public void UpdateStatic() {
+                UpdateZonePoints(_gm._zones, _gm._extractZone);
+            }
+
+            public void UpdateDynamic() {
+                SetElementPositionWorldToTopoMap(_mc.gameObject.transform.position, _playerIcon);
+                _playerIcon.style.rotate = new Rotate((_mc.rotationAngle - 90 + 360) % 360);
+                if (shell && !shell.isGrounded) SetElementPositionWorldToTopoMap(shell.transform.position, _shellIcon);
             }
             
             public void ShowShellIcon() {
@@ -103,10 +113,15 @@ namespace _Scripts {
                 if (shell && shellRb) Debug.Log("Shell: " + shell + ", RB: " + shellRb); 
                 else Debug.Log("Shell: " + shell + ", RB: " + shellRb);
                 
-                // if (_mc) {
-                //     if (!_shell) _shell = _mc.currentShell;
-                //     if (_shell && !_shellRb) _shellRb = _shell.GetComponent<Rigidbody>();
-                // }
+                // UpdateMapAll();
+                
+                _playerIcon.visible = true;
+                _cursorPoint.visible = true;
+                _shellPath.visible = true;
+                
+                SetElementPositionWorldToTopoMap(_mc.gameObject.transform.position, _playerIcon);
+
+                UpdateStatic();
             }
             
             private void InitMap() {
@@ -181,18 +196,43 @@ namespace _Scripts {
                 TopoMapBG = texture;
                 _topoMap.style.backgroundImage = TopoMapBG;
             }
+            
+            private void OnEnable() {
+                ShellEvent.OnShellLanded += HandleShellLanded;
+                ShellEvent.OnShellFired += HandleShellFired;
+                ShellEvent.OnShellLoaded += HandleShellLoaded;
+            }
+
+            private void OnDisable() {
+                ShellEvent.OnShellLanded -= HandleShellLanded;
+                ShellEvent.OnShellFired -= HandleShellFired;
+                ShellEvent.OnShellLoaded -= HandleShellLoaded;
+            }
+
+        #endregion
+
+        #region Event Responses
+
+            private void HandleShellLanded() {
+                // add switch to static rendering here
+                // UpdateStatic();
+            }
+
+            private void HandleShellFired() {
+                ShowShellIcon();
+            }
+
+            private void HandleShellLoaded() {
+                HideShellIcon();
+                // UpdateStatic();
+            }
 
         #endregion
 
         #region Update Functions
             
             private void UpdateEntityIcons() {
-                _playerIcon.visible = true;
-                _cursorPoint.visible = true;
-                _shellPath.visible = true;
-                
                 SetElementPositionWorldToTopoMap(_mc.gameObject.transform.position, _playerIcon);
-                // _playerIcon.style.rotate = new Rotate(_mc.gameObject.transform.eulerAngles.y + 45f);
                 _playerIcon.style.rotate = new Rotate((_mc.rotationAngle - 90 + 360) % 360);
 
                 if (shell) SetElementPositionWorldToTopoMap(shell.transform.position, _shellIcon);
@@ -269,10 +309,6 @@ namespace _Scripts {
             }
 
             private void UpdateCalculatorText() {
-                var dist = Vector2.Distance(new Vector2(_mc.transform.position.x, _mc.transform.position.z),
-                    new Vector2(shellTf.position.x, shellTf.position.z));
-                if (dist < 5f) dist = 0;
-            
                 var cursorDist = Vector3.Distance(_mc.gameObject.transform.position, MapMarker.transform.position);
                 _distanceLabel.text = $"{UIHelper.RoundFloatToStr(cursorDist)} m from target";
 

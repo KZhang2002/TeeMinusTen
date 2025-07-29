@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -10,19 +11,24 @@ namespace _Scripts {
     
     public class Zone : MonoBehaviour {
         [SerializeField] public float goalRadius = 0.5f;
-        protected SphereCollider Col;
+        [SerializeField] public float goalHeight = 0.5f;
+        [SerializeField] public Mesh mesh;
+        protected CapsuleCollider Col;
         protected GameManager Gm;
         [SerializeField] public bool isCompleted = false;
         public zoneType type = zoneType.Target;
-        [SerializeField] protected Color gizmoColor = Color.blue;
         
-        [SerializeField] public bool isOpen = true;
+        [SerializeField] protected Color gizmoColor = Color.blue;
+        [SerializeField] public bool isOpen = true; // determines if zone is interactable or not
     
         public int id = -1;
+        private Vector3 colCenterLocal => Vector3.up * (goalHeight / 2 - goalRadius);
 
         private void Awake() {
-            Col = GetComponent<SphereCollider>();
+            Col = GetComponent<CapsuleCollider>();
             Col.radius = goalRadius;
+            Col.height = goalHeight;
+            Col.center = colCenterLocal;
         }
 
         private void Start() {
@@ -59,19 +65,6 @@ namespace _Scripts {
             if (type != zoneType.Extract) return;
             isOpen = true;
         }
-        
-        // private void OnTriggerExit(Collider other) {
-        //     if (isCompleted) return;
-        //     
-        //     GameObject obj = other.gameObject;
-        //     // Debug.Log("goal zone hit by obj: " + obj.name);
-        //     bool isShell = obj.CompareTag("Shell");
-        //     if (!isShell) return;
-        //     
-        //     isCompleted = true;
-        //     Debug.Log($"completed goal. ID: {id}");
-        //     _gm.CompleteGoal(id);
-        // }
 
         // Update is called once per frame
         void Update() {
@@ -79,17 +72,20 @@ namespace _Scripts {
         }
     
         void OnDrawGizmos() {
-            Color sphereColor = gizmoColor;
+            Color finalColor = gizmoColor;
 
             // if (type == zoneType.Extract) {
             //     sphereColor = _isOpen ? Color.green : Color.black;
             // }
 
-            if (isCompleted || !isOpen) sphereColor = Color.white;
+            if (isCompleted || !isOpen) finalColor = Color.white;
         
-            sphereColor.a = 0.5f; // make transparent
-            Gizmos.color = sphereColor;
-            Gizmos.DrawSphere(transform.position, goalRadius);
+            finalColor.a = 0.5f; // make transparent
+            Gizmos.color = finalColor;
+            Vector3 origin = transform.position;
+            
+            float goalDiameter = goalRadius * 2;
+            Gizmos.DrawMesh(mesh, colCenterLocal + origin, quaternion.identity, new Vector3(goalDiameter, goalHeight/2 - goalRadius, goalDiameter));
         }
     }
 }

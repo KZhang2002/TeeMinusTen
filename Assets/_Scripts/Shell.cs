@@ -1,14 +1,33 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Scripts {
+    
+    // angles are 30, 40, 45, 50, 60, 70, 80
+    public static class ShellRangeData {
+        public static readonly Dictionary<impulseType, string> RangeTable = new() {
+            { impulseType.Weak, "1\n2\n3\n4\n5\n6\n7" },
+            { impulseType.Medium, "360\n368\n357\n338\n279\n197\n102" },
+            { impulseType.M49A2, "1095\n1058\n1005\n933\n748\n520\n266" }
+        };
+    }
+    
     public enum shellType {
         Beacon,
         Package
     }
 
+    public enum impulseType {
+        Weak,
+        Medium,
+        M49A2
+    }
+
+
     public class Shell : MonoBehaviour {
         [SerializeField] private float _launchImpulse = 20;
+        [SerializeField] private impulseType _impulseType = impulseType.Weak;
         public int id = -1;
 
         [SerializeField] private GameObject geo;
@@ -22,6 +41,7 @@ namespace _Scripts {
         private Rigidbody _rb;
         private TrailRenderer _trailR;
         public float launchImpulse => _launchImpulse;
+        public impulseType impulseType => _impulseType;
 
         public shellType type { get; private set; } = shellType.Beacon;
 
@@ -75,7 +95,6 @@ namespace _Scripts {
             tf.rotation = Quaternion.identity;
 
             ShellEvent.ShellLoaded();
-            _uiManager.HideShellIcon();
         }
 
         public void LoadShell(Vector3 newPos, Quaternion dir) {
@@ -118,13 +137,12 @@ namespace _Scripts {
 
         public void Fire(Vector3 dir) {
             Fire(launchImpulse, dir);
-            ShellEvent.ShellFired();
         }
 
         public void Fire(float impulseVal, Vector3 dir) {
             MakeDynamic();
             _rb.AddForce(dir * impulseVal, ForceMode.Impulse);
-            _uiManager.ShowShellIcon();
+            ShellEvent.ShellFired();
         }
         
         void OnDrawGizmos() {

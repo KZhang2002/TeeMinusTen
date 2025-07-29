@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5142627413553499162}
   - component: {fileID: 5104625458890189504}
-  - component: {fileID: 88076825934270281}
+  - component: {fileID: -6003678290324473003}
   m_Layer: 0
   m_Name: ZoneGoal
   m_TagString: Goal
@@ -46,11 +46,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goalRadius: 0.5
-  Type: 1
+  goalHeight: 300
+  mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  isCompleted: 0
+  type: 1
   gizmoColor: {r: 0, g: 0, b: 1, a: 1}
+  isOpen: 1
   id: -1
---- !u!135 &88076825934270281
-SphereCollider:
+--- !u!136 &-6003678290324473003
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -67,6 +71,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 2
   m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}

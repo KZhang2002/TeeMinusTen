@@ -6,11 +6,12 @@ namespace _Scripts {
     public class Cursor : MonoBehaviour
     {
         public UIDocument uiDocument;
-
         private VisualElement cursor;
 
-        void OnEnable()
-        {
+        public float verticalOffset = 8f;
+        public float horizontalOffset = 5f;
+
+        void OnEnable() {
             var root = uiDocument.rootVisualElement;
             cursor = root.Q<VisualElement>("cursor");
             
@@ -27,8 +28,8 @@ namespace _Scripts {
             Vector2 panelPos = RuntimePanelUtils.ScreenToPanel(
                 uiDocument.rootVisualElement.panel, mousePos);
 
-            cursor.style.left = panelPos.x;
-            cursor.style.top = panelPos.y;
+            cursor.style.left = panelPos.x + horizontalOffset;
+            cursor.style.top = panelPos.y + verticalOffset;
         }
     }
 }
