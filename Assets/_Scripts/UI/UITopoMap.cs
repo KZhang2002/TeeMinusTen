@@ -81,9 +81,7 @@ namespace _Scripts {
             }
 
             public void UpdateDynamic() {
-                SetElementPositionWorldToTopoMap(_mc.gameObject.transform.position, _playerIcon);
-                _playerIcon.style.rotate = new Rotate((_mc.rotationAngle - 90 + 360) % 360);
-                if (shell && !shell.isGrounded) SetElementPositionWorldToTopoMap(shell.transform.position, _shellIcon);
+                UpdateEntityIcons();
             }
             
             public void ShowShellIcon() {
@@ -110,18 +108,14 @@ namespace _Scripts {
                 _mc = _gm.mortar;
                 
                 // NOT DEBUG - ATTEMPTS TO PREFETCH SHELL AND SHELLRB
-                if (shell && shellRb) Debug.Log("Shell: " + shell + ", RB: " + shellRb); 
-                else Debug.Log("Shell: " + shell + ", RB: " + shellRb);
-                
-                // UpdateMapAll();
+                // if (shell && shellRb) Debug.Log("Shell: " + shell + ", RB: " + shellRb); 
+                // else Debug.Log("Shell: " + shell + ", RB: " + shellRb);
                 
                 _playerIcon.visible = true;
                 _cursorPoint.visible = true;
                 _shellPath.visible = true;
                 
-                SetElementPositionWorldToTopoMap(_mc.gameObject.transform.position, _playerIcon);
-
-                UpdateStatic();
+                UpdateMapAll();
             }
             
             private void InitMap() {
@@ -133,12 +127,14 @@ namespace _Scripts {
                         isDragging = true;
                         evt.StopPropagation();
                         MoveMapCursor(evt.localMousePosition);
+                        UpdateCalculatorText();
                     }
                 });
 
                 _topoMap.RegisterCallback<MouseMoveEvent>(evt => {
                     if (isDragging) {
                         MoveMapCursor(evt.localMousePosition);
+                        UpdateCalculatorText();
                     }
                 });
 
@@ -148,6 +144,10 @@ namespace _Scripts {
                         isDragging = false;
                         evt.StopPropagation();
                     }
+                });
+                
+                _topoMap.RegisterCallback((GeometryChangedEvent _) => {
+                    UpdateZonePoints(_gm._zones, _gm._extractZone);
                 });
 
                 // Calculator Text
@@ -214,8 +214,6 @@ namespace _Scripts {
         #region Event Responses
 
             private void HandleShellLanded() {
-                // add switch to static rendering here
-                // UpdateStatic();
             }
 
             private void HandleShellFired() {
@@ -224,7 +222,6 @@ namespace _Scripts {
 
             private void HandleShellLoaded() {
                 HideShellIcon();
-                // UpdateStatic();
             }
 
         #endregion
@@ -280,15 +277,16 @@ namespace _Scripts {
                     var diameterPixels = kvp.Value.goalRadius * 2f * pixelsPerUnit;
                     copy.style.width = diameterPixels;
                     copy.style.height = diameterPixels;
+                    
+                    // Set position on the map
+                    SetElementPositionWorldToTopoMap(kvp.Value.transform.position, copy);
                 });
 
                 // Apply zone icon through class addition
-                _targetPoint.RegisterCallback((GeometryChangedEvent _) => {
-                    copy.style.backgroundImage = _targetPoint.resolvedStyle.backgroundImage;
+                copy.style.backgroundImage = _targetPoint.resolvedStyle.backgroundImage;
 
-                    foreach (var className in _targetPoint.GetClasses())
-                        copy.AddToClassList(className);
-                });
+                foreach (var className in _targetPoint.GetClasses())
+                    copy.AddToClassList(className);
 
                 // Create a copy of the label
                 var labelCopy = new Label {
@@ -384,7 +382,7 @@ namespace _Scripts {
         
         #region Cached Constants and Getters
 
-            // Constants - calculated at runtime!
+            // Constants: calculated at runtime!
             private float _mapHeight;
             private float _mapWidth;
             private float _pixelsPerUnit;

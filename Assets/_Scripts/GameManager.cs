@@ -19,7 +19,6 @@ namespace _Scripts {
         private int _shellIDCounter;
         private int _zoneIDCounter;
         
-        private int _targetTotalCount; // max num of targets for target count to check itself against
         private int _targetCount;
         private int _completedTargetsCounter;
         private bool _reachedExtract = false;
@@ -40,13 +39,12 @@ namespace _Scripts {
                 instance = this;
 
             mortar = GameObject.FindWithTag("Mortar").GetComponent<MortarController>(); // todo replace with reference?
-
-            _targetTotalCount = GameObject.FindGameObjectsWithTag("Goal").Length;
             // input = GetComponent<InputManager>();
         }
 
         private void Start() {
             _uiManager = UIManager.instance;
+            Time.timeScale = 2.0f;
         }
 
         public void RegisterZone(Zone zone) {
@@ -57,7 +55,7 @@ namespace _Scripts {
                 else {
                     _extractZone = zone;
                     Debug.Log("Setting zone points on map.");
-                    _uiManager.UpdateZonePoints(_zones, zone);
+                    // _uiManager.UpdateZonePoints(_zones, zone);
                 }
                 
                 return;
@@ -101,6 +99,8 @@ namespace _Scripts {
                 Debug.Log("All goals completed. Go to extract.");
                 _extractZone.OpenExtract();
             }
+            
+            // _uiManager.UpdateZonePoints();
         }
 
         public void RegisterShell(Shell shell) {
@@ -136,11 +136,11 @@ namespace _Scripts {
         }
 
         private void HandleShellFired() {
-            Debug.Log("Shell has been fired.");
+            // Debug.Log("Shell has been fired.");
         }
 
         private void HandleShellLoaded() {
-            Debug.Log("Shell has been loaded.");
+            // Debug.Log("Shell has been loaded.");
             currentZoneID = -1; // unset currentZoneID
         }
     }

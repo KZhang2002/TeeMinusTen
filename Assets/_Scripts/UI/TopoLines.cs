@@ -43,6 +43,8 @@ namespace _Scripts {
             
             _map = GetComponent<UITopoMap>();
             if (_map == null) Debug.LogError("Topo Line Generator cannot find a UITopoMap component to output to!");
+            
+            
         }
 
         void Start() {
@@ -52,9 +54,11 @@ namespace _Scripts {
             // _srgbBkgColor = SRGBToLinear(bkgColor);
             // _srgbBandColor = SRGBToLinear(bandColor);
             
-            GenerateTopoLines();
+            
             // string sceneName = SceneManager.GetActiveScene().name;
             // SaveTextureAsImage(topoMap, sceneName + "_map", false);
+            
+            GenerateTopoLines();
             _uiManager.loadTopoMapTexture(topoMap);
         }
         

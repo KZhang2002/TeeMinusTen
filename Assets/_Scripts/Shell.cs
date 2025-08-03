@@ -24,7 +24,6 @@ namespace _Scripts {
         M49A2
     }
 
-
     public class Shell : MonoBehaviour {
         [SerializeField] private float _launchImpulse = 20;
         [SerializeField] private impulseType _impulseType = impulseType.Weak;
@@ -54,7 +53,6 @@ namespace _Scripts {
             _rb = GetComponent<Rigidbody>();
             _col = GetComponent<Collider>();
             _trailR = GetComponent<TrailRenderer>();
-            Time.timeScale = 2.0f;
         }
 
         private void Start() {
@@ -65,15 +63,7 @@ namespace _Scripts {
 
             MakeStatic();
             _mc.LoadShell(this);
-            // _mc.RegisterShellRef(this);
             _gm.RegisterShell(this);
-        }
-
-        private void LateUpdate() {
-            if (_isFired) {
-                var velocity = _rb.velocity;
-                // PointShell(velocity.normalized);
-            }
         }
 
         private void OnCollisionEnter(Collision other) {

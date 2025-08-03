@@ -48,7 +48,7 @@
 .mapText {
     -unity-font-definition: initial;
     -unity-font: url("project://database/Assets/Fonts/modern-proggy-tiny/ProggyTiny.ttf?fileID=12800000&guid=33f1463ca56a5f2469e4ee94d71b5478&type=3#ProggyTiny");
-    font-size: 50px;
+    font-size: 30px;
     background-color: rgba(255, 255, 255, 0);
     color: rgb(255, 255, 255);
     word-spacing: -10px;

@@ -3,8 +3,13 @@ using UnityEngine;
 
 namespace _Scripts {
     public class ShellEvent : MonoBehaviour {
-        // public static event Action<int> OnHealthChanged;
+        public static event Action OnShellRegistered;
         
+        public static void ShellRegistered() {
+            OnShellRegistered?.Invoke();
+        }
+        
+        // regular gameplay
         public static event Action OnShellLanded;
         public static event Action OnShellFired;
         public static event Action OnShellLoaded;

@@ -71,6 +71,7 @@ namespace _Scripts {
 
         public void ChangeFiringAngle(float n) {
             firingAngle += n;
+            firingAngle = Mathf.Clamp(firingAngle, minFiringAngle, maxFiringAngle);
         }
         
         public void ChangeRotationAngle(float n) {
@@ -79,8 +80,9 @@ namespace _Scripts {
             else if (rotationAngle < 0) rotationAngle += 360;
         }
 
-        public void RegisterShellRef(Shell shell) {
+        private void RegisterShellRef(Shell shell) {
             currentShell = shell;
+            ShellEvent.ShellRegistered();
         }
         
         public void LoadShell(Shell shell) {

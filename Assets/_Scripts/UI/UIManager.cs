@@ -13,15 +13,13 @@ namespace _Scripts {
         private UIDocument _doc;
         private GameManager _gm;
         private MortarController _mc;
+        
         private Shell _shell;
         private Rigidbody _shellRb;
+        
         public static UIManager instance { get; private set; }
         private Transform shellTf => _shell.transform;
         private UITopoMap _map;
-        
-        // Debug
-        // Visual indicator of where map calculator pointer is pointing at in world space.
-        public GameObject MapCursor;
 
         #region Terminal Data
 
@@ -64,10 +62,9 @@ namespace _Scripts {
                 if (!_gm || !_gm.mortar) return;
 
                 _mc = _gm.mortar;
-                if (_mc) {
-                    if (!_shell) _shell = _mc.currentShell;
-                    if (_shell && !_shellRb) _shellRb = _shell.GetComponent<Rigidbody>();
-                }
+                
+                // UpdateRangeData();
+                // _map.UpdateStatic();
             }
             
             public void loadTopoMapTexture(Texture2D texture) {
@@ -103,40 +100,50 @@ namespace _Scripts {
                 ShellEvent.OnShellLanded += HandleShellLanded;
                 // ShellEvent.OnShellFired += HandleShellFired;
                 ShellEvent.OnShellLoaded += HandleShellLoaded;
+                ShellEvent.OnShellRegistered += HandleShellRegistered;
             }
 
             private void OnDisable() {
                 ShellEvent.OnShellLanded -= HandleShellLanded;
                 // ShellEvent.OnShellFired -= HandleShellFired;
                 ShellEvent.OnShellLoaded -= HandleShellLoaded;
+                ShellEvent.OnShellRegistered -= HandleShellRegistered;
             }
             
             private void HandleShellLanded() {
                 // add switch to static rendering here
-                UpdatePkgStatusList();
+                // UpdatePkgStatusList();
+                _map.UpdateStatic();
             }
 
             private void HandleShellLoaded() {
+                // UpdateRangeData();
+            }
+            
+            private void HandleShellRegistered() {
+                if (_mc) {
+                    if (!_shell) _shell = _mc.currentShell;
+                    if (_shell && !_shellRb) _shellRb = _shell.GetComponent<Rigidbody>();
+                }
+                
                 UpdateRangeData();
             }
+            
         #endregion
 
         private void Update() {
             _timer += Time.deltaTime;
             if (_timer >= updateInterval) {
-                if (_mc) {
-                    if (!_shell) _shell = _mc.currentShell;
-                    if (_shell && !_shellRb) _shellRb = _shell.GetComponent<Rigidbody>();
-                    if (_shellRb) UpdateDataText();
-                }
-
-                // UpdatePkgStatusList();
-
+                // if (_mc) {
+                //     if (!_shell) _shell = _mc.currentShell;
+                //     if (_shell && !_shellRb) _shellRb = _shell.GetComponent<Rigidbody>();
+                //     if (_shellRb) UpdateDataText();
+                // }
+                UpdateDataText();
+                
                 _timer = 0f;
             }
             
-            // _map.UpdateDynamic();
-
             _map.UpdateMapAll();
             UpdatePkgStatusList();
         }
@@ -180,6 +187,7 @@ namespace _Scripts {
         private void UpdateRangeData() {
             impulseType type = _shell.impulseType;
             _rangeData.text = ShellRangeData.RangeTable[type];
+            // Debug.Log("input range data as: " + _rangeData.text);
         }
     }
 }

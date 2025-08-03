@@ -16,7 +16,7 @@ public class debugUI : MonoBehaviour {
     public GUIStyle debugGuiStyle = new();
     [SerializeField] private float leftPadding = 10f;
     [SerializeField] private float upPadding = 10f;
-    [SerializeField] private float verticalSpacing = 36f; // todo change to depend on guiStyle.lineHeight
+    [SerializeField] private float verticalSpacing = 36f;
 
     private void Start() {
         _gm = GameManager.instance;

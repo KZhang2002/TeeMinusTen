@@ -43,11 +43,20 @@ namespace _Scripts {
             if (isCompleted) return;
             
             GameObject obj = other.gameObject;
-            // Debug.Log("goal zone hit by obj: " + obj.name);
             bool isShell = obj.CompareTag("Shell");
             if (!isShell) return;
             
             Gm.SetCurrentZone(id);
+        }
+        
+        private void OnTriggerExit(Collider other) {
+            if (isCompleted) return;
+            
+            GameObject obj = other.gameObject;
+            bool isShell = obj.CompareTag("Shell");
+            if (!isShell) return;
+            
+            Gm.SetCurrentZone(-1);
         }
 
         public void CompleteGoal() {
