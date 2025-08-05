@@ -339,18 +339,6 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2695141978281263128, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 48.400005
-      objectReference: {fileID: 0}
-    - target: {fileID: 2695141978281263128, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 27.225004
-      objectReference: {fileID: 0}
-    - target: {fileID: 2695141978281263128, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.025208337
-      objectReference: {fileID: 0}
     - target: {fileID: 3445938750352786538, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -410,6 +398,18 @@ PrefabInstance:
     - target: {fileID: 5488104333796768509, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5524431220048032525, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 45.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 5524431220048032525, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 25.351875
+      objectReference: {fileID: 0}
+    - target: {fileID: 5524431220048032525, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.02347396
       objectReference: {fileID: 0}
     - target: {fileID: 5754289581865304987, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
       propertyPath: Terrain
@@ -810,7 +810,7 @@ GameObject:
   - component: {fileID: 1101498125}
   - component: {fileID: 1101498124}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: TerminalBG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

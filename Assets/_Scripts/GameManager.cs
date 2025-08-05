@@ -75,24 +75,19 @@ namespace _Scripts {
             // }
         }
         
-        public void TriggerZone(int zoneID) {
-            Zone zone = _zones[zoneID];
-            if (zone.type == zoneType.Extract) {
-                _reachedExtract = true;
-                return;
-            }
-            ++_completedTargetsCounter;
-            if (_targetCount > 0 && _completedTargetsCounter == _targetCount) {
-                Debug.Log("Level completed");
-            }
-        }
+        // public void TriggerZone(int zoneID) {
+        //     Zone zone = _zones[zoneID];
+        //     if (zone.type == zoneType.Extract) {
+        //         _reachedExtract = true;
+        //         return;
+        //     }
+        //     ++_completedTargetsCounter;
+        //     if (_targetCount > 0 && _completedTargetsCounter == _targetCount) {
+        //         Debug.Log("Level completed");
+        //     }
+        // }
 
         public void CompleteGoal(int goalID) {
-            if (goalID < 0) {
-                Debug.LogError("Goal ID cannot be negative!");
-                return;
-            }
-            
             _zones[goalID].CompleteGoal();
             ++_completedTargetsCounter;
             if (_targetCount > 0 && _completedTargetsCounter == _targetCount) {
@@ -130,9 +125,9 @@ namespace _Scripts {
             ShellEvent.OnShellLoaded -= HandleShellLoaded;
         }
         
-        private void HandleShellLanded() {
-            Debug.Log("Shell has landed. Current zone is " + currentZoneID);
-            if (currentZoneID >= 0) CompleteGoal(currentZoneID);
+        private void HandleShellLanded(int zoneID) {
+            Debug.Log("Shell has landed. Current zone is " + zoneID);
+            CompleteGoal(zoneID);
         }
 
         private void HandleShellFired() {

@@ -82,7 +82,7 @@ namespace _Scripts {
 
         private void RegisterShellRef(Shell shell) {
             currentShell = shell;
-            ShellEvent.ShellRegistered();
+            ShellEvent.ShellRegistered(shell);
         }
         
         public void LoadShell(Shell shell) {

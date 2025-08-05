@@ -110,21 +110,19 @@ namespace _Scripts {
                 ShellEvent.OnShellRegistered -= HandleShellRegistered;
             }
             
-            private void HandleShellLanded() {
+            private void HandleShellLanded(int zoneID) {
                 // add switch to static rendering here
                 // UpdatePkgStatusList();
-                _map.UpdateStatic();
+                // _map.UpdateStatic();
             }
 
             private void HandleShellLoaded() {
                 // UpdateRangeData();
             }
             
-            private void HandleShellRegistered() {
-                if (_mc) {
-                    if (!_shell) _shell = _mc.currentShell;
-                    if (_shell && !_shellRb) _shellRb = _shell.GetComponent<Rigidbody>();
-                }
+            private void HandleShellRegistered(Shell shell) {
+                _shell = shell;
+                _shellRb = _shell.GetComponent<Rigidbody>();
                 
                 UpdateRangeData();
             }
@@ -134,13 +132,7 @@ namespace _Scripts {
         private void Update() {
             _timer += Time.deltaTime;
             if (_timer >= updateInterval) {
-                // if (_mc) {
-                //     if (!_shell) _shell = _mc.currentShell;
-                //     if (_shell && !_shellRb) _shellRb = _shell.GetComponent<Rigidbody>();
-                //     if (_shellRb) UpdateDataText();
-                // }
                 UpdateDataText();
-                
                 _timer = 0f;
             }
             

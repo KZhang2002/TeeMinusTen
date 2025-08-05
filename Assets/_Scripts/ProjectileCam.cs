@@ -48,7 +48,7 @@ namespace _Scripts {
         private float shellDist;
         private Vector3 midpoint;
         
-        private void HandleShellLanded() {
+        private void HandleShellLanded(int zoneID) {
             
         }
 

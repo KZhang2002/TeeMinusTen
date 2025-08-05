@@ -213,7 +213,8 @@ namespace _Scripts {
 
         #region Event Responses
 
-            private void HandleShellLanded() {
+            private void HandleShellLanded(int zoneID) {
+                // UpdateStatic();
             }
 
             private void HandleShellFired() {
@@ -242,7 +243,7 @@ namespace _Scripts {
                     }
                     
                     var targetCopy = _targetPointsDict[kvp.Key];
-                    if (targetCopy.ClassListContains("zoneCompleted")) return;
+                    if (targetCopy.ClassListContains("zoneCompleted")) continue;
                     
                     if (kvp.Value.isCompleted) {
                         targetCopy.AddToClassList("zoneCompleted");

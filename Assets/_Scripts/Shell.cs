@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Scripts {
-    
     // angles are 30, 40, 45, 50, 60, 70, 80
     public static class ShellRangeData {
         public static readonly Dictionary<impulseType, string> RangeTable = new() {
@@ -12,7 +10,7 @@ namespace _Scripts {
             { impulseType.M49A2, "1095\n1058\n1005\n933\n748\n520\n266" }
         };
     }
-    
+
     public enum shellType {
         Beacon,
         Package
@@ -39,6 +37,10 @@ namespace _Scripts {
 
         private Rigidbody _rb;
         private TrailRenderer _trailR;
+
+        private UIManager _uiManager;
+
+        private int currentZoneID = -1;
         public float launchImpulse => _launchImpulse;
         public impulseType impulseType => _impulseType;
 
@@ -46,8 +48,6 @@ namespace _Scripts {
 
         private Transform tf => transform;
         private Transform geoTr => geo.transform;
-
-        private UIManager _uiManager;
 
         private void Awake() {
             _rb = GetComponent<Rigidbody>();
@@ -68,13 +68,42 @@ namespace _Scripts {
 
         private void OnCollisionEnter(Collision other) {
             var obj = other.gameObject;
-            if (!obj.CompareTag("Terrain")) return;
+
+            if (obj.CompareTag("Terrain")) {
+                MakeStatic();
+                isGrounded = true;
+                ShellEvent.ShellLanded(currentZoneID);
+            }
+        }
+        
+        private void OnTriggerEnter(Collider other) {
+            var obj = other.gameObject;
+            
+            if (obj.CompareTag("Goal")) {
+                var zone = obj.GetComponent<Zone>();
+                currentZoneID = zone.id;
+                Debug.Log("Shell entered zone " + zone.id);
+            }
+
             if (obj.CompareTag("KillBarrier")) {
                 _mc.LoadShell(this);
             }
-            MakeStatic();
-            isGrounded = true;
-            ShellEvent.ShellLanded();
+        }
+        
+        private void OnTriggerExit(Collider other) {
+            var obj = other.gameObject;
+            
+            if (obj.CompareTag("Goal")) {
+                Debug.Log("Shell exited zone");
+                currentZoneID = -1;
+            }
+        }
+
+        private void OnDrawGizmos() {
+            var sphereColor = Color.magenta;
+            sphereColor.a = 0.5f; // make transparent
+            Gizmos.color = sphereColor;
+            Gizmos.DrawSphere(transform.position, 1.0f);
         }
 
         public void LoadShell(Vector3 newPos, Vector3 dir) {
@@ -133,13 +162,6 @@ namespace _Scripts {
             MakeDynamic();
             _rb.AddForce(dir * impulseVal, ForceMode.Impulse);
             ShellEvent.ShellFired();
-        }
-        
-        void OnDrawGizmos() {
-            Color sphereColor = Color.magenta;
-            sphereColor.a = 0.5f; // make transparent
-            Gizmos.color = sphereColor;
-            Gizmos.DrawSphere(transform.position, 1.0f);
         }
     }
 }
