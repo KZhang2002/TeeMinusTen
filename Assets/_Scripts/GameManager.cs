@@ -126,6 +126,11 @@ namespace _Scripts {
         }
         
         private void HandleShellLanded(int zoneID) {
+            if (zoneID < 0) {
+                Debug.Log("Shell has landed outside of any zone.");
+                return;
+            }
+            
             Debug.Log("Shell has landed. Current zone is " + zoneID);
             CompleteGoal(zoneID);
         }

@@ -9,6 +9,12 @@ namespace _Scripts {
             OnZoneRegistered?.Invoke(zoneID);
         }
         
+        public static event Action OnAllTargetsCompleted;
+        
+        public static void AllZonesCompleted() {
+            OnAllTargetsCompleted?.Invoke();
+        }
+        
         // regular gameplay
         // public static event Action OnShellLanded;
         // public static event Action OnShellFired;

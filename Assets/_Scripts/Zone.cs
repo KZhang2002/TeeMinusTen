@@ -38,26 +38,38 @@ namespace _Scripts {
                 isOpen = false;
             }
         }
-    
-        private void OnTriggerEnter(Collider other) {
-            if (isCompleted) return;
-            
-            GameObject obj = other.gameObject;
-            bool isShell = obj.CompareTag("Shell");
-            if (!isShell) return;
-            
-            Gm.SetCurrentZone(id);
+
+        private void OnEnable() {
+            ZoneEvent.OnAllTargetsCompleted += HandleTargetsCompleted;
         }
         
-        private void OnTriggerExit(Collider other) {
-            if (isCompleted) return;
-            
-            GameObject obj = other.gameObject;
-            bool isShell = obj.CompareTag("Shell");
-            if (!isShell) return;
-            
-            Gm.SetCurrentZone(-1);
+        private void OnDisable() {
+            ZoneEvent.OnAllTargetsCompleted -= HandleTargetsCompleted;
         }
+
+        private void HandleTargetsCompleted() {
+            OpenExtract();
+        }
+
+        // private void OnTriggerEnter(Collider other) {
+        //     if (isCompleted) return;
+        //     
+        //     GameObject obj = other.gameObject;
+        //     bool isShell = obj.CompareTag("Shell");
+        //     if (!isShell) return;
+        //     
+        //     Gm.SetCurrentZone(id);
+        // }
+        //
+        // private void OnTriggerExit(Collider other) {
+        //     if (isCompleted) return;
+        //     
+        //     GameObject obj = other.gameObject;
+        //     bool isShell = obj.CompareTag("Shell");
+        //     if (!isShell) return;
+        //     
+        //     Gm.SetCurrentZone(-1);
+        // }
 
         public void CompleteGoal() {
             isCompleted = true;
@@ -68,24 +80,14 @@ namespace _Scripts {
                 Gm.Extract();
             }
         }
-
-        //todo connect to event system
+        
         public void OpenExtract() {
             if (type != zoneType.Extract) return;
             isOpen = true;
         }
-
-        // Update is called once per frame
-        void Update() {
-            
-        }
     
         void OnDrawGizmos() {
             Color finalColor = gizmoColor;
-
-            // if (type == zoneType.Extract) {
-            //     sphereColor = _isOpen ? Color.green : Color.black;
-            // }
 
             if (isCompleted || !isOpen) finalColor = Color.white;
         

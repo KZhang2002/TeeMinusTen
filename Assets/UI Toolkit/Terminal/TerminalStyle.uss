@@ -1,6 +1,6 @@
 .text {
     -unity-font-definition: initial;
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-proggy-tiny/ProggyTinyModified.ttf?fileID=12800000&guid=2d49d2d9dd7c77045a07e54ac2583ee2&type=3#ProggyTinyModified");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-proggy-tiny/ProggyTinyModified.ttf?fileID=12800000&guid=2d49d2d9dd7c77045a07e54ac2583ee2&type=3#ProggyTinyModified");
     font-size: 75px;
     background-color: rgba(255, 255, 255, 0);
     color: rgb(255, 255, 255);
@@ -10,7 +10,7 @@
 .header {
     font-size: 64px;
     color: rgb(255, 255, 255);
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
     -unity-font-definition: initial;
 }
 
@@ -27,7 +27,7 @@
 
 .button {
     font-size: 75px;
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-proggy-tiny/ProggyTiny.ttf?fileID=12800000&guid=33f1463ca56a5f2469e4ee94d71b5478&type=3#ProggyTiny");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-proggy-tiny/ProggyTiny.ttf?fileID=12800000&guid=33f1463ca56a5f2469e4ee94d71b5478&type=3#ProggyTiny");
     -unity-font-definition: initial;
     -unity-font-style: normal;
     background-color: rgba(0, 0, 0, 0);
@@ -36,7 +36,7 @@
 
 .data {
     -unity-font-definition: initial;
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-proggy-tiny/ProggyTinyModified.ttf?fileID=12800000&guid=2d49d2d9dd7c77045a07e54ac2583ee2&type=3#ProggyTinyModified");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-proggy-tiny/ProggyTinyModified.ttf?fileID=12800000&guid=2d49d2d9dd7c77045a07e54ac2583ee2&type=3#ProggyTinyModified");
     font-size: 50px;
     color: rgb(255, 255, 255);
 }
@@ -47,8 +47,8 @@
 
 .mapText {
     -unity-font-definition: initial;
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-proggy-tiny/ProggyTinyModified.ttf?fileID=12800000&guid=2d49d2d9dd7c77045a07e54ac2583ee2&type=3#ProggyTinyModified");
-    font-size: 33px;
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-proggy-tiny/ProggyTinyModified.ttf?fileID=12800000&guid=2d49d2d9dd7c77045a07e54ac2583ee2&type=3#ProggyTinyModified");
+    font-size: 35px;
     background-color: rgba(255, 255, 255, 0);
     color: rgb(255, 255, 255);
     word-spacing: -10px;
@@ -60,7 +60,7 @@
 .subHeader {
     font-size: 40px;
     color: rgb(255, 255, 255);
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
     -unity-font-definition: initial;
 }
 
@@ -77,7 +77,6 @@
 
 .tableData {
     -unity-paragraph-spacing: 20px;
-    height: 280px;
     padding-left: 0;
     padding-right: 0;
     padding-top: 0;
@@ -88,6 +87,7 @@
     margin-bottom: 0;
     -unity-text-align: upper-center;
     font-size: 40px;
+    width: 100%;
 }
 
 .tableHeader {
@@ -111,7 +111,7 @@
     -unity-background-image-tint-color: rgb(255, 255, 255);
     width: 42px;
     height: 42px;
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
     -unity-font-definition: initial;
     color: rgb(255, 255, 255);
     justify-content: center;
@@ -132,7 +132,7 @@
 }
 
 .pointLabel {
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
     font-size: 40px;
     align-items: center;
     justify-content: center;
@@ -170,27 +170,29 @@
     letter-spacing: -2px;
     word-spacing: -12px;
     -unity-paragraph-spacing: 11px;
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-proggy-tiny/ProggyTinyModified.ttf?fileID=12800000&guid=2d49d2d9dd7c77045a07e54ac2583ee2&type=3#ProggyTinyModified");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-proggy-tiny/ProggyTinyModified.ttf?fileID=12800000&guid=2d49d2d9dd7c77045a07e54ac2583ee2&type=3#ProggyTinyModified");
 }
 
 .actionLog {
     font-size: 64px;
     color: rgb(255, 255, 255);
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/RetroFonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
     -unity-font-definition: initial;
 }
 
 .actionLogHeader {
-    font-size: 40px;
+    font-size: 51px;
     color: rgb(255, 255, 255);
-    -unity-font: url("project://database/Assets/Visuals/Fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf?fileID=12800000&guid=9e46e9631190cb3408ae7d0198e3cd09&type=3#FSEX301-L2");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/NbPixelFonts/AtariGames.ttf?fileID=12800000&guid=d13af451bab9dee49a83becea61fccba&type=3#AtariGames");
     -unity-font-definition: initial;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 0;
-    margin-bottom: 0;
     padding-left: 0;
     padding-right: 0;
     padding-top: 0;
     padding-bottom: 0;
+    letter-spacing: 10px;
+    margin-top: -7px;
+    margin-left: 10px;
+    margin-right: 0;
+    margin-bottom: -2px;
+    -unity-font-style: normal;
 }
