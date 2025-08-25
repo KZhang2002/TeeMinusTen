@@ -447,6 +447,10 @@ PrefabInstance:
       propertyPath: MapCursor
       value: 
       objectReference: {fileID: 258117419}
+    - target: {fileID: 7612425176734547778, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
+      propertyPath: updateInterval
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 8428972755877013856, guid: 724638a0209520b44bbb2a902df9342a, type: 3}
       propertyPath: _doc
       value: 

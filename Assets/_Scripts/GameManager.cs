@@ -44,7 +44,7 @@ namespace _Scripts {
 
         private void Start() {
             _uiManager = UIManager.instance;
-            Time.timeScale = 2.0f;
+            Time.timeScale = 1.0f;
         }
 
         public void RegisterZone(Zone zone) {

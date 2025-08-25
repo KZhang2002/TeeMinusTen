@@ -17,24 +17,33 @@ namespace _Scripts {
         public float startingFiringAngle = 45f;
         public float startingRotationAngle = 0f;
         
-        
         // Shell References
         public Shell currentShell { get; private set; }
         private Transform shellTf => currentShell.transform;
         
         // Interaction
         public float firingAngle;
-        public float rotationAngle = 0f;
+        public float actualFiringAngle;
+        public float rotationAngle;
+        public float actualRotationAngle;
         
         private float _timer;
         private float updateInterval = 0.2f;
 
         public Light muzzleFlash;
         private bool flashOn;
+        
+        // Player Control Settings
+        [SerializeField] private float firingAngleIncrement = 20f;
+        [SerializeField] private float actualFiringAngleIncrement = 10f;
+        [SerializeField] private float rotationAngleIncrement = 20f;
+        [SerializeField] private float actualRotationAngleIncrement = 10f;
 
         private void Awake() {
             firingAngle = startingFiringAngle;
+            actualFiringAngle = firingAngle;
             rotationAngle = startingRotationAngle;
+            actualRotationAngle = rotationAngle;
             
             _timer = 0f;
             muzzleFlash.enabled = false;
@@ -65,19 +74,23 @@ namespace _Scripts {
 
         private void UpdateAngles() {
             firingAngle = Mathf.Clamp(firingAngle, minFiringAngle, maxFiringAngle);
-            transform.eulerAngles = new Vector3(0, rotationAngle, 0);
-            barrelObj.transform.localEulerAngles = new Vector3(0, 0, firingAngle - 90f);
+            var targetFiringAngle = Mathf.MoveTowards(actualFiringAngle, firingAngle, actualFiringAngleIncrement * Time.fixedDeltaTime);
+            barrelObj.transform.localEulerAngles = new Vector3(0, 0, targetFiringAngle - 90f);
+            actualFiringAngle = targetFiringAngle;
+
+            var targetRotationAngle = Mathf.MoveTowards(actualRotationAngle, rotationAngle,
+                actualRotationAngleIncrement * Time.fixedDeltaTime);
+            transform.eulerAngles = new Vector3(0, targetRotationAngle, 0);
+            actualRotationAngle = targetRotationAngle;
         }
 
         public void ChangeFiringAngle(float n) {
-            firingAngle += n;
+            firingAngle += n * firingAngleIncrement * Time.deltaTime;
             firingAngle = Mathf.Clamp(firingAngle, minFiringAngle, maxFiringAngle);
         }
         
         public void ChangeRotationAngle(float n) {
-            rotationAngle += n;
-            if (rotationAngle >= 360) rotationAngle -= 360;
-            else if (rotationAngle < 0) rotationAngle += 360;
+            rotationAngle += n * rotationAngleIncrement * Time.deltaTime;
         }
 
         private void RegisterShellRef(Shell shell) {
@@ -115,7 +128,6 @@ namespace _Scripts {
             
             Debug.Log("Teleporting to shell.");
             transform.position = shellTf.position;
-            
         }
     }
 }

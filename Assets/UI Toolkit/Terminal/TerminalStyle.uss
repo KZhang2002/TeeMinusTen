@@ -55,6 +55,7 @@
     margin-top: -2px;
     margin-bottom: -2px;
     margin-right: -4px;
+    margin-left: 0;
 }
 
 .subHeader {
@@ -180,19 +181,24 @@
     -unity-font-definition: initial;
 }
 
-.actionLogHeader {
+.boxHeader {
     font-size: 51px;
     color: rgb(255, 255, 255);
-    -unity-font: url("project://database/Assets/Visuals/Fonts/NbPixelFonts/AtariGames.ttf?fileID=12800000&guid=d13af451bab9dee49a83becea61fccba&type=3#AtariGames");
+    -unity-font: url("project://database/Assets/Visuals/Fonts/NbPixelFonts/TinyUnicode.ttf?fileID=12800000&guid=41ebc17ba44805844acbbad1ddfee722&type=3#TinyUnicode");
     -unity-font-definition: initial;
     padding-left: 0;
     padding-right: 0;
     padding-top: 0;
     padding-bottom: 0;
     letter-spacing: 10px;
-    margin-top: -7px;
-    margin-left: 10px;
-    margin-right: 0;
-    margin-bottom: -2px;
     -unity-font-style: normal;
+    position: absolute;
+    top: -53px;
+    width: 100%;
+    left: -7px;
+}
+
+.box {
+    align-self: auto;
+    justify-content: flex-start;
 }

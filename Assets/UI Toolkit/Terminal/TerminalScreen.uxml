@@ -8,9 +8,9 @@
             <ui:VisualElement name="LeftColumn" class="mainColumn" style="width: 27.5%; height: 100%; align-self: center; justify-content: space-between; align-items: flex-start; padding-right: 0;">
                 <ui:VisualElement name="ShellMenu" class="border" style="width: 90%; height: 360px; position: relative; -unity-background-scale-mode: scale-to-fit;" />
                 <ui:VisualElement name="ActionLogMenu" style="flex-grow: 1; align-self: stretch; justify-content: center;">
-                    <ui:Label tabindex="-1" text="ACTION LOG" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ActionLogHeader" class="actionLogHeader" style="width: 100%; -unity-font: url(&quot;project://database/Assets/Visuals/Fonts/NbPixelFonts/TinyUnicode.ttf?fileID=12800000&amp;guid=41ebc17ba44805844acbbad1ddfee722&amp;type=3#TinyUnicode&quot;);" />
-                    <ui:VisualElement name="LogBox" class="border" style="width: 90%; height: 376px;">
+                    <ui:VisualElement name="LogBox" class="border box" style="width: 90%; height: 376px;">
                         <ui:Label tabindex="-1" text="SHELL LAUNCHED&#10;SHELL LANDED&#10;TELEPORTING..." parse-escape-sequences="true" display-tooltip-when-elided="true" name="ActionLog" class="actionLog" style="font-size: 31px; margin-top: -2px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 4px;" />
+                        <ui:Label tabindex="-1" text="ACTION LOG" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ActionLogHeader" class="boxHeader" style="width: 100%; top: -53px; left: -7px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="InstructionsBox" style="width: 90%; flex-direction: row; justify-content: space-between;">
@@ -39,19 +39,23 @@
                         <ui:VisualElement name="cursorPoint" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Visuals/Images/Cross.png?fileID=2800000&amp;guid=f3fd16405f1eac948b7427dbda0552d9&amp;type=3#Cross&quot;); -unity-background-image-tint-color: rgb(255, 255, 255); background-color: rgba(255, 255, 255, 0); position: absolute; width: 20px; height: 20px; top: 339px; left: 377px; -unity-background-scale-mode: scale-to-fit;" />
                     </ui:VisualElement>
                     <ui:VisualElement name="MortarStats" style="flex-direction: row; align-items: auto; position: absolute; top: 101%; width: 100%;">
-                        <ui:VisualElement name="StatBox" style="width: 21%;">
-                            <ui:Label tabindex="-1" text="ANGL:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="firingAngle" class="text mapText" style="color: rgb(255, 255, 255); margin-left: 0;" />
-                            <ui:Label tabindex="-1" text="HEAD:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="mortarRotation" class="text mapText" style="color: rgb(255, 255, 255); white-space: nowrap; margin-left: 0;" />
+                        <ui:VisualElement name="StatBox" style="width: 31%;">
+                            <ui:Label tabindex="-1" text="ANGL:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="firingAngle" class="text mapText" style="color: rgb(255, 255, 255);" />
+                            <ui:Label tabindex="-1" text="HEAD:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="mortarRotation" class="text mapText" style="color: rgb(255, 255, 255); white-space: nowrap;" />
                         </ui:VisualElement>
                         <ui:VisualElement name="StatBox" style="width: 50%;">
-                            <ui:Label tabindex="-1" text="HGHT:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="shellHeight" class="text mapText" style="color: rgb(255, 255, 255); margin-left: 0;" />
-                            <ui:Label tabindex="-1" text="DIST:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="shellDistance" class="text mapText" style="color: rgb(255, 255, 255); text-overflow: ellipsis; margin-left: 0;" />
+                            <ui:Label tabindex="-1" text="HGHT:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="shellHeight" class="text mapText" style="color: rgb(255, 255, 255);" />
+                            <ui:Label tabindex="-1" text="DIST:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="shellDistance" class="text mapText" style="color: rgb(255, 255, 255); text-overflow: ellipsis;" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="RightColumn" class="mainColumn" style="width: 27.5%; height: 100%; flex-direction: column; align-items: flex-end;">
-                <ui:VisualElement name="MortarCam" class="border" style="background-image: url(&quot;project://database/Assets/Visuals/TrailCamRenderTexture.renderTexture?fileID=8400000&amp;guid=f79daf8bb760cc34b8a9401b9d0eefc2&amp;type=2#TrailCamRenderTexture&quot;); width: 358px; height: 280px; align-items: auto; justify-content: space-around; align-self: flex-end; position: relative; -unity-background-scale-mode: scale-to-fit;" />
+                <ui:VisualElement name="ActionLogMenu" style="flex-grow: 1; align-self: stretch; justify-content: center;">
+                    <ui:VisualElement name="MortarCam" class="border box" style="background-image: url(&quot;project://database/Assets/Visuals/TrailCamRenderTexture.renderTexture?fileID=8400000&amp;guid=f79daf8bb760cc34b8a9401b9d0eefc2&amp;type=2#TrailCamRenderTexture&quot;); width: 358px; height: 280px; -unity-background-scale-mode: scale-to-fit;">
+                        <ui:Label tabindex="-1" text="MORTAR CAM" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ActionLogHeader" class="boxHeader" style="width: 100%; -unity-font: url(&quot;project://database/Assets/Visuals/Fonts/NbPixelFonts/TinyUnicode.ttf?fileID=12800000&amp;guid=41ebc17ba44805844acbbad1ddfee722&amp;type=3#TinyUnicode&quot;);" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
                 <ui:VisualElement name="RangeTable" class="border" style="position: relative; flex-direction: row; width: 55%; padding-left: 10px; padding-right: 10px; background-color: rgb(7, 7, 7); align-self: flex-end; justify-content: space-around; height: 307px;">
                     <ui:VisualElement name="AngleColumn" class="tableCollumn">
                         <ui:Label tabindex="-1" text="ANGLE" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AngleLabel" class="subHeader tableHeader" style="align-items: center;" />
@@ -61,6 +65,7 @@
                         <ui:Label tabindex="-1" text="RANGE" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RangeLabel" class="subHeader tableHeader" style="align-items: center;" />
                         <ui:Label tabindex="-1" text="XXXX&#10;XXXX&#10;XXXX&#10;XXX&#10;XXX&#10;XXX&#10;XXX" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RangeData" class="text data tableData" style="color: rgb(255, 255, 255); -unity-text-align: upper-center;" />
                     </ui:VisualElement>
+                    <ui:Label tabindex="-1" text="RANGE CARD" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RangeTableHeader" class="boxHeader" style="display: none;" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

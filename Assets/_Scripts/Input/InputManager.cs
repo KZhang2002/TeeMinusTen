@@ -10,13 +10,10 @@ namespace _Scripts {
         private GameManager _gm;
         private MortarController _mc;
 
-        public float firingAngleIncrement { get; private set; } = 0.1f; // maybe move to mortar controller
-        public float rotationAngleIncrement { get; private set; } = 0.1f; // ditto
+        private float tiltInput;
+        private float rotateInput;
 
-        private float tiltInput = 0f;
-        private float rotateInput = 0f;
-
-        private bool isSpeedMod = false;
+        private bool isSpeedMod; // speed modifier key (default: shift) is pressed
 
         private void Awake() {
             _controls = new PlayerControls();
@@ -34,14 +31,8 @@ namespace _Scripts {
             tiltInput = rawTilt * (isSpeedMod ? 0.1f : 1f);
             rotateInput = rawRotate * (isSpeedMod ? 0.1f : 1f);
 
-            _mc.ChangeFiringAngle(tiltInput * firingAngleIncrement * Time.deltaTime * 100f);
-            _mc.ChangeRotationAngle(rotateInput * rotationAngleIncrement * Time.deltaTime * 100f);
-            
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                Scene currentScene = SceneManager.GetActiveScene();
-                SceneManager.LoadScene(currentScene.name);
-            }
+            _mc.ChangeFiringAngle(tiltInput);
+            _mc.ChangeRotationAngle(rotateInput);
         }
 
         private void OnEnable() {
@@ -51,6 +42,7 @@ namespace _Scripts {
             _controls.Standard.Reload.performed += OnReload;
 
             _controls.Standard.TeleportDEBUG.performed += OnTeleport;
+            _controls.Standard.ResetLevelDEBUG.performed += OnResetLevel;
             
             _controls.Standard.SpeedModifier.performed += _ => isSpeedMod = true;
             _controls.Standard.SpeedModifier.canceled += _ => isSpeedMod = false;
@@ -70,6 +62,11 @@ namespace _Scripts {
 
         private void OnReload(InputAction.CallbackContext context) {
             _mc.ResetShell();
+        }
+
+        private void OnResetLevel(InputAction.CallbackContext context) {
+            Scene currentScene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(currentScene.name);
         }
     }
 }

@@ -675,8 +675,14 @@ MonoBehaviour:
   startingFiringAngle: 45
   startingRotationAngle: 0
   firingAngle: 0
+  actualFiringAngle: 0
   rotationAngle: 0
+  actualRotationAngle: 0
   muzzleFlash: {fileID: 4640249287410288357}
+  firingAngleIncrement: 20
+  actualFiringAngleIncrement: 10
+  rotationAngleIncrement: 20
+  actualRotationAngleIncrement: 10
 --- !u!1 &3767962647542961942
 GameObject:
   m_ObjectHideFlags: 0

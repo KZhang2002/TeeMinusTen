@@ -148,10 +148,10 @@ namespace _Scripts {
             //     SetElementPositionWorldToTopoMap(extractZone.transform.position, _extractPoint);
             // }
         }
-
+        
         private void UpdateDataText() {
-            _firingAngle.text = _fAPrefix + $" {UIHelper.RoundFloatToStr(_mc.firingAngle)}°";
-            _mortarRotation.text = _mRPrefix + $" {UIHelper.RoundFloatToStr(_mc.rotationAngle)}°";
+            _firingAngle.text = _fAPrefix + $" {UIHelper.RoundFloatToStr(_mc.firingAngle)}°/{UIHelper.RoundFloatToStr(_mc.actualFiringAngle)}°";
+            _mortarRotation.text = _mRPrefix + $" {UIHelper.RoundFloatToStr(_mc.rotationAngle % 360)}°/{UIHelper.RoundFloatToStr(_mc.actualRotationAngle % 360)}°";
 
             var dist = Vector2.Distance(new Vector2(_mc.transform.position.x, _mc.transform.position.z),
                 new Vector2(shellTf.position.x, shellTf.position.z));
