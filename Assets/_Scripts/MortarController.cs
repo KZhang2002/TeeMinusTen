@@ -4,14 +4,17 @@ using UnityEngine.Serialization;
 
 namespace _Scripts {
     public class MortarController : MonoBehaviour {
-        // Inspector References
+        [Header("Inspector References"), Space]
         [SerializeField] private GameObject muzzlePosObj;
         private Vector3 muzzlePos => muzzlePosObj.transform.position;
         [SerializeField] private GameObject barrelObj;
         private Vector3 barrelPos => barrelObj.transform.position;
         private Vector3 barrelDir => barrelObj.transform.rotation * Vector3.up; // Direction the barrel is pointed towards in world space
         
-        // Mortar Attributes
+        public Light muzzleFlash;
+        private bool flashOn;
+        
+        [Header("Set Up Variables"), Space]
         public float minFiringAngle = 10f;
         public float maxFiringAngle = 100f;
         public float startingFiringAngle = 45f;
@@ -21,17 +24,15 @@ namespace _Scripts {
         public Shell currentShell { get; private set; }
         private Transform shellTf => currentShell.transform;
         
-        // Interaction
+        [Header("Interaction"), Space]
         public float firingAngle;
-        public float actualFiringAngle;
+        public float actualFiringAngle { get; private set; }
         public float rotationAngle;
-        public float actualRotationAngle;
+        public float actualRotationAngle  { get; private set; }
         
         private float _timer;
         private float updateInterval = 0.2f;
-
-        public Light muzzleFlash;
-        private bool flashOn;
+        
         
         // Player Control Settings
         [SerializeField] private float firingAngleIncrement = 20f;

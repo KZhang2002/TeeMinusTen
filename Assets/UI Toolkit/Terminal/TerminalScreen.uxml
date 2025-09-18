@@ -6,7 +6,9 @@
     <ui:VisualElement name="Main" picking-mode="Ignore" class="fill" style="flex-grow: 1; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-left: 23px; padding-top: 23px; padding-bottom: 23px; padding-right: 23px; align-items: center; position: relative; top: 0; right: 0; height: 1080px; width: 1920px; left: 0; align-self: center; flex-direction: row; justify-content: center; background-color: rgba(255, 0, 215, 0);">
         <ui:VisualElement name="VisibleArea" picking-mode="Ignore" class="fill" style="flex-grow: 1; align-items: center; position: relative; top: 0; right: 0; height: 100%; width: 100%; left: 0; align-self: center; flex-direction: row; justify-content: center; background-color: rgba(255, 0, 184, 0);">
             <ui:VisualElement name="LeftColumn" class="mainColumn" style="width: 27.5%; height: 100%; align-self: center; justify-content: space-between; align-items: flex-start; padding-right: 0;">
-                <ui:VisualElement name="ShellMenu" class="border" style="width: 90%; height: 360px; position: relative; -unity-background-scale-mode: scale-to-fit;" />
+                <ui:VisualElement name="ShellMenu" class="border" style="width: 90%; height: 360px; position: relative; -unity-background-scale-mode: scale-to-fit;">
+                    <ui:Label tabindex="-1" text="SHELL DETAILS" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ShellMenuHeader" class="boxHeader" style="width: 100%; top: -53px; left: -7px;" />
+                </ui:VisualElement>
                 <ui:VisualElement name="ActionLogMenu" style="flex-grow: 1; align-self: stretch; justify-content: center;">
                     <ui:VisualElement name="LogBox" class="border box" style="width: 90%; height: 376px;">
                         <ui:Label tabindex="-1" text="SHELL LAUNCHED&#10;SHELL LANDED&#10;TELEPORTING..." parse-escape-sequences="true" display-tooltip-when-elided="true" name="ActionLog" class="actionLog" style="font-size: 31px; margin-top: -2px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 4px;" />
@@ -55,6 +57,10 @@
                     <ui:VisualElement name="MortarCam" class="border box" style="background-image: url(&quot;project://database/Assets/Visuals/TrailCamRenderTexture.renderTexture?fileID=8400000&amp;guid=f79daf8bb760cc34b8a9401b9d0eefc2&amp;type=2#TrailCamRenderTexture&quot;); width: 358px; height: 280px; -unity-background-scale-mode: scale-to-fit;">
                         <ui:Label tabindex="-1" text="MORTAR CAM" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ActionLogHeader" class="boxHeader" style="width: 100%; -unity-font: url(&quot;project://database/Assets/Visuals/Fonts/NbPixelFonts/TinyUnicode.ttf?fileID=12800000&amp;guid=41ebc17ba44805844acbbad1ddfee722&amp;type=3#TinyUnicode&quot;);" />
                     </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="StatBox" style="width: 50%; display: none;">
+                    <ui:Label tabindex="-1" text="BARREL NOT CLEAR" parse-escape-sequences="true" display-tooltip-when-elided="true" name="shellHeight" class="text mapText border" style="color: rgb(255, 255, 255); -unity-text-align: middle-center;" />
+                    <ui:Label tabindex="-1" text="TELEPORT READY" parse-escape-sequences="true" display-tooltip-when-elided="true" name="shellDistance" class="text mapText border" style="color: rgb(255, 255, 255); text-overflow: ellipsis; -unity-text-align: middle-center; margin-right: 0; padding-left: 2px;" />
                 </ui:VisualElement>
                 <ui:VisualElement name="RangeTable" class="border" style="position: relative; flex-direction: row; width: 55%; padding-left: 10px; padding-right: 10px; background-color: rgb(7, 7, 7); align-self: flex-end; justify-content: space-around; height: 307px;">
                     <ui:VisualElement name="AngleColumn" class="tableCollumn">

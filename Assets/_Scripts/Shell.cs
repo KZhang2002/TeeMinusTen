@@ -5,7 +5,7 @@ namespace _Scripts {
     // angles are 30, 40, 45, 50, 60, 70, 80
     public static class ShellRangeData {
         public static readonly Dictionary<impulseType, string> RangeTable = new() {
-            { impulseType.Weak, "1\n2\n3\n4\n5\n6\n7" },
+            { impulseType.Weak, "113\n120\n118\n113\n96\n69\n36" },
             { impulseType.Medium, "360\n368\n357\n338\n279\n197\n102" },
             { impulseType.M49A2, "1095\n1058\n1005\n933\n748\n520\n266" }
         };
